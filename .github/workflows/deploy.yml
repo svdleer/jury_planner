@@ -1,0 +1,50 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    types: [ closed ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.PRODUCTION_SSH_KEY }}
+
+    - name: Add production server to known hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H jury2025.useless.nl >> ~/.ssh/known_hosts
+
+    - name: Deploy to production server
+      run: |
+        echo "🚀 Deploying to Plesk production server..."
+        
+        # Add production remote (Plesk path)
+        git remote add production jury2025@jury2025.useless.nl:/home/httpd/vhosts/jury2025.useless.nl/git/jury2025.git || true
+        
+        # Push to production
+        git push production main
+        
+        echo "✅ Deployment to Plesk completed!"
+
+    - name: Notify deployment status
+      if: always()
+      run: |
+        if [ ${{ job.status }} == 'success' ]; then
+          echo "✅ Deployment successful!"
+        else
+          echo "❌ Deployment failed!"
+        fi

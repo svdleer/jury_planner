@@ -1,0 +1,177 @@
+/* Custom styles for Jury Planner */
+
+/* Water polo themed colors */
+:root {
+    --water-blue-50: #eff6ff;
+    --water-blue-100: #dbeafe;
+    --water-blue-200: #bfdbfe;
+    --water-blue-300: #93c5fd;
+    --water-blue-400: #60a5fa;
+    --water-blue-500: #3b82f6;
+    --water-blue-600: #2563eb;
+    --water-blue-700: #1d4ed8;
+    --water-blue-800: #1e40af;
+    --water-blue-900: #1e3a8a;
+}
+
+/* Loading states */
+.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Toast notifications */
+.toast {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    max-width: 400px;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.toast-success {
+    background-color: #10b981;
+    color: white;
+}
+
+.toast-error {
+    background-color: #ef4444;
+    color: white;
+}
+
+.toast-warning {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.toast-info {
+    background-color: var(--water-blue-500);
+    color: white;
+}
+
+/* Custom table styles */
+.table-hover tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+/* Custom button styles */
+.btn-water {
+    background-color: var(--water-blue-600);
+    border-color: var(--water-blue-600);
+    color: white;
+}
+
+.btn-water:hover {
+    background-color: var(--water-blue-700);
+    border-color: var(--water-blue-700);
+}
+
+/* Custom badge styles */
+.badge-water {
+    background-color: var(--water-blue-100);
+    color: var(--water-blue-800);
+}
+
+/* Hide Alpine.js elements before initialization */
+[x-cloak] { 
+    display: none !important; 
+}
+
+/* Custom modal backdrop */
+.modal-backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        color: black !important;
+        background: white !important;
+    }
+    
+    .shadow-lg,
+    .shadow-md,
+    .shadow-sm {
+        box-shadow: none !important;
+    }
+}
+
+/* Responsive design helpers */
+@media (max-width: 640px) {
+    .mobile-hidden {
+        display: none !important;
+    }
+    
+    .mobile-stack > * {
+        width: 100% !important;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Focus styles for accessibility */
+.focus-ring:focus {
+    outline: 2px solid var(--water-blue-500);
+    outline-offset: 2px;
+}
+
+/* Status indicators */
+.status-active {
+    color: #10b981;
+}
+
+.status-inactive {
+    color: #6b7280;
+}
+
+.status-scheduled {
+    color: var(--water-blue-600);
+}
+
+.status-in-progress {
+    color: #f59e0b;
+}
+
+.status-completed {
+    color: #10b981;
+}
+
+.status-cancelled {
+    color: #ef4444;
+}
