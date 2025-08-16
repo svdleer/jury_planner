@@ -64,19 +64,19 @@ else
     git reset --hard origin/main
 fi
 
-# Create symlink or copy PHP interface to httpdocs root
-echo "🔗 Setting up web-accessible PHP interface in root..."
-if [ -L "$HTTPDOCS" ] || [ -d "$HTTPDOCS" ]; then
-    # Backup existing httpdocs if it's not a symlink to our interface
-    if [ ! -L "$HTTPDOCS" ] || [ "$(readlink "$HTTPDOCS")" != "$DEPLOY_DIR/php_interface" ]; then
-        if [ -d "$HTTPDOCS" ]; then
-            echo "📦 Backing up existing httpdocs..."
-            mv "$HTTPDOCS" "$HTTPDOCS.backup.$(date +%Y%m%d_%H%M%S)" 2>/dev/null || true
-        fi
-    fi
+# Backup existing httpdocs if it exists and is not our deployment
+echo "🔗 Setting up web-accessible PHP interface in httpdocs root..."
+if [ -d "$HTTPDOCS" ] && [ ! -L "$HTTPDOCS" ]; then
+    echo "📦 Backing up existing httpdocs..."
+    mv "$HTTPDOCS" "$HTTPDOCS.backup.$(date +%Y%m%d_%H%M%S)" 2>/dev/null || true
 fi
 
-# Create symlink to PHP interface as httpdocs root
+# Remove httpdocs if it's a symlink or directory
+if [ -L "$HTTPDOCS" ] || [ -d "$HTTPDOCS" ]; then
+    rm -rf "$HTTPDOCS"
+fi
+
+# Create symlink from httpdocs to php_interface (direct root access)
 ln -sf "$DEPLOY_DIR/php_interface" "$HTTPDOCS"
 
 # Set proper permissions for Plesk
@@ -93,11 +93,12 @@ fi
 
 # Set specific permissions for sensitive files
 chmod 600 "$DEPLOY_DIR/.env" 2>/dev/null || true
-chmod 644 "$DEPLOY_DIR/php_interface/.htaccess" 2>/dev/null || true
+chmod 644 "$HTTPDOCS/.htaccess" 2>/dev/null || true
 
 echo "✅ Plesk deployment completed successfully!"
 echo "🌍 PHP Interface available at: https://jury2025.useless.nl/"
 echo "🔍 Test connection at: https://jury2025.useless.nl/test_connection.php"
+echo "📊 Dashboard at: https://jury2025.useless.nl/mnc_dashboard.php"
 EOF
 
 # Make the hook executable

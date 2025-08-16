@@ -11,13 +11,13 @@ This deployment is specifically designed for Plesk hosting environments where:
 
 ```
 /home/httpd/vhosts/jury2025.useless.nl/
-├── httpdocs/                           # Symlink to php_interface (root web access)
+├── httpdocs/                           # Symlink to php_interface (direct root access)
 ├── jury_planner/                      # Full repository (private)
 │   ├── php_interface/                 # PHP web interface source
-│   │   ├── index.php                  # Dashboard
-│   │   ├── teams.php                  # Team management
-│   │   ├── matches.php                # Match management
-│   │   └── test_connection.php        # Database test
+│   │   ├── index.php                  # Main entry point (redirects to dashboard)
+│   │   ├── mnc_dashboard.php          # Main dashboard
+│   │   ├── test_connection.php        # Database test
+│   │   └── config/                    # Configuration files
 │   ├── backend/                       # Python backend (private)
 │   ├── planning_engine/               # Planning engine (private)
 │   ├── database/                      # Database schema (private)
@@ -75,7 +75,7 @@ When you push to the production remote:
 1. **Receives Push**: Git bare repository receives your code
 2. **Triggers Hook**: `post-receive` hook automatically executes
 3. **Updates Repository**: Pulls latest code to `/home/httpd/vhosts/jury2025.useless.nl/jury_planner/`
-4. **Creates Symlink**: Links entire `php_interface/` directory as `httpdocs/` root
+4. **Creates Root Symlink**: Makes `httpdocs` a direct symlink to `php_interface/`
 5. **Sets Permissions**: Applies Plesk-compatible permissions
 6. **Updates Environment**: Manages `.env` configuration securely
 
@@ -121,6 +121,7 @@ cd /home/httpd/vhosts/jury2025.useless.nl/jury_planner
 git pull origin main
 
 # Update symlink if needed
+rm -rf /home/httpd/vhosts/jury2025.useless.nl/httpdocs
 ln -sf /home/httpd/vhosts/jury2025.useless.nl/jury_planner/php_interface /home/httpd/vhosts/jury2025.useless.nl/httpdocs
 ```
 
@@ -156,7 +157,7 @@ chmod -R 755 /home/httpd/vhosts/jury2025.useless.nl/httpdocs/jury
 
 2. **Symlink Not Working**
    ```bash
-   rm -f /home/httpd/vhosts/jury2025.useless.nl/httpdocs
+   rm -rf /home/httpd/vhosts/jury2025.useless.nl/httpdocs
    ln -sf /home/httpd/vhosts/jury2025.useless.nl/jury_planner/php_interface /home/httpd/vhosts/jury2025.useless.nl/httpdocs
    ```
 

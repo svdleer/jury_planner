@@ -12,8 +12,9 @@ Local Development → GitHub → Plesk Production
 ### Plesk Directory Layout
 ```
 /home/httpd/vhosts/jury2025.useless.nl/
-├── httpdocs/                   ← Symlink to php_interface (WEB ACCESSIBLE ROOT)
+├── httpdocs/                   ← Direct symlink to php_interface (ROOT ACCESS)
 ├── jury_planner/               ← Full repository (PRIVATE)
+│   └── php_interface/          ← PHP interface source
 └── git/jury2025.git/           ← Bare repository + hooks (PRIVATE)
 ```
 
