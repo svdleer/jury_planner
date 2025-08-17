@@ -6,6 +6,7 @@ require_once 'includes/TeamManager.php';
 require_once 'includes/AssignmentConstraintManager.php';
 require_once 'includes/CustomConstraintManager.php';
 require_once 'includes/MatchConstraintManager.php';
+require_once 'includes/FairnessManager.php';
 
 $matchManager = new MatchManager($db);
 $teamManager = new TeamManager($db);

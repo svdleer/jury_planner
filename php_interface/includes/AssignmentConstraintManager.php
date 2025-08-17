@@ -4,6 +4,7 @@ class AssignmentConstraintManager {
     private $db;
     private $customConstraintManager;
     private $matchConstraintManager;
+    private $fairnessManager;
     
     public function __construct($database) {
         $this->db = $database;
@@ -13,6 +14,9 @@ class AssignmentConstraintManager {
         }
         if (class_exists('MatchConstraintManager')) {
             $this->matchConstraintManager = new MatchConstraintManager($database);
+        }
+        if (class_exists('FairnessManager')) {
+            $this->fairnessManager = new FairnessManager($database);
         }
     }
     
@@ -157,6 +161,17 @@ class AssignmentConstraintManager {
                 
                 // Adjust score for current usage (load balancing)
                 $score -= $teamUsage[$team['id']] * 10;
+                
+                // Apply fairness scoring if available
+                if ($this->fairnessManager) {
+                    $recommendations = $this->fairnessManager->getAssignmentRecommendations($match['id']);
+                    foreach ($recommendations as $rec) {
+                        if ($rec['team_id'] == $team['id']) {
+                            $score += $rec['priority']; // Add fairness priority to score
+                            break;
+                        }
+                    }
+                }
                 
                 $eligibleTeams[] = [
                     'team' => $team,

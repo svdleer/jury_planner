@@ -55,6 +55,9 @@
                     <a href="constraint_analysis.php" class="hover:bg-blue-700 px-3 py-2 rounded">
                         <i class="fas fa-search mr-1"></i> Analysis
                     </a>
+                    <a href="fairness.php" class="hover:bg-blue-700 px-3 py-2 rounded">
+                        <i class="fas fa-balance-scale mr-1"></i> Fairness
+                    </a>
                     <a href="test_connection.php" class="hover:bg-blue-700 px-3 py-2 rounded">
                         <i class="fas fa-database mr-1"></i> DB Test
                     </a>
