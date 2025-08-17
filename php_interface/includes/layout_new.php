@@ -13,7 +13,7 @@ function formatDate($date, $format = 'M j, Y') {
 }
 
 // Format time function
-function formatTime($time, $format = 'g:i A') {
+function formatTime($time, $format = 'H:i') {
     return date($format, strtotime($time));
 }
 ?>

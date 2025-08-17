@@ -171,7 +171,7 @@ ob_start();
                                         <?php echo htmlspecialchars($match['home_team_name']); ?> vs <?php echo htmlspecialchars($match['away_team_name']); ?>
                                     </div>
                                     <div class="text-sm text-gray-500">
-                                        <?php echo date('M j, Y', strtotime($match['match_date'])); ?> at <?php echo date('g:i A', strtotime($match['match_time'])); ?>
+                                        <?php echo date('M j, Y', strtotime($match['match_date'])); ?> at <?php echo date('H:i', strtotime($match['match_time'])); ?>
                                         <?php if ($match['location']): ?>
                                             • <?php echo htmlspecialchars($match['location']); ?>
                                         <?php endif; ?>

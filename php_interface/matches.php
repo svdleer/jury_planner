@@ -320,7 +320,7 @@ ob_start();
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         <div class="text-gray-900"><?php echo date('M j, Y', strtotime($match['match_date'])); ?></div>
-                                        <div class="text-gray-500"><?php echo date('g:i A', strtotime($match['match_time'])); ?></div>
+                                        <div class="text-gray-500"><?php echo date('H:i', strtotime($match['match_time'])); ?></div>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         <div class="text-gray-900"><?php echo htmlspecialchars($match['location']); ?></div>

@@ -86,7 +86,7 @@ ob_start();
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Date & Time</label>
-                    <p class="mt-1 text-sm text-gray-900"><?php echo date('l, F j, Y \a\t g:i A', strtotime($selectedMatch['date_time'])); ?></p>
+                    <p class="mt-1 text-sm text-gray-900"><?php echo date('l, F j, Y \a\t H:i', strtotime($selectedMatch['date_time'])); ?></p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Home Team</label>
