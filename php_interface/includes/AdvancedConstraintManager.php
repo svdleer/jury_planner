@@ -131,16 +131,6 @@ class AdvancedConstraintManager {
                 'penalty_points' => 20
             ],
             [
-                'constraint_code' => 'WEEKEND_WEEKDAY_BALANCE',
-                'constraint_name' => 'Weekend vs Weekday Balance',
-                'category' => 'Fairness & Balance',
-                'description' => 'Balance weekend versus weekday load per team.',
-                'constraint_type' => 'soft',
-                'enabled' => true,
-                'weight' => 2.00,
-                'penalty_points' => 15
-            ],
-            [
                 'constraint_code' => 'PRESERVE_FREE_WEEKENDS',
                 'constraint_name' => 'Preserve Free Weekends',
                 'category' => 'Fairness & Balance',
