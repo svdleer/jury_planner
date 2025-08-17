@@ -13,8 +13,14 @@ $pageTitle = 'Match Constraint Analysis';
 $pageDescription = 'Analyze constraints for jury assignments based on team schedules and match conflicts';
 
 // Get upcoming matches
-$upcomingMatches = $matchManager->getUpcomingMatches(10);
-$teams = $teamManager->getAllTeams();
+$upcomingMatches = [];
+$teams = [];
+try {
+    $upcomingMatches = $matchManager->getUpcomingMatches(10);
+    $teams = $teamManager->getAllTeams();
+} catch (Exception $e) {
+    $error = "Error loading data: " . $e->getMessage();
+}
 
 // Selected match for analysis
 $selectedMatchId = $_GET['match_id'] ?? ($upcomingMatches[0]['id'] ?? null);
@@ -38,6 +44,16 @@ ob_start();
             <p class="mt-1 text-sm text-gray-500">Analyze why teams can or cannot be assigned as jury for specific matches</p>
         </div>
     </div>
+
+    <?php if (isset($error)): ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <?php echo htmlspecialchars($error); ?>
+        </div>
+    <?php elseif (empty($upcomingMatches)): ?>
+        <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+            No upcoming matches found.
+        </div>
+    <?php else: ?>
 
     <!-- Match Selection -->
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg mb-6">
@@ -185,6 +201,7 @@ ob_start();
             </div>
         </div>
     </div>
+    <?php endif; ?>
     <?php endif; ?>
 </div>
 
