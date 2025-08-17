@@ -60,6 +60,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $constraintsByCategory = $constraintManager->getAllConstraintsByCategory();
 $stats = $constraintManager->getConstraintStats();
+
+ob_start();
+?>
+
+<div class="max-w-7xl mx-auto p-6" x-data="constraintManager()">
 ?>
 
 <!DOCTYPE html>
@@ -389,5 +394,8 @@ $stats = $constraintManager->getConstraintStats();
             }
         }
     </script>
-</body>
-</html>
+
+<?php
+$content = ob_get_clean();
+include 'includes/layout.php';
+?>

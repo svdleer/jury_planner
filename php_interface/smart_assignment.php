@@ -82,7 +82,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $recentAssignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-include 'includes/layout.php';
+ob_start();
 ?>
 
 <div class="max-w-7xl mx-auto p-6" x-data="smartAssignmentApp()">
@@ -439,3 +439,8 @@ function smartAssignmentApp() {
     }
 }
 </script>
+
+<?php
+$content = ob_get_clean();
+include 'includes/layout.php';
+?>
