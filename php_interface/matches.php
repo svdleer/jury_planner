@@ -76,6 +76,7 @@ $teams = $teamManager->getAllTeams();
 
 if ($view === 'planning') {
     $stats = $constraintManager->getAssignmentStatistics();
+    $matches = []; // Initialize as empty array for planning view
     $pageTitle = 'Auto Assignment Planning';
     $pageDescription = 'Automatically assign jury teams to matches using constraints and optimization';
 } else {
