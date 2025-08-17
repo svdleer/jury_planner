@@ -3,12 +3,16 @@
 class AssignmentConstraintManager {
     private $db;
     private $customConstraintManager;
+    private $matchConstraintManager;
     
     public function __construct($database) {
         $this->db = $database;
-        // Initialize CustomConstraintManager if it exists
+        // Initialize constraint managers if they exist
         if (class_exists('CustomConstraintManager')) {
             $this->customConstraintManager = new CustomConstraintManager($database);
+        }
+        if (class_exists('MatchConstraintManager')) {
+            $this->matchConstraintManager = new MatchConstraintManager($database);
         }
     }
     
@@ -138,23 +142,43 @@ class AssignmentConstraintManager {
         $eligibleTeams = [];
         
         foreach ($teams as $team) {
-            // Check exclusion constraints
-            if ($this->isTeamExcludedFromMatch($team['id'], $match)) {
-                continue;
+            // Use new match constraint system if available
+            if ($this->matchConstraintManager) {
+                $score = $this->matchConstraintManager->calculateEligibilityScore(
+                    $team['name'], 
+                    $match, 
+                    $team['capacity_factor']
+                );
+                
+                // Skip teams that violate hard constraints
+                if ($score <= -1000) {
+                    continue;
+                }
+                
+                // Adjust score for current usage (load balancing)
+                $score -= $teamUsage[$team['id']] * 10;
+                
+                $eligibleTeams[] = [
+                    'team' => $team,
+                    'score' => $score
+                ];
+            } else {
+                // Fallback to original constraint checking
+                if ($this->isTeamExcludedFromMatch($team['id'], $match)) {
+                    continue;
+                }
+                
+                if ($this->isTeamUnavailableForDate($team['id'], $match['date_time'])) {
+                    continue;
+                }
+                
+                $score = $this->calculateTeamScore($team, $teamUsage[$team['id']], $options);
+                
+                $eligibleTeams[] = [
+                    'team' => $team,
+                    'score' => $score
+                ];
             }
-            
-            // Check availability constraints (e.g., not already assigned to matches on same date)
-            if ($this->isTeamUnavailableForDate($team['id'], $match['date_time'])) {
-                continue;
-            }
-            
-            // Calculate team score based on various factors
-            $score = $this->calculateTeamScore($team, $teamUsage[$team['id']], $options);
-            
-            $eligibleTeams[] = [
-                'team' => $team,
-                'score' => $score
-            ];
         }
         
         if (empty($eligibleTeams)) {
