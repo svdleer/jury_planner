@@ -2,10 +2,8 @@
 require_once 'config/database.php';
 
 try {
-    $pdo = new PDO("mysql:host=" . $db_config['host'] . ";dbname=" . $db_config['dbname'], 
-                   $db_config['username'], 
-                   $db_config['password']);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $database = new Database();
+    $pdo = $database->getConnection();
     
     // Create custom_constraints table
     $sql = "CREATE TABLE IF NOT EXISTS custom_constraints (
