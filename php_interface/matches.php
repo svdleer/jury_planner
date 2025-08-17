@@ -75,7 +75,8 @@ $dateFilter = $_GET['date'] ?? 'all';
 $teams = $teamManager->getAllTeams();
 
 if ($view === 'planning') {
-    $stats = $constraintManager->getAssignmentStatistics();
+    // $stats = $constraintManager->getAssignmentStatistics();
+    $stats = null; // Temporarily disable to test
     $matches = []; // Initialize as empty array for planning view
     $pageTitle = 'Auto Assignment Planning';
     $pageDescription = 'Automatically assign jury teams to matches using constraints and optimization';
