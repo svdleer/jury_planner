@@ -309,9 +309,9 @@ class AssignmentConstraintManager {
      * Create a jury assignment
      */
     private function createJuryAssignment($matchId, $teamId, $notes = '') {
-        $sql = "INSERT INTO jury_assignments (match_id, team_id, notes) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO jury_assignments (match_id, team_id) VALUES (?, ?)";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([$matchId, $teamId, $notes]);
+        return $stmt->execute([$matchId, $teamId]);
     }
     
     /**
