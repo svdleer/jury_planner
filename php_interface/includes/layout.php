@@ -83,6 +83,9 @@ function formatTime($time, $format = 'g:i A') {
                             <a href="matches.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'matches.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
                                 Matches
                             </a>
+                            <a href="constraints.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraints.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
+                                Constraints
+                            </a>
                         </div>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:items-center">
@@ -112,6 +115,7 @@ function formatTime($time, $format = 'g:i A') {
                     <a href="index.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'index.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Dashboard</a>
                     <a href="teams.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'teams.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Teams</a>
                     <a href="matches.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'matches.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Matches</a>
+                    <a href="constraints.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraints.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Constraints</a>
                 </div>
             </div>
         </nav>

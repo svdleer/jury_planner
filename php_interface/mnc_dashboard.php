@@ -261,6 +261,11 @@
                         <i class="fas fa-database mr-2"></i>
                         Test DB
                     </a>
+                    
+                    <a href="constraints.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700">
+                        <i class="fas fa-ban mr-2"></i>
+                        Constraints
+                    </a>
                 </div>
             </div>
         </div>
