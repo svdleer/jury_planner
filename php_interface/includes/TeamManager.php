@@ -71,7 +71,7 @@ class TeamManager {
      */
     public function deleteTeam($id) {
         // Check if team has any assignments
-        $checkSql = "SELECT COUNT(*) FROM jury_assignments WHERE jury_team_id = ?";
+        $checkSql = "SELECT COUNT(*) FROM jury_assignments WHERE team_id = ?";
         $checkStmt = $this->db->prepare($checkSql);
         $checkStmt->execute([$id]);
         
@@ -107,8 +107,8 @@ class TeamManager {
                     COUNT(ja.id) as total_assignments,
                     COUNT(DISTINCT ja.match_id) as matches_worked
                 FROM jury_assignments ja
-                JOIN home_matches m ON ja.match_id = m.match_id
-                WHERE ja.jury_team_id = ?";
+                JOIN home_matches m ON ja.match_id = m.id
+                WHERE ja.team_id = ?";
         
         $params = [$id];
         
