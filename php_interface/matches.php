@@ -74,6 +74,13 @@ if ($_POST) {
                     header('Location: matches.php');
                     exit;
                     
+                case 'unassign_all':
+                    $forceIncludeLocked = isset($_POST['force_include_locked']);
+                    $lockManager->resetAllAssignments($forceIncludeLocked);
+                    $_SESSION['success'] = 'All jury assignments removed successfully!';
+                    header('Location: matches.php');
+                    exit;
+                    
                 case 'auto_assign':
                     $options = [
                         'prefer_low_usage' => isset($_POST['prefer_low_usage']),
@@ -207,6 +214,13 @@ ob_start();
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                             </svg>
                             Reset All Assignments
+                        </button>
+                        
+                        <button @click="showUnassignAllModal = true" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-orange-700 bg-orange-50 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                            <svg class="-ml-1 mr-2 h-5 w-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            Unassign All Matches
                         </button>
                     </div>
                 </div>
@@ -356,8 +370,8 @@ ob_start();
                     <table class="min-w-full divide-y divide-gray-300">
                         <thead>
                             <tr>
-                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Match</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Date & Time</th>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Date & Time</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Match</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Location</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Lock Status</th>
@@ -371,15 +385,20 @@ ob_start();
                             <?php foreach ($matches as $match): ?>
                                 <tr class="hover:bg-gray-50">
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 sm:pl-0">
+                                        <div class="text-sm font-medium text-gray-900"><?php echo date('l', strtotime($match['match_date'])); ?></div>
+                                        <div class="text-sm text-gray-900"><?php echo date('M j, Y', strtotime($match['match_date'])); ?></div>
+                                        <div class="text-sm text-gray-500"><?php echo date('H:i', strtotime($match['match_time'])); ?></div>
+                                    </td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         <div class="flex items-center">
-                                            <div class="h-10 w-10 flex-shrink-0">
-                                                <div class="h-10 w-10 rounded-full bg-water-blue-100 flex items-center justify-center">
-                                                    <svg class="h-5 w-5 text-water-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div class="h-8 w-8 flex-shrink-0">
+                                                <div class="h-8 w-8 rounded-full bg-water-blue-100 flex items-center justify-center">
+                                                    <svg class="h-4 w-4 text-water-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                                     </svg>
                                                 </div>
                                             </div>
-                                            <div class="ml-4">
+                                            <div class="ml-3">
                                                 <div class="text-sm font-medium text-gray-900">
                                                     <?php echo htmlspecialchars($match['home_team_name']); ?> vs <?php echo htmlspecialchars($match['away_team_name']); ?>
                                                 </div>
@@ -388,10 +407,6 @@ ob_start();
                                                 <?php endif; ?>
                                             </div>
                                         </div>
-                                    </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        <div class="text-gray-900"><?php echo date('M j, Y', strtotime($match['match_date'])); ?></div>
-                                        <div class="text-gray-500"><?php echo date('H:i', strtotime($match['match_time'])); ?></div>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         <div class="text-gray-900"><?php echo htmlspecialchars($match['location']); ?></div>
@@ -716,6 +731,46 @@ ob_start();
             </div>
         </div>
     </div>
+    
+    <!-- Unassign All Modal -->
+    <div x-show="showUnassignAllModal" x-cloak class="relative z-50" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                            <h3 class="text-base font-semibold leading-6 text-gray-900">Unassign All Jury Teams</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">
+                                    This will remove all jury team assignments from all matches. Locked matches will be preserved unless you force unassign.
+                                </p>
+                            </div>
+                            <div class="mt-4">
+                                <label class="flex items-center">
+                                    <input type="checkbox" x-model="forceIncludeLockedUnassign" class="rounded border-gray-300 text-orange-600 focus:ring-orange-500">
+                                    <span class="ml-2 text-sm text-gray-700">Also unassign locked matches (force unassign)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                        <button @click="confirmUnassignAll()" class="inline-flex w-full justify-center rounded-md bg-orange-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 sm:ml-3 sm:w-auto">
+                            Unassign All
+                        </button>
+                        <button @click="showUnassignAllModal = false; forceIncludeLockedUnassign = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -726,7 +781,9 @@ function matchesApp() {
         showDeleteModal: false,
         showJuryModal: false,
         showResetAllModal: false,
+        showUnassignAllModal: false,
         forceIncludeLocked: false,
+        forceIncludeLockedUnassign: false,
         editingMatch: {
             id: null,
             home_team_id: '',
@@ -834,12 +891,31 @@ function matchesApp() {
             }
         },
         
+        confirmUnassignAll() {
+            const message = this.forceIncludeLockedUnassign 
+                ? 'Unassign ALL jury teams including from locked matches? This action cannot be undone.'
+                : 'Unassign all jury teams from unlocked matches? Locked matches will be preserved.';
+                
+            if (confirm(message)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.innerHTML = `
+                    <input type="hidden" name="action" value="unassign_all">
+                    ${this.forceIncludeLockedUnassign ? '<input type="hidden" name="force_include_locked" value="1">' : ''}
+                `;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        },
+        
         closeModals() {
             this.showCreateModal = false;
             this.showEditModal = false;
             this.showJuryModal = false;
             this.showResetAllModal = false;
+            this.showUnassignAllModal = false;
             this.forceIncludeLocked = false;
+            this.forceIncludeLockedUnassign = false;
             this.editingMatch = {
                 id: null,
                 home_team_id: '',
