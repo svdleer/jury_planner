@@ -207,5 +207,77 @@ ob_start();
 
 <?php
 $content = ob_get_clean();
-require_once 'templates/base.php';
 ?>
+
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $pageTitle; ?> - Water Polo Jury Planner</title>
+    <meta name="description" content="<?php echo $pageDescription; ?>">
+    <meta name="author" content="Water Polo Jury Planner">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'water-blue': {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="h-full bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-water-blue-600 shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-white">
+                        <i class="fas fa-water mr-2"></i>
+                        Water Polo Jury Planner
+                    </h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="mnc_dashboard.php" class="text-white hover:bg-water-blue-700 px-3 py-2 rounded">
+                        <i class="fas fa-home mr-1"></i> Dashboard
+                    </a>
+                    <a href="matches.php" class="text-white hover:bg-water-blue-700 px-3 py-2 rounded">
+                        <i class="fas fa-calendar mr-1"></i> Matches
+                    </a>
+                    <a href="constraints.php" class="text-white hover:bg-water-blue-700 px-3 py-2 rounded">
+                        <i class="fas fa-cogs mr-1"></i> Constraints
+                    </a>
+                    <a href="constraint_analysis.php" class="text-white bg-water-blue-700 px-3 py-2 rounded">
+                        <i class="fas fa-chart-line mr-1"></i> Analysis
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <?php echo $content; ?>
+    </main>
+</body>
+</html>

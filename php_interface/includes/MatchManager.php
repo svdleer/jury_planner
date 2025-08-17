@@ -216,20 +216,16 @@ class MatchManager {
     }
     
     /**
-     * Get upcoming matches (next 30 days)
+     * Get upcoming matches with assignment counts
      */
     public function getUpcomingMatches($limit = 10) {
-        $sql = "SELECT m.*, 
-                    ht.name as home_team_name,
-                    at.name as away_team_name,
+        $sql = "SELECT m.id, m.date_time, m.home_team, m.away_team,
                     COUNT(ja.id) as assignment_count
-                FROM matches m
-                LEFT JOIN teams ht ON m.home_team_id = ht.id
-                LEFT JOIN teams at ON m.away_team_id = at.id
+                FROM home_matches m
                 LEFT JOIN jury_assignments ja ON m.id = ja.match_id
-                WHERE m.match_date >= CURDATE()
-                GROUP BY m.id
-                ORDER BY m.match_date, m.match_time
+                WHERE m.date_time >= NOW()
+                GROUP BY m.id, m.date_time, m.home_team, m.away_team
+                ORDER BY m.date_time
                 LIMIT ?";
         
         $stmt = $this->db->prepare($sql);
