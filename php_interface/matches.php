@@ -3,9 +3,11 @@ session_start();
 require_once 'config/database.php';
 require_once 'includes/MatchManager.php';
 require_once 'includes/TeamManager.php';
+require_once 'includes/AssignmentConstraintManager.php';
 
 $matchManager = new MatchManager($db);
 $teamManager = new TeamManager($db);
+$constraintManager = new AssignmentConstraintManager($db);
 
 // Handle form submissions
 if ($_POST) {
@@ -41,6 +43,21 @@ if ($_POST) {
                     $_SESSION['success'] = 'Jury assignment removed!';
                     header('Location: matches.php');
                     exit;
+                    
+                case 'auto_assign':
+                    $options = [
+                        'prefer_low_usage' => isset($_POST['prefer_low_usage']),
+                        'prefer_high_capacity' => isset($_POST['prefer_high_capacity'])
+                    ];
+                    $result = $constraintManager->autoAssignJuryTeams($options);
+                    
+                    if ($result['success']) {
+                        $_SESSION['success'] = $result['message'];
+                    } else {
+                        $_SESSION['error'] = $result['message'];
+                    }
+                    header('Location: matches.php?view=planning');
+                    exit;
             }
         }
     } catch (Exception $e) {
@@ -49,38 +66,148 @@ if ($_POST) {
 }
 
 // Get filter parameters
+$view = $_GET['view'] ?? 'list';
 $statusFilter = $_GET['status'] ?? 'all';
 $teamFilter = $_GET['team'] ?? 'all';
 $dateFilter = $_GET['date'] ?? 'all';
 
 // Get data
 $teams = $teamManager->getAllTeams();
-$matches = $matchManager->getMatchesWithDetails($statusFilter, $teamFilter, $dateFilter);
 
-$pageTitle = 'Matches Management';
-$pageDescription = 'Manage water polo matches, assign jury teams, and track assignments';
+if ($view === 'planning') {
+    $stats = $constraintManager->getAssignmentStatistics();
+    $pageTitle = 'Auto Assignment Planning';
+    $pageDescription = 'Automatically assign jury teams to matches using constraints and optimization';
+} else {
+    $matches = $matchManager->getMatchesWithDetails($statusFilter, $teamFilter, $dateFilter);
+    $pageTitle = 'Matches Management';
+    $pageDescription = 'Manage water polo matches, assign jury teams, and track assignments';
+}
 
 ob_start();
 ?>
 
 <div x-data="matchesApp()" x-init="init()">
-    <!-- Header with actions -->
-    <div class="sm:flex sm:items-center sm:justify-between mb-6">
-        <div class="min-w-0 flex-1">
-            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                Matches
-            </h2>
+    <!-- Header with view navigation -->
+    <div class="mb-6">
+        <div class="sm:flex sm:items-center sm:justify-between mb-4">
+            <div class="min-w-0 flex-1">
+                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                    <?php echo $view === 'planning' ? 'Auto Assignment Planning' : 'Matches'; ?>
+                </h2>
+            </div>
+            <div class="mt-4 flex sm:ml-4 sm:mt-0 space-x-3">
+                <?php if ($view === 'list'): ?>
+                    <button @click="showCreateModal = true" type="button" class="inline-flex items-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500">
+                        <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                        </svg>
+                        Add Match
+                    </button>
+                <?php endif; ?>
+            </div>
         </div>
-        <div class="mt-4 flex sm:ml-4 sm:mt-0 space-x-3">
-            <button @click="showCreateModal = true" type="button" class="inline-flex items-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-water-blue-600">
-                <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                </svg>
-                Add Match
-            </button>
+        
+        <!-- View Navigation -->
+        <div class="border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8">
+                <a href="matches.php" class="<?php echo $view === 'list' ? 'border-water-blue-500 text-water-blue-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> whitespace-nowrap border-b-2 py-2 px-1 text-sm font-medium">
+                    Matches List
+                </a>
+                <a href="matches.php?view=planning" class="<?php echo $view === 'planning' ? 'border-water-blue-500 text-water-blue-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> whitespace-nowrap border-b-2 py-2 px-1 text-sm font-medium">
+                    Auto Planning
+                </a>
+            </nav>
         </div>
     </div>
 
+    <?php if ($view === 'planning'): ?>
+        <!-- Planning View -->
+        <div class="space-y-6">
+            <!-- Auto Assignment Controls -->
+            <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Auto Assignment Controls</h3>
+                    
+                    <form method="POST" class="space-y-4">
+                        <input type="hidden" name="action" value="auto_assign">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="prefer_low_usage" class="rounded border-gray-300 text-water-blue-600 focus:ring-water-blue-500">
+                                    <span class="ml-2 text-sm text-gray-700">Prefer teams with fewer assignments</span>
+                                </label>
+                            </div>
+                            
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="prefer_high_capacity" class="rounded border-gray-300 text-water-blue-600 focus:ring-water-blue-500">
+                                    <span class="ml-2 text-sm text-gray-700">Prefer teams with higher capacity</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-start">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                                <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                Run Auto Assignment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Assignment Statistics -->
+            <?php if (isset($stats)): ?>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Team Assignment Counts -->
+                    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
+                        <div class="px-4 py-5 sm:p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Team Assignment Status</h3>
+                            <div class="space-y-3">
+                                <?php foreach ($stats['team_assignments'] as $team): ?>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm font-medium text-gray-900"><?php echo htmlspecialchars($team['name']); ?></span>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm text-gray-600"><?php echo $team['assignment_count']; ?> assignments</span>
+                                            <span class="text-xs text-gray-500">(capacity: <?php echo $team['capacity_factor']; ?>)</span>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Match Assignment Overview -->
+                    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
+                        <div class="px-4 py-5 sm:p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Match Assignment Overview</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-sm font-medium text-gray-900">Total Matches:</span>
+                                    <span class="text-sm text-gray-600"><?php echo $stats['match_status']['total_matches']; ?></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm font-medium text-green-700">Assigned:</span>
+                                    <span class="text-sm text-green-600"><?php echo $stats['match_status']['assigned_matches']; ?></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm font-medium text-red-700">Unassigned:</span>
+                                    <span class="text-sm text-red-600"><?php echo $stats['match_status']['unassigned_matches']; ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+        
+    <?php else: ?>
+        <!-- List View (existing content) -->
+        
     <!-- Filters -->
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg mb-6">
         <div class="px-4 py-4 sm:px-6">
@@ -423,6 +550,8 @@ ob_start();
             </div>
         </div>
     </div>
+    
+    <?php endif; // End of list view ?>
 </div>
 
 <script>
