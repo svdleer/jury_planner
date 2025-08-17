@@ -173,7 +173,7 @@ class AssignmentConstraintManager {
         
         // Check excluded_teams table for specific exclusions
         $sql = "SELECT COUNT(*) FROM excluded_teams 
-                WHERE jury_team_id = ? 
+                WHERE team_id = ? 
                 AND (excluded_team = ? OR excluded_team = ?)";
         
         $stmt = $this->db->prepare($sql);
@@ -190,7 +190,7 @@ class AssignmentConstraintManager {
         
         $sql = "SELECT COUNT(*) FROM jury_assignments ja
                 JOIN home_matches m ON ja.match_id = m.id
-                WHERE ja.jury_team_id = ?
+                WHERE ja.team_id = ?
                 AND DATE(m.date_time) = ?";
         
         $stmt = $this->db->prepare($sql);
@@ -237,7 +237,7 @@ class AssignmentConstraintManager {
      * Create a jury assignment
      */
     private function createJuryAssignment($matchId, $teamId, $notes = '') {
-        $sql = "INSERT INTO jury_assignments (match_id, jury_team_id, notes) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO jury_assignments (match_id, team_id, notes) VALUES (?, ?, ?)";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$matchId, $teamId, $notes]);
     }
@@ -251,7 +251,7 @@ class AssignmentConstraintManager {
         // Team assignment counts
         $sql = "SELECT jt.name, jt.capacity_factor, COUNT(ja.id) as assignment_count
                 FROM jury_teams jt
-                LEFT JOIN jury_assignments ja ON jt.id = ja.jury_team_id
+                LEFT JOIN jury_assignments ja ON jt.id = ja.team_id
                 GROUP BY jt.id, jt.name, jt.capacity_factor
                 ORDER BY assignment_count DESC";
         
