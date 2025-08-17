@@ -97,7 +97,6 @@ ob_start();
                             <tr>
                                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Team</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Weight</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Contact</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Dedicated To</th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
@@ -129,16 +128,6 @@ ob_start();
                                         <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <?php echo $team['weight'] >= 1.5 ? 'bg-green-100 text-green-800' : ($team['weight'] >= 1.0 ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'); ?>">
                                             <?php echo $team['weight']; ?>
                                         </span>
-                                    </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        <?php if ($team['contact_person']): ?>
-                                            <div><?php echo htmlspecialchars($team['contact_person']); ?></div>
-                                            <?php if ($team['email']): ?>
-                                                <div class="text-xs text-gray-400"><?php echo htmlspecialchars($team['email']); ?></div>
-                                            <?php endif; ?>
-                                        <?php else: ?>
-                                            <span class="text-gray-400">No contact</span>
-                                        <?php endif; ?>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         <?php if ($team['is_active']): ?>
@@ -192,21 +181,6 @@ ob_start();
                                         <label for="weight" class="block text-sm font-medium leading-6 text-gray-900">Weight</label>
                                         <input type="number" step="0.1" min="0" max="5" name="weight" id="weight" x-model="editingTeam.weight" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
                                         <p class="mt-1 text-xs text-gray-500">1.0 = standard capacity, higher values = more assignments</p>
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="contact_person" class="block text-sm font-medium leading-6 text-gray-900">Contact Person</label>
-                                        <input type="text" name="contact_person" id="contact_person" x-model="editingTeam.contact_person" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
-                                        <input type="email" name="email" id="email" x-model="editingTeam.email" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="phone" class="block text-sm font-medium leading-6 text-gray-900">Phone</label>
-                                        <input type="tel" name="phone" id="phone" x-model="editingTeam.phone" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
                                     </div>
                                     
                                     <div>
@@ -290,9 +264,6 @@ function teamsApp() {
             id: null,
             name: '',
             weight: 1.0,
-            contact_person: '',
-            email: '',
-            phone: '',
             dedicated_to_team_id: '',
             notes: '',
             is_active: true
@@ -323,9 +294,6 @@ function teamsApp() {
                 id: null,
                 name: '',
                 weight: 1.0,
-                contact_person: '',
-                email: '',
-                phone: '',
                 dedicated_to_team_id: '',
                 notes: '',
                 is_active: true

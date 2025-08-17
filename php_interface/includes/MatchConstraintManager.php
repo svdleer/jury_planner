@@ -256,11 +256,6 @@ class MatchConstraintManager {
                 'severity' => 'HARD',
                 'description' => 'Team cannot jury within 2 hours of their home match'
             ],
-            'home_match_same_day' => [
-                'name' => 'Home Match Same Day',
-                'severity' => 'SOFT',
-                'description' => 'Prefer team not to jury on same day as home match (>2h apart)'
-            ],
             'same_pool' => [
                 'name' => 'Same Pool/Division',
                 'severity' => 'SOFT',
