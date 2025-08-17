@@ -12,10 +12,14 @@ class FairnessManager {
      */
     public function calculateMatchPoints($match) {
         $matchId = $match['id'];
-        $competition = strtolower($match['competition'] ?? '');
+        $competition = isset($match['competition']) ? strtolower($match['competition']) : '';
         
         // Get all matches to determine if this is first or last
         $allMatches = $this->getAllMatches();
+        if (empty($allMatches)) {
+            return 10; // Default points if no matches found
+        }
+        
         $isFirstMatch = ($matchId == $allMatches[0]['id']);
         $isLastMatch = ($matchId == end($allMatches)['id']);
         $isGoMatch = strpos($competition, 'go') !== false;
@@ -34,7 +38,7 @@ class FairnessManager {
      * Get all matches ordered by date
      */
     private function getAllMatches() {
-        $sql = "SELECT id, date_time, competition FROM home_matches ORDER BY date_time ASC";
+        $sql = "SELECT id, date_time FROM home_matches ORDER BY date_time ASC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -67,7 +71,7 @@ class FairnessManager {
             ];
             
             // Get all assignments for this team
-            $sql = "SELECT m.id, m.date_time, m.home_team, m.away_team, m.competition,
+            $sql = "SELECT m.id, m.date_time, m.home_team, m.away_team,
                            ja.created_at
                     FROM jury_assignments ja
                     JOIN home_matches m ON ja.match_id = m.id
@@ -86,7 +90,7 @@ class FairnessManager {
                     'date' => $assignment['date_time'],
                     'match' => $assignment['home_team'] . ' vs ' . $assignment['away_team'],
                     'points' => $points,
-                    'competition' => $assignment['competition']
+                    'competition' => 'Standard' // Default since competition column may not exist
                 ];
             }
         }
