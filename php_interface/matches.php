@@ -7,10 +7,12 @@ require_once 'includes/AssignmentConstraintManager.php';
 require_once 'includes/CustomConstraintManager.php';
 require_once 'includes/MatchConstraintManager.php';
 require_once 'includes/FairnessManager.php';
+require_once 'includes/MatchLockManager.php';
 
 $matchManager = new MatchManager($db);
 $teamManager = new TeamManager($db);
 $constraintManager = new AssignmentConstraintManager($db);
+$lockManager = new MatchLockManager($db);
 
 // Handle form submissions
 if ($_POST) {
@@ -18,8 +20,8 @@ if ($_POST) {
         if (isset($_POST['action'])) {
             switch ($_POST['action']) {
                 case 'create':
-                    $matchManager->createMatch($_POST);
-                    $_SESSION['success'] = 'Match created successfully!';
+                    // Match creation disabled for production
+                    $_SESSION['error'] = 'Adding new matches is disabled in production mode.';
                     header('Location: matches.php');
                     exit;
                     
@@ -30,8 +32,8 @@ if ($_POST) {
                     exit;
                     
                 case 'delete':
-                    $matchManager->deleteMatch($_POST['id']);
-                    $_SESSION['success'] = 'Match deleted successfully!';
+                    // Match deletion disabled for production
+                    $_SESSION['error'] = 'Deleting matches is disabled in production mode.';
                     header('Location: matches.php');
                     exit;
                     
@@ -44,6 +46,31 @@ if ($_POST) {
                 case 'remove_jury':
                     $matchManager->removeJuryAssignment($_POST['assignment_id']);
                     $_SESSION['success'] = 'Jury assignment removed!';
+                    header('Location: matches.php');
+                    exit;
+                    
+                case 'lock_match':
+                    $lockManager->lockMatch($_POST['match_id'], 'User');
+                    $_SESSION['success'] = 'Match locked successfully!';
+                    header('Location: matches.php');
+                    exit;
+                    
+                case 'unlock_match':
+                    $lockManager->unlockMatch($_POST['match_id']);
+                    $_SESSION['success'] = 'Match unlocked successfully!';
+                    header('Location: matches.php');
+                    exit;
+                    
+                case 'reset_match':
+                    $lockManager->resetMatchAssignments($_POST['match_id']);
+                    $_SESSION['success'] = 'Match assignments reset successfully!';
+                    header('Location: matches.php');
+                    exit;
+                    
+                case 'reset_all':
+                    $forceIncludeLocked = isset($_POST['force_include_locked']);
+                    $lockManager->resetAllAssignments($forceIncludeLocked);
+                    $_SESSION['success'] = 'All assignments reset successfully!';
                     header('Location: matches.php');
                     exit;
                     
@@ -80,10 +107,21 @@ $teams = $teamManager->getAllTeams();
 if ($view === 'planning') {
     $stats = $constraintManager->getAssignmentStatistics();
     $matches = []; // Initialize as empty array for planning view
+    $lockStats = $lockManager->getAssignmentStats();
     $pageTitle = 'Auto Assignment Planning';
     $pageDescription = 'Automatically assign jury teams to matches using constraints and optimization';
 } else {
     $matches = $matchManager->getMatchesWithDetails($statusFilter, $teamFilter, $dateFilter);
+    
+    // Add lock information to each match
+    foreach ($matches as &$match) {
+        $lockInfo = $lockManager->getMatchLockInfo($match['id']);
+        $match['locked'] = $lockInfo['locked'] ?? false;
+        $match['locked_at'] = $lockInfo['locked_at'] ?? null;
+        $match['locked_by'] = $lockInfo['locked_by'] ?? null;
+    }
+    unset($match); // Break the reference
+    
     $pageTitle = 'Matches Management';
     $pageDescription = 'Manage water polo matches, assign jury teams, and track assignments';
 }
@@ -101,14 +139,7 @@ ob_start();
                 </h2>
             </div>
             <div class="mt-4 flex sm:ml-4 sm:mt-0 space-x-3">
-                <?php if ($view === 'list'): ?>
-                    <button @click="showCreateModal = true" type="button" class="inline-flex items-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500">
-                        <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                        </svg>
-                        Add Match
-                    </button>
-                <?php endif; ?>
+                <!-- Add Match button disabled for production -->
             </div>
         </div>
         
@@ -164,9 +195,26 @@ ob_start();
                 </div>
             </div>
             
+            <!-- Reset Controls -->
+            <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Reset Controls</h3>
+                    <p class="text-sm text-gray-600 mb-4">Use these controls to reset jury assignments. Locked matches will be preserved unless force reset is enabled.</p>
+                    
+                    <div class="flex flex-wrap gap-3">
+                        <button @click="showResetAllModal = true" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            <svg class="-ml-1 mr-2 h-5 w-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            Reset All Assignments
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Assignment Statistics -->
             <?php if (isset($stats)): ?>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- Team Assignment Counts -->
                     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
                         <div class="px-4 py-5 sm:p-6">
@@ -205,6 +253,33 @@ ob_start();
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Lock Status Overview -->
+                    <?php if (isset($lockStats)): ?>
+                        <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
+                            <div class="px-4 py-5 sm:p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Lock Status Overview</h3>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span class="text-sm font-medium text-gray-900">Total Matches:</span>
+                                        <span class="text-sm text-gray-600"><?php echo $lockStats['total_matches']; ?></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm font-medium text-red-700">Locked:</span>
+                                        <span class="text-sm text-red-600"><?php echo $lockStats['locked_matches']; ?></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm font-medium text-green-700">Unlocked:</span>
+                                        <span class="text-sm text-green-600"><?php echo $lockStats['unlocked_matches']; ?></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm font-medium text-blue-700">Locked with Assignments:</span>
+                                        <span class="text-sm text-blue-600"><?php echo $lockStats['locked_matches_with_assignments']; ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             <?php endif; ?>
         </div>
@@ -273,12 +348,7 @@ ob_start();
                     <h3 class="mt-2 text-sm font-semibold text-gray-900">No matches found</h3>
                     <p class="mt-1 text-sm text-gray-500">Get started by creating your first match or adjust your filters.</p>
                     <div class="mt-6">
-                        <button @click="showCreateModal = true" type="button" class="inline-flex items-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-water-blue-600">
-                            <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                            </svg>
-                            Add Match
-                        </button>
+                        <!-- Add Match button disabled for production -->
                     </div>
                 </div>
             <?php else: ?>
@@ -290,6 +360,7 @@ ob_start();
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Date & Time</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Location</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Lock Status</th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Jury Assignment</th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                                     <span class="sr-only">Actions</span>
@@ -342,6 +413,30 @@ ob_start();
                                             <?php echo ucfirst(str_replace('_', ' ', $match['status'])); ?>
                                         </span>
                                     </td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        <?php if ($match['locked']): ?>
+                                            <div class="flex items-center">
+                                                <span class="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">
+                                                    <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    Locked
+                                                </span>
+                                                <?php if ($match['locked_by']): ?>
+                                                    <div class="ml-2 text-xs text-gray-500" title="Locked at <?php echo $match['locked_at']; ?>">
+                                                        by <?php echo htmlspecialchars($match['locked_by']); ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php else: ?>
+                                            <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                                                <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
+                                                </svg>
+                                                Unlocked
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td class="px-3 py-4 text-sm text-gray-500">
                                         <?php if ($match['jury_assignments']): ?>
                                             <div class="space-y-1">
@@ -369,16 +464,41 @@ ob_start();
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                         <div class="flex justify-end space-x-2">
-                                            <button @click="editMatch(<?php echo htmlspecialchars(json_encode($match)); ?>)" class="text-water-blue-600 hover:text-water-blue-900">
+                                            <!-- Lock/Unlock buttons -->
+                                            <?php if ($match['locked']): ?>
+                                                <button @click="unlockMatch(<?php echo $match['id']; ?>, '<?php echo htmlspecialchars($match['home_team_name'] . ' vs ' . $match['away_team_name']); ?>')" 
+                                                        class="text-green-600 hover:text-green-900" title="Unlock match">
+                                                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z"/>
+                                                    </svg>
+                                                </button>
+                                            <?php else: ?>
+                                                <button @click="lockMatch(<?php echo $match['id']; ?>, '<?php echo htmlspecialchars($match['home_team_name'] . ' vs ' . $match['away_team_name']); ?>')" 
+                                                        class="text-red-600 hover:text-red-900" title="Lock match">
+                                                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                </button>
+                                            <?php endif; ?>
+                                            
+                                            <!-- Reset button (only for unlocked matches with assignments) -->
+                                            <?php if (!$match['locked'] && $match['jury_assignments']): ?>
+                                                <button @click="resetMatchAssignments(<?php echo $match['id']; ?>, '<?php echo htmlspecialchars($match['home_team_name'] . ' vs ' . $match['away_team_name']); ?>')" 
+                                                        class="text-orange-600 hover:text-orange-900" title="Reset assignments">
+                                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                                    </svg>
+                                                </button>
+                                            <?php endif; ?>
+                                            
+                                            <!-- Edit button -->
+                                            <button @click="editMatch(<?php echo htmlspecialchars(json_encode($match)); ?>)" class="text-water-blue-600 hover:text-water-blue-900" title="Edit match">
                                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                                 </svg>
                                             </button>
-                                            <button @click="deleteMatch(<?php echo $match['id']; ?>, '<?php echo htmlspecialchars($match['home_team_name'] . ' vs ' . $match['away_team_name']); ?>')" class="text-red-600 hover:text-red-900">
-                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                </svg>
-                                            </button>
+                                            
+                                            <!-- Delete button disabled for production -->
                                         </div>
                                     </td>
                                 </tr>
@@ -556,6 +676,46 @@ ob_start();
     </div>
     
     <?php endif; // End of list view ?>
+
+    <!-- Reset All Assignments Modal -->
+    <div x-show="showResetAllModal" x-cloak class="relative z-50" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"></path>
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                            <h3 class="text-base font-semibold leading-6 text-gray-900">Reset All Assignments</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">
+                                    This will remove all jury assignments from matches. Locked matches will be preserved unless you force reset.
+                                </p>
+                            </div>
+                            <div class="mt-4">
+                                <label class="flex items-center">
+                                    <input type="checkbox" x-model="forceIncludeLocked" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                                    <span class="ml-2 text-sm text-gray-700">Also reset locked matches (force reset)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                        <button @click="confirmResetAll()" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">
+                            Reset All
+                        </button>
+                        <button @click="showResetAllModal = false; forceIncludeLocked = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -565,6 +725,8 @@ function matchesApp() {
         showEditModal: false,
         showDeleteModal: false,
         showJuryModal: false,
+        showResetAllModal: false,
+        forceIncludeLocked: false,
         editingMatch: {
             id: null,
             home_team_id: '',
@@ -616,10 +778,68 @@ function matchesApp() {
             }
         },
         
+        lockMatch(matchId, matchName) {
+            if (confirm(`Lock match "${matchName}"? This will prevent changes to jury assignments.`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.innerHTML = `
+                    <input type="hidden" name="action" value="lock_match">
+                    <input type="hidden" name="match_id" value="${matchId}">
+                `;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        },
+        
+        unlockMatch(matchId, matchName) {
+            if (confirm(`Unlock match "${matchName}"? This will allow changes to jury assignments.`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.innerHTML = `
+                    <input type="hidden" name="action" value="unlock_match">
+                    <input type="hidden" name="match_id" value="${matchId}">
+                `;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        },
+        
+        resetMatchAssignments(matchId, matchName) {
+            if (confirm(`Reset all jury assignments for match "${matchName}"? This action cannot be undone.`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.innerHTML = `
+                    <input type="hidden" name="action" value="reset_match">
+                    <input type="hidden" name="match_id" value="${matchId}">
+                `;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        },
+        
+        confirmResetAll() {
+            const message = this.forceIncludeLocked 
+                ? 'Reset ALL jury assignments including locked matches? This action cannot be undone.'
+                : 'Reset all jury assignments from unlocked matches? Locked matches will be preserved.';
+                
+            if (confirm(message)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.innerHTML = `
+                    <input type="hidden" name="action" value="reset_all">
+                    ${this.forceIncludeLocked ? '<input type="hidden" name="force_include_locked" value="1">' : ''}
+                `;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        },
+        
         closeModals() {
             this.showCreateModal = false;
             this.showEditModal = false;
             this.showJuryModal = false;
+            this.showResetAllModal = false;
+            this.forceIncludeLocked = false;
             this.editingMatch = {
                 id: null,
                 home_team_id: '',

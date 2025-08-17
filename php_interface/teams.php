@@ -11,8 +11,8 @@ if ($_POST) {
         if (isset($_POST['action'])) {
             switch ($_POST['action']) {
                 case 'create':
-                    $teamManager->createTeam($_POST);
-                    $_SESSION['success'] = 'Team created successfully!';
+                    // Team creation disabled for production
+                    $_SESSION['error'] = 'Adding new teams is disabled in production mode.';
                     header('Location: teams.php');
                     exit;
                     
@@ -23,8 +23,8 @@ if ($_POST) {
                     exit;
                     
                 case 'delete':
-                    $teamManager->deleteTeam($_POST['id']);
-                    $_SESSION['success'] = 'Team deleted successfully!';
+                    // Team deletion disabled for production
+                    $_SESSION['error'] = 'Deleting teams is disabled in production mode.';
                     header('Location: teams.php');
                     exit;
                     
@@ -72,12 +72,7 @@ ob_start();
             </h2>
         </div>
         <div class="mt-4 flex sm:ml-4 sm:mt-0">
-            <button @click="showCreateModal = true" type="button" class="inline-flex items-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-water-blue-600">
-                <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                </svg>
-                Add Team
-            </button>
+            <!-- Add Team button disabled for production -->
         </div>
     </div>
 
@@ -92,12 +87,7 @@ ob_start();
                     <h3 class="mt-2 text-sm font-semibold text-gray-900">No teams</h3>
                     <p class="mt-1 text-sm text-gray-500">Get started by creating your first jury team.</p>
                     <div class="mt-6">
-                        <button @click="showCreateModal = true" type="button" class="inline-flex items-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-water-blue-600">
-                            <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                            </svg>
-                            Add Team
-                        </button>
+                        <!-- Add Team button disabled for production -->
                     </div>
                 </div>
             <?php else: ?>
@@ -167,11 +157,7 @@ ob_start();
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                                 </svg>
                                             </button>
-                                            <button @click="deleteTeam(<?php echo $team['id']; ?>, '<?php echo htmlspecialchars($team['name']); ?>')" class="text-red-600 hover:text-red-900">
-                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                </svg>
-                                            </button>
+                                            <!-- Delete button disabled for production -->
                                         </div>
                                     </td>
                                 </tr>
