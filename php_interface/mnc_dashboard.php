@@ -275,6 +275,26 @@
                         <i class="fas fa-ban mr-2"></i>
                         Constraints
                     </a>
+                    
+                    <a href="advanced_constraints.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700">
+                        <i class="fas fa-cogs mr-2"></i>
+                        Advanced Rules
+                    </a>
+                    
+                    <a href="smart_assignment.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700">
+                        <i class="fas fa-robot mr-2"></i>
+                        Smart Assign
+                    </a>
+                    
+                    <a href="fairness.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                        <i class="fas fa-balance-scale mr-2"></i>
+                        Fairness
+                    </a>
+                    
+                    <a href="constraint_analysis.php" class="flex items-center justify-center px-4 py-3 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        <i class="fas fa-search mr-2"></i>
+                        Analysis
+                    </a>
                 </div>
             </div>
         </div>
