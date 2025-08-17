@@ -1,7 +1,16 @@
 <?php
 /**
  * Advanced Constraint Configuration Manager
- * Handles all jury assignment constraints with enable/disable, hard/soft, and weight settings
+ * Handles all jury assignment constraints with enable/disable, hard            [
+                'constraint_code' => 'SATURDAY_SUNDAY_BALANCE',
+                'constraint_name' => 'Saturday vs Sunday Balance',
+                'category' => 'Fairness & Balance',
+                'description' => 'Balance Saturday versus Sunday assignments per team across the season.',
+                'constraint_type' => 'soft',
+                'enabled' => true,
+                'weight' => 2.00,
+                'penalty_points' => 10
+            ], weight settings
  */
 class AdvancedConstraintManager {
     private $db;
@@ -204,10 +213,10 @@ class AdvancedConstraintManager {
                 'penalty_points' => 2
             ],
             [
-                'constraint_code' => 'FALLBACK_NON_WEEKEND',
-                'constraint_name' => 'Fallback: Non-Weekend Teams',
+                'constraint_code' => 'FALLBACK_DISTANT_TEAMS',
+                'constraint_name' => 'Fallback: Distant Teams',
                 'category' => 'Preference Hierarchy',
-                'description' => 'Then consider any other teams available on non-weekend days (provided none are excluded).',
+                'description' => 'As a last resort, consider teams that require longer travel to the venue.',
                 'constraint_type' => 'soft',
                 'enabled' => true,
                 'weight' => 1.00,
@@ -240,16 +249,6 @@ class AdvancedConstraintManager {
                 'constraint_name' => 'Void Second Match Day Rule',
                 'category' => 'Special Cases & Exceptions',
                 'description' => 'If that voided match is the second match of the day, do not increment the day counter.',
-                'constraint_type' => 'soft',
-                'enabled' => true,
-                'weight' => 1.00,
-                'penalty_points' => 0
-            ],
-            [
-                'constraint_code' => 'RESET_AFTER_VOID_COMPENSATION',
-                'constraint_name' => 'Reset After Void Compensation',
-                'category' => 'Special Cases & Exceptions',
-                'description' => 'After awarding a special 3rd match due to a void, reset the assignment count for future days.',
                 'constraint_type' => 'soft',
                 'enabled' => true,
                 'weight' => 1.00,

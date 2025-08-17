@@ -69,6 +69,9 @@ class ConstraintValidationEngine {
             case 'PRESERVE_FREE_WEEKENDS':
                 return $this->checkPreserveFreeWeekends($constraint, $matchId, $teamId);
                 
+            case 'SATURDAY_SUNDAY_BALANCE':
+                return $this->checkSaturdaySundayBalance($constraint, $matchId, $teamId);
+                
             case 'HISTORICAL_POINT_THRESHOLD':
                 return $this->checkHistoricalPointThreshold($constraint, $matchId, $teamId);
                 
@@ -270,6 +273,51 @@ class ConstraintValidationEngine {
                     'severity' => $constraint['constraint_type']
                 ];
             }
+        }
+        
+        return null;
+    }
+    
+    private function checkSaturdaySundayBalance($constraint, $matchId, $teamId) {
+        $matchDate = $this->getMatchDate($matchId);
+        $dayOfWeek = date('w', strtotime($matchDate)); // 0 = Sunday, 6 = Saturday
+        
+        // Get current season Saturday/Sunday assignment counts for this team
+        $sql = "SELECT 
+                    SUM(CASE WHEN DAYOFWEEK(m.date_time) = 7 THEN 1 ELSE 0 END) as saturday_count,
+                    SUM(CASE WHEN DAYOFWEEK(m.date_time) = 1 THEN 1 ELSE 0 END) as sunday_count
+                FROM jury_assignments ja
+                JOIN home_matches m ON ja.match_id = m.id
+                WHERE ja.team_id = ?
+                AND YEAR(m.date_time) = YEAR(?)";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$teamId, $matchDate]);
+        $counts = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $saturdayCount = $counts['saturday_count'] ?: 0;
+        $sundayCount = $counts['sunday_count'] ?: 0;
+        
+        // Check if this assignment would create significant imbalance
+        if ($dayOfWeek == 6) { // Saturday
+            $newSaturdayCount = $saturdayCount + 1;
+            $difference = $newSaturdayCount - $sundayCount;
+        } else if ($dayOfWeek == 0) { // Sunday
+            $newSundayCount = $sundayCount + 1;
+            $difference = $newSundayCount - $saturdayCount;
+        } else {
+            // Not a weekend day - this shouldn't happen in weekend-only schedule
+            return null;
+        }
+        
+        // Allow some imbalance but flag if it gets too large
+        if ($difference > 3) {
+            $dayName = ($dayOfWeek == 6) ? 'Saturday' : 'Sunday';
+            return [
+                'constraint' => $constraint['constraint_name'],
+                'message' => "Team already has significantly more {$dayName} assignments than the other weekend day",
+                'severity' => $constraint['constraint_type']
+            ];
         }
         
         return null;
