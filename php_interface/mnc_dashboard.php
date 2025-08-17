@@ -46,7 +46,7 @@
                     <a href="mnc_teams.php" class="hover:bg-blue-700 px-3 py-2 rounded">
                         <i class="fas fa-users mr-1"></i> Teams
                     </a>
-                    <a href="mnc_matches.php" class="hover:bg-blue-700 px-3 py-2 rounded">
+                    <a href="matches.php" class="hover:bg-blue-700 px-3 py-2 rounded">
                         <i class="fas fa-calendar mr-1"></i> Matches
                     </a>
                     <a href="test_connection.php" class="hover:bg-blue-700 px-3 py-2 rounded">
@@ -179,7 +179,7 @@
                         
                         <?php if (count($upcomingMatches) > 5): ?>
                             <div class="mt-4 text-center">
-                                <a href="mnc_matches.php" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                <a href="matches.php" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
                                     View all <?php echo count($upcomingMatches); ?> upcoming matches
                                 </a>
                             </div>
@@ -223,7 +223,7 @@
                         
                         <?php if (count($matchesWithoutJury) > 5): ?>
                             <div class="mt-4 text-center">
-                                <a href="mnc_matches.php?filter=no_jury" class="text-yellow-600 hover:text-yellow-800 text-sm font-medium">
+                                <a href="matches.php?filter=no_jury" class="text-yellow-600 hover:text-yellow-800 text-sm font-medium">
                                     View all <?php echo count($matchesWithoutJury); ?> unassigned matches
                                 </a>
                             </div>
@@ -247,12 +247,12 @@
                         Add Team
                     </a>
                     
-                    <a href="mnc_matches.php?action=add" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                    <a href="matches.php?action=add" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
                         <i class="fas fa-calendar-plus mr-2"></i>
                         Add Match
                     </a>
                     
-                    <a href="mnc_matches.php?view=planning" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700">
+                    <a href="matches.php?view=planning" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700">
                         <i class="fas fa-brain mr-2"></i>
                         Auto Plan
                     </a>

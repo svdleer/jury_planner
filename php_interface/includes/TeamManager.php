@@ -17,7 +17,7 @@ class TeamManager {
      * Get all teams with optional filtering
      */
     public function getAllTeams($activeOnly = false) {
-        $sql = "SELECT * FROM jury_teams ORDER BY team_name";
+        $sql = "SELECT * FROM jury_teams ORDER BY name";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
@@ -41,14 +41,13 @@ class TeamManager {
      * Create a new team
      */
     public function createTeam($data) {
-        $sql = "INSERT INTO jury_teams (team_name, contact_info) 
-                VALUES (?, ?)";
+        $sql = "INSERT INTO jury_teams (name) 
+                VALUES (?)";
         
         $stmt = $this->db->prepare($sql);
         
         return $stmt->execute([
-            $data['team_name'],
-            $data['contact_info'] ?? null
+            $data['name']
         ]);
     }
     
@@ -56,14 +55,13 @@ class TeamManager {
      * Update an existing team
      */
     public function updateTeam($id, $data) {
-        $sql = "UPDATE jury_teams SET team_name = ?, contact_info = ?
+        $sql = "UPDATE jury_teams SET name = ?
                 WHERE id = ?";
         
         $stmt = $this->db->prepare($sql);
         
         return $stmt->execute([
-            $data['team_name'],
-            $data['contact_info'],
+            $data['name'],
             $id
         ]);
     }
