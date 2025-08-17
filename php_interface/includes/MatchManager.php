@@ -19,12 +19,10 @@ class MatchManager {
     public function getAllMatches() {
         $stmt = $this->db->prepare("
             SELECT m.*, 
-                   ht.name as home_team_name, 
-                   at.name as away_team_name
-            FROM matches m
-            LEFT JOIN teams ht ON m.home_team_id = ht.id
-            LEFT JOIN teams at ON m.away_team_id = at.id
-            ORDER BY m.match_date DESC, m.match_time DESC
+                   m.home_team as home_team_name, 
+                   m.away_team as away_team_name
+            FROM home_matches m
+            ORDER BY m.date_time DESC
         ");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -36,11 +34,9 @@ class MatchManager {
     public function getMatchesWithDetails($statusFilter = 'all', $teamFilter = 'all', $dateFilter = 'all') {
         $sql = "
             SELECT m.*, 
-                   ht.name as home_team_name, 
-                   at.name as away_team_name
-            FROM matches m
-            LEFT JOIN teams ht ON m.home_team_id = ht.id
-            LEFT JOIN teams at ON m.away_team_id = at.id
+                   m.home_team as home_team_name, 
+                   m.away_team as away_team_name
+            FROM home_matches m
             WHERE 1=1
         ";
         
@@ -54,29 +50,29 @@ class MatchManager {
         
         // Team filter
         if ($teamFilter !== 'all') {
-            $sql .= " AND (m.home_team_id = :team_id OR m.away_team_id = :team_id)";
-            $params['team_id'] = $teamFilter;
+            $sql .= " AND (m.home_team = :team_name OR m.away_team = :team_name)";
+            $params['team_name'] = $teamFilter;
         }
         
         // Date filter
         if ($dateFilter !== 'all') {
             switch ($dateFilter) {
                 case 'today':
-                    $sql .= " AND DATE(m.match_date) = CURDATE()";
+                    $sql .= " AND DATE(m.date_time) = CURDATE()";
                     break;
                 case 'upcoming':
-                    $sql .= " AND m.match_date >= CURDATE()";
+                    $sql .= " AND m.date_time >= CURDATE()";
                     break;
                 case 'this_week':
-                    $sql .= " AND YEARWEEK(m.match_date, 1) = YEARWEEK(CURDATE(), 1)";
+                    $sql .= " AND YEARWEEK(m.date_time, 1) = YEARWEEK(CURDATE(), 1)";
                     break;
                 case 'this_month':
-                    $sql .= " AND YEAR(m.match_date) = YEAR(CURDATE()) AND MONTH(m.match_date) = MONTH(CURDATE())";
+                    $sql .= " AND YEAR(m.date_time) = YEAR(CURDATE()) AND MONTH(m.date_time) = MONTH(CURDATE())";
                     break;
             }
         }
         
-        $sql .= " ORDER BY m.match_date ASC, m.match_time ASC";
+        $sql .= " ORDER BY m.date_time ASC";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
