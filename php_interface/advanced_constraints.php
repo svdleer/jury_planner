@@ -1,10 +1,8 @@
 <?php
-require_once 'includes/Database.php';
+require_once 'includes/config.php';
 require_once 'includes/AdvancedConstraintManager.php';
 
-$database = new Database();
-$db = $database->getConnection();
-$constraintManager = new AdvancedConstraintManager($db);
+$constraintManager = new AdvancedConstraintManager($pdo);
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -1,6 +1,4 @@
 <?php
-require_once 'includes/Database.php';
-
 /**
  * Advanced Constraint Configuration Manager
  * Handles all jury assignment constraints with enable/disable, hard/soft, and weight settings
