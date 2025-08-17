@@ -266,11 +266,11 @@ class MncMatchManager {
      */
     public function assignJury($match_id, $team_id, $locked = false) {
         $stmt = $this->pdo->prepare("
-            INSERT INTO jury_assignments (match_id, team_id, locked) 
-            VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE team_id = VALUES(team_id), locked = VALUES(locked)
+            INSERT INTO jury_assignments (match_id, team_id) 
+            VALUES (?, ?)
+            ON DUPLICATE KEY UPDATE team_id = VALUES(team_id)
         ");
-        return $stmt->execute([$match_id, $team_id, $locked ? 1 : 0]);
+        return $stmt->execute([$match_id, $team_id]);
     }
     
     /**
