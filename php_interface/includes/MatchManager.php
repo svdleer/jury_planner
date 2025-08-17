@@ -20,7 +20,9 @@ class MatchManager {
         $stmt = $this->db->prepare("
             SELECT m.*, 
                    m.home_team as home_team_name, 
-                   m.away_team as away_team_name
+                   m.away_team as away_team_name,
+                   DATE(m.date_time) as match_date,
+                   TIME(m.date_time) as match_time
             FROM home_matches m
             ORDER BY m.date_time DESC
         ");
@@ -35,7 +37,9 @@ class MatchManager {
         $sql = "
             SELECT m.*, 
                    m.home_team as home_team_name, 
-                   m.away_team as away_team_name
+                   m.away_team as away_team_name,
+                   DATE(m.date_time) as match_date,
+                   TIME(m.date_time) as match_time
             FROM home_matches m
             WHERE 1=1
         ";
