@@ -30,12 +30,6 @@ RedirectMatch 404 /\.git
 RedirectMatch 404 /config/
 RedirectMatch 404 /includes/
 
-# Allow access to assets
-<Directory "assets">
-    Order allow,deny
-    Allow from all
-</Directory>
-
 # PHP security settings
 php_flag display_errors Off
 php_flag log_errors On
