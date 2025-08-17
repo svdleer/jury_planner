@@ -71,8 +71,7 @@ class FairnessManager {
             ];
             
             // Get all assignments for this team
-            $sql = "SELECT m.id, m.date_time, m.home_team, m.away_team,
-                           ja.created_at
+            $sql = "SELECT m.id, m.date_time, m.home_team, m.away_team
                     FROM jury_assignments ja
                     JOIN home_matches m ON ja.match_id = m.id
                     WHERE ja.team_id = ?
