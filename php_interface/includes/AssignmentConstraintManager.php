@@ -168,19 +168,17 @@ class AssignmentConstraintManager {
      * Check if a team is excluded from a specific match
      */
     private function isTeamExcludedFromMatch($teamId, $match) {
+        $teamName = $this->getTeamNameById($teamId);
+        
         // Check if team is participating in the match (can't be jury for own games)
-        if ($match['home_team'] === $this->getTeamNameById($teamId) || 
-            $match['away_team'] === $this->getTeamNameById($teamId)) {
+        if ($match['home_team'] === $teamName || $match['away_team'] === $teamName) {
             return true;
         }
         
-        // Check excluded_teams table for specific exclusions
-        $sql = "SELECT COUNT(*) FROM excluded_teams 
-                WHERE team_id = ? 
-                AND (excluded_team = ? OR excluded_team = ?)";
-        
+        // Check excluded_teams table - this table now only contains team names that are excluded
+        $sql = "SELECT COUNT(*) FROM excluded_teams WHERE name = ?";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$teamId, $match['home_team'], $match['away_team']]);
+        $stmt->execute([$teamName]);
         
         return $stmt->fetchColumn() > 0;
     }
