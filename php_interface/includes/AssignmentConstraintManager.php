@@ -8,7 +8,10 @@ class AssignmentConstraintManager {
     }
     
     /**
-     * Auto-assign jury teams to matches based on constraints
+     * Auto-assign jury teams         $sql = "SELECT COUNT(*) FROM jury_assignments ja
+                JOIN home_matches m ON ja.match_id = m.id
+                WHERE ja.team_id = ?
+                AND DATE(m.date_time) = ?";atches based on constraints
      */
     public function autoAssignJuryTeams($options = []) {
         $results = [
@@ -80,12 +83,12 @@ class AssignmentConstraintManager {
      * Get available jury teams with their capacity and exclusion constraints
      */
     private function getAvailableTeams() {
-        $sql = "SELECT jt.id, jt.name, 1.0 as capacity_factor,
+        $sql = "SELECT jt.id, jt.name, jt.capacity_factor,
                        COUNT(ja.id) as current_assignments
                 FROM jury_teams jt
-                LEFT JOIN jury_assignments ja ON jt.id = ja.jury_team_id
-                GROUP BY jt.id, jt.name
-                ORDER BY current_assignments ASC";
+                LEFT JOIN jury_assignments ja ON jt.id = ja.team_id
+                GROUP BY jt.id, jt.name, jt.capacity_factor
+                ORDER BY current_assignments ASC, jt.capacity_factor DESC";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
@@ -190,7 +193,7 @@ class AssignmentConstraintManager {
         
         $sql = "SELECT COUNT(*) FROM jury_assignments ja
                 JOIN home_matches m ON ja.match_id = m.id
-                WHERE ja.jury_team_id = ?
+                WHERE ja.team_id = ?
                 AND DATE(m.date_time) = ?";
         
         $stmt = $this->db->prepare($sql);
@@ -249,10 +252,10 @@ class AssignmentConstraintManager {
         $stats = [];
         
         // Team assignment counts
-        $sql = "SELECT jt.name, COUNT(ja.id) as assignment_count
+        $sql = "SELECT jt.name, jt.capacity_factor, COUNT(ja.id) as assignment_count
                 FROM jury_teams jt
-                LEFT JOIN jury_assignments ja ON jt.id = ja.jury_team_id
-                GROUP BY jt.id, jt.name
+                LEFT JOIN jury_assignments ja ON jt.id = ja.team_id
+                GROUP BY jt.id, jt.name, jt.capacity_factor
                 ORDER BY assignment_count DESC";
         
         $stmt = $this->db->prepare($sql);
