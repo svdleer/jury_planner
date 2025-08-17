@@ -2,9 +2,14 @@
 
 class AssignmentConstraintManager {
     private $db;
+    private $customConstraintManager;
     
     public function __construct($database) {
         $this->db = $database;
+        // Initialize CustomConstraintManager if it exists
+        if (class_exists('CustomConstraintManager')) {
+            $this->customConstraintManager = new CustomConstraintManager($database);
+        }
     }
     
     /**
@@ -180,7 +185,24 @@ class AssignmentConstraintManager {
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$teamName]);
         
-        return $stmt->fetchColumn() > 0;
+        if ($stmt->fetchColumn() > 0) {
+            return true;
+        }
+        
+        // Check custom constraints if available
+        if ($this->customConstraintManager) {
+            $matchDate = date('Y-m-d', strtotime($match['date_time']));
+            $violations = $this->customConstraintManager->checkAssignmentConstraints(
+                $teamName, 
+                $match['home_team'], 
+                $match['away_team'], 
+                $matchDate
+            );
+            
+            return !empty($violations);
+        }
+        
+        return false;
     }
     
     /**
@@ -207,7 +229,17 @@ class AssignmentConstraintManager {
         $score = 0;
         
         // Base score from capacity factor (higher capacity = higher score)
-        $score += $team['capacity_factor'] * 100;
+        $baseCapacity = $team['capacity_factor'];
+        
+        // Check for capacity override in custom constraints
+        if ($this->customConstraintManager) {
+            $override = $this->customConstraintManager->getCapacityOverride($team['name']);
+            if ($override !== null) {
+                $baseCapacity = $override;
+            }
+        }
+        
+        $score += $baseCapacity * 100;
         
         // Penalty for teams with more assignments (load balancing)
         $score -= $currentAssignments * 10;
@@ -218,7 +250,7 @@ class AssignmentConstraintManager {
         }
         
         if (isset($options['prefer_high_capacity']) && $options['prefer_high_capacity']) {
-            $score += $team['capacity_factor'] * 50; // Extra bonus for capacity
+            $score += $baseCapacity * 50; // Extra bonus for capacity
         }
         
         return $score;
