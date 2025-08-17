@@ -109,7 +109,7 @@ class MatchManager {
     public function getJuryAssignments($matchId) {
         $sql = "SELECT ja.id as assignment_id, ja.*, t.name as jury_team_name
                 FROM jury_assignments ja
-                JOIN jury_teams t ON ja.jury_team_id = t.id
+                JOIN jury_teams t ON ja.team_id = t.id
                 WHERE ja.match_id = ?
                 ORDER BY ja.id";
         
