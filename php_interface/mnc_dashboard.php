@@ -251,15 +251,17 @@
                 </h3>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <a href="mnc_teams.php?action=add" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                    <!-- Add Team button disabled for production -->
+                    <!-- <a href="mnc_teams.php?action=add" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                         <i class="fas fa-plus mr-2"></i>
                         Add Team
-                    </a>
+                    </a> -->
                     
-                    <a href="matches.php?action=add" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                    <!-- Add Match button disabled for production -->
+                    <!-- <a href="matches.php?action=add" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
                         <i class="fas fa-calendar-plus mr-2"></i>
                         Add Match
-                    </a>
+                    </a> -->
                     
                     <a href="matches.php?view=planning" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700">
                         <i class="fas fa-brain mr-2"></i>
