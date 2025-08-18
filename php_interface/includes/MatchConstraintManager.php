@@ -18,7 +18,20 @@ class MatchConstraintManager {
         
         // HARD CONSTRAINTS (must not violate)
         
-        // 1. Cannot jury own match
+        // 1. Cannot jury if dedicated to specific team and this match doesn't involve that team
+        $dedicatedTeam = $this->getTeamDedication($juryTeamName);
+        if ($dedicatedTeam) {
+            if ($match['home_team'] !== $dedicatedTeam && $match['away_team'] !== $dedicatedTeam) {
+                $violations[] = [
+                    'type' => 'wrong_dedication',
+                    'severity' => 'HARD',
+                    'message' => "{$juryTeamName} is dedicated to {$dedicatedTeam} but this match doesn't involve them",
+                    'score_penalty' => -1000
+                ];
+            }
+        }
+        
+        // 2. Cannot jury own match
         if ($match['home_team'] === $juryTeamName || $match['away_team'] === $juryTeamName) {
             $violations[] = [
                 'type' => 'own_match',
@@ -28,7 +41,7 @@ class MatchConstraintManager {
             ];
         }
         
-        // 2. Cannot jury if team has away match same day
+        // 3. Cannot jury if team has away match same day
         $awayMatches = $this->getTeamAwayMatches($juryTeamName, $matchDate);
         foreach ($awayMatches as $awayMatch) {
             if ($awayMatch['id'] != $match['id']) {
@@ -41,7 +54,7 @@ class MatchConstraintManager {
             }
         }
         
-        // 3. Cannot jury if team has home match within 2 hours
+        // 4. Cannot jury if team has home match within 2 hours
         $nearbyHomeMatches = $this->getTeamHomeMatchesNearTime($juryTeamName, $match['date_time'], 2);
         foreach ($nearbyHomeMatches as $homeMatch) {
             if ($homeMatch['id'] != $match['id']) {
@@ -57,7 +70,7 @@ class MatchConstraintManager {
         
         // SOFT CONSTRAINTS (preferences)
         
-        // 4. Prefer teams that have home matches same day (they're already at the location)
+        // 5. Prefer teams that have home matches same day (they're already at the location)
         $sameDayHomeMatches = $this->getTeamHomeMatches($juryTeamName, $matchDate);
         foreach ($sameDayHomeMatches as $homeMatch) {
             if ($homeMatch['id'] != $match['id']) {
@@ -73,7 +86,7 @@ class MatchConstraintManager {
             }
         }
         
-        // 5. Prefer not to jury matches involving teams from same pool/division
+        // 6. Prefer not to jury matches involving teams from same pool/division
         $poolConflict = $this->checkPoolConflict($juryTeamName, $match['home_team'], $match['away_team']);
         if ($poolConflict) {
             $violations[] = [
@@ -84,7 +97,7 @@ class MatchConstraintManager {
             ];
         }
         
-        // 6. Prefer not to jury consecutive weekends
+        // 7. Prefer not to jury consecutive weekends
         $hasConsecutiveWeekends = $this->checkConsecutiveWeekendAssignments($juryTeamName, $matchDate);
         if ($hasConsecutiveWeekends) {
             $violations[] = [
@@ -95,7 +108,7 @@ class MatchConstraintManager {
             ];
         }
         
-        // 7. Prefer teams that haven't had recent jury duty (load balancing)
+        // 8. Prefer teams that haven't had recent jury duty (load balancing)
         $recentAssignments = $this->getRecentAssignmentCount($juryTeamName, $matchDate, 14); // last 2 weeks
         if ($recentAssignments > 2) {
             $violations[] = [
@@ -241,6 +254,11 @@ class MatchConstraintManager {
      */
     public function getConstraintTypes() {
         return [
+            'wrong_dedication' => [
+                'name' => 'Wrong Team Dedication',
+                'severity' => 'HARD',
+                'description' => 'Team is dedicated to a specific team but this match doesn\'t involve them'
+            ],
             'own_match' => [
                 'name' => 'Own Match',
                 'severity' => 'HARD',
@@ -272,6 +290,42 @@ class MatchConstraintManager {
                 'description' => 'Prefer teams with fewer recent assignments (load balancing)'
             ]
         ];
+    }
+    
+    /**
+     * Get the team that a jury team is dedicated to (if any)
+     * Returns the name of the team they're dedicated to, or null if not dedicated
+     */
+    private function getTeamDedication($juryTeamName) {
+        try {
+            // First get the jury team's dedicated_to_team_id
+            $stmt = $this->db->prepare("
+                SELECT dedicated_to_team_id 
+                FROM jury_teams 
+                WHERE name = ?
+            ");
+            $stmt->execute([$juryTeamName]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$result || !$result['dedicated_to_team_id']) {
+                return null;
+            }
+            
+            // Get the name of the dedicated team
+            $stmt = $this->db->prepare("
+                SELECT name 
+                FROM mnc_teams 
+                WHERE id = ?
+            ");
+            $stmt->execute([$result['dedicated_to_team_id']]);
+            $dedicatedTeam = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return $dedicatedTeam ? $dedicatedTeam['name'] : null;
+            
+        } catch (Exception $e) {
+            error_log("Error getting team dedication: " . $e->getMessage());
+            return null;
+        }
     }
 }
 
