@@ -116,7 +116,7 @@ if ($view === 'planning') {
     $stats = $constraintManager->getAssignmentStatistics();
     $matches = []; // Initialize as empty array for planning view
     $lockStats = $lockManager->getAssignmentStats();
-    $pageTitle = 'Auto Assignment Planning';
+    $pageTitle = t('auto_assignment_planning');
     $pageDescription = 'Automatically assign jury teams to matches using constraints and optimization';
 } else {
     $matches = $matchManager->getMatchesWithDetails($statusFilter, $teamFilter, $dateFilter);
@@ -130,7 +130,7 @@ if ($view === 'planning') {
     }
     unset($match); // Break the reference
     
-    $pageTitle = 'Matches Management';
+    $pageTitle = t('matches_management');
     $pageDescription = 'Manage water polo matches, assign jury teams, and track assignments';
 }
 
@@ -221,7 +221,7 @@ ob_start();
                             <svg class="-ml-1 mr-2 h-5 w-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
-                            Unassign All Matches
+                            <?php echo t('unassign_all_matches'); ?>
                         </button>
                     </div>
                 </div>
@@ -371,14 +371,14 @@ ob_start();
                     <table class="min-w-full divide-y divide-gray-300">
                         <thead>
                             <tr>
-                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Date & Time</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Match</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Location</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Lock Status</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Jury Assignment</th>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"><?php echo t('date_time'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('match'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('location'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('status'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('lock_status'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('jury_assignment'); ?></th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                                    <span class="sr-only">Actions</span>
+                                    <span class="sr-only"><?php echo t('actions'); ?></span>
                                 </th>
                             </tr>
                         </thead>
@@ -746,7 +746,7 @@ ob_start();
                             </svg>
                         </div>
                         <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                            <h3 class="text-base font-semibold leading-6 text-gray-900">Unassign All Jury Teams</h3>
+                            <h3 class="text-base font-semibold leading-6 text-gray-900"><?php echo t('unassign_all_jury_teams'); ?></h3>
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">
                                     This will remove all jury team assignments from all matches. Locked matches will be preserved unless you force unassign.
@@ -762,7 +762,7 @@ ob_start();
                     </div>
                     <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                         <button @click="confirmUnassignAll()" class="inline-flex w-full justify-center rounded-md bg-orange-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 sm:ml-3 sm:w-auto">
-                            Unassign All
+                            <?php echo t('unassign_all'); ?>
                         </button>
                         <button @click="showUnassignAllModal = false; forceIncludeLockedUnassign = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
                             Cancel

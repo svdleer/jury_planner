@@ -1,12 +1,13 @@
 <?php
 session_start();
+require_once 'includes/translations.php';
 require_once 'config/database.php';
 require_once 'includes/FairnessManager.php';
 
 $fairnessManager = new FairnessManager($db);
 
-$pageTitle = 'Fairness Dashboard';
-$pageDescription = 'Monitor jury assignment fairness and point distribution';
+$pageTitle = t('fairness_dashboard');
+$pageDescription = t('fairness_dashboard_description');
 
 // Get fairness report
 $report = $fairnessManager->getFairnessReport();

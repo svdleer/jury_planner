@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once 'includes/translations.php';
 require_once 'config/database.php';
 require_once 'includes/TeamManager.php';
 require_once 'includes/CustomConstraintManager.php';
@@ -7,8 +8,8 @@ require_once 'includes/CustomConstraintManager.php';
 $teamManager = new TeamManager($db);
 $constraintManager = new CustomConstraintManager($db);
 
-$pageTitle = 'Assignment Constraints';
-$pageDescription = 'Manage jury assignment constraints, exclusions, and team capacities';
+$pageTitle = t('assignment_constraints');
+$pageDescription = t('assignment_constraints_description');
 
 $message = '';
 
