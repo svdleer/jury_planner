@@ -60,6 +60,9 @@ class Translations {
             'team_updated_success' => 'Team updated successfully',
             'team_deleted_success' => 'Team deleted successfully',
             'error_occurred' => 'An error occurred',
+            'teams_management_description' => 'Manage jury teams, their weights, and availability',
+            'teams_get_started_message' => 'Get started by creating your first jury team.',
+            'status' => 'Status',
             
             // Matches
             'date_time' => 'Date/Time',
@@ -176,6 +179,9 @@ class Translations {
             'team_updated_success' => 'Team succesvol bijgewerkt',
             'team_deleted_success' => 'Team succesvol verwijderd',
             'error_occurred' => 'Er is een fout opgetreden',
+            'teams_management_description' => 'Beheer jury teams, hun gewichten en beschikbaarheid',
+            'teams_get_started_message' => 'Begin met het aanmaken van je eerste jury team.',
+            'status' => 'Status',
             
             // Matches
             'date_time' => 'Datum/Tijd',

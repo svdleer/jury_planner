@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once 'includes/translations.php';
 require_once 'config/database.php';
 require_once 'includes/MatchManager.php';
 require_once 'includes/TeamManager.php';

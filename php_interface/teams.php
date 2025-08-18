@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once 'includes/translations.php';
 require_once 'config/database.php';
 require_once 'includes/TeamManager.php';
 
@@ -57,8 +58,8 @@ if ($teamId && in_array($action, ['edit', 'view'])) {
     $editTeam = $teamManager->getTeamById($teamId);
 }
 
-$pageTitle = 'Teams Management';
-$pageDescription = 'Manage jury teams, their weights, contact information, and availability';
+$pageTitle = t('teams');
+$pageDescription = t('teams_management_description');
 
 ob_start();
 ?>
@@ -68,7 +69,7 @@ ob_start();
     <div class="sm:flex sm:items-center sm:justify-between mb-6">
         <div class="min-w-0 flex-1">
             <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                Teams
+                <?php echo t('teams'); ?>
             </h2>
         </div>
         <div class="mt-4 flex sm:ml-4 sm:mt-0">
@@ -84,8 +85,8 @@ ob_start();
                     <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
-                    <h3 class="mt-2 text-sm font-semibold text-gray-900">No teams</h3>
-                    <p class="mt-1 text-sm text-gray-500">Get started by creating your first jury team.</p>
+                    <h3 class="mt-2 text-sm font-semibold text-gray-900"><?php echo t('no_teams_found'); ?></h3>
+                    <p class="mt-1 text-sm text-gray-500"><?php echo t('teams_get_started_message'); ?></p>
                     <div class="mt-6">
                         <!-- Add Team button disabled for production -->
                     </div>
@@ -95,12 +96,12 @@ ob_start();
                     <table class="min-w-full divide-y divide-gray-300">
                         <thead>
                             <tr>
-                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Team</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Weight</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Dedicated To</th>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"><?php echo t('team_name'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('weight'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('status'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('dedicated_to'); ?></th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                                    <span class="sr-only">Actions</span>
+                                    <span class="sr-only"><?php echo t('actions'); ?></span>
                                 </th>
                             </tr>
                         </thead>
