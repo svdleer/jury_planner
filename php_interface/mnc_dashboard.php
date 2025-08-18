@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?php echo Translations::getCurrentLanguage(); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNC Jury Planner Dashboard</title>
+    <title><?php echo t('mnc_jury_planner'); ?> - <?php echo t('dashboard'); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
     <?php
+    require_once 'includes/translations.php';
     require_once 'config/database.php';
     require_once 'includes/MncTeamManager.php';
     require_once 'includes/MncMatchManager.php';
@@ -37,30 +38,33 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <i class="fas fa-swimmer text-2xl mr-3"></i>
-                    <h1 class="text-xl font-bold">MNC Jury Planner</h1>
+                    <h1 class="text-xl font-bold"><?php echo t('mnc_jury_planner'); ?></h1>
                 </div>
                 <div class="flex items-center space-x-4">
                     <a href="index.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-home mr-1"></i> Dashboard
+                        <i class="fas fa-home mr-1"></i> <?php echo t('dashboard'); ?>
                     </a>
                     <a href="teams.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-users mr-1"></i> Teams
+                        <i class="fas fa-users mr-1"></i> <?php echo t('teams'); ?>
                     </a>
                     <a href="matches.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-calendar mr-1"></i> Matches
+                        <i class="fas fa-calendar mr-1"></i> <?php echo t('matches'); ?>
                     </a>
                     <a href="constraints.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-cog mr-1"></i> Constraints
+                        <i class="fas fa-cog mr-1"></i> <?php echo t('constraints'); ?>
                     </a>
                     <a href="constraint_analysis.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-search mr-1"></i> Analysis
+                        <i class="fas fa-search mr-1"></i> <?php echo t('analysis'); ?>
                     </a>
                     <a href="fairness.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-balance-scale mr-1"></i> Fairness
+                        <i class="fas fa-balance-scale mr-1"></i> <?php echo t('fairness'); ?>
                     </a>
                     <a href="test_connection.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-database mr-1"></i> DB Test
+                        <i class="fas fa-database mr-1"></i> <?php echo t('db_test'); ?>
                     </a>
+                    
+                    <!-- Language Toggle -->
+                    <?php include 'includes/language_toggle.php'; ?>
                 </div>
             </div>
         </div>
@@ -78,10 +82,10 @@
         <div class="bg-white shadow rounded-lg p-6 mb-6">
             <h2 class="text-2xl font-bold text-gray-900 mb-2">
                 <i class="fas fa-tachometer-alt text-blue-600 mr-2"></i>
-                MNC Jury Management Dashboard
+                <?php echo t('jury_management_dashboard'); ?>
             </h2>
             <p class="text-gray-600">
-                Welcome to the MNC Dordrecht jury planning system. Manage teams, matches, and jury assignments.
+                <?php echo t('welcome_message'); ?>
             </p>
         </div>
 
@@ -95,7 +99,7 @@
                         </div>
                         <div class="ml-5 w-0 flex-1">
                             <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">Jury Teams</dt>
+                                <dt class="text-sm font-medium text-gray-500 truncate"><?php echo t('jury_teams'); ?></dt>
                                 <dd class="text-lg font-medium text-gray-900"><?php echo $teamStats['jury_teams']; ?></dd>
                             </dl>
                         </div>
@@ -111,7 +115,7 @@
                         </div>
                         <div class="ml-5 w-0 flex-1">
                             <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">MNC Teams</dt>
+                                <dt class="text-sm font-medium text-gray-500 truncate"><?php echo t('mnc_teams'); ?></dt>
                                 <dd class="text-lg font-medium text-gray-900"><?php echo $teamStats['mnc_teams']; ?></dd>
                             </dl>
                         </div>
@@ -127,7 +131,7 @@
                         </div>
                         <div class="ml-5 w-0 flex-1">
                             <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">Home Matches</dt>
+                                <dt class="text-sm font-medium text-gray-500 truncate"><?php echo t('home_matches'); ?></dt>
                                 <dd class="text-lg font-medium text-gray-900"><?php echo $matchStats['total_home_matches']; ?></dd>
                             </dl>
                         </div>
@@ -143,7 +147,7 @@
                         </div>
                         <div class="ml-5 w-0 flex-1">
                             <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">Assigned</dt>
+                                <dt class="text-sm font-medium text-gray-500 truncate"><?php echo t('assigned'); ?></dt>
                                 <dd class="text-lg font-medium text-gray-900"><?php echo $matchStats['assigned_matches']; ?></dd>
                             </dl>
                         </div>
@@ -160,11 +164,11 @@
                 <div class="px-4 py-5 sm:p-6">
                     <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
                         <i class="fas fa-calendar-day text-blue-600 mr-2"></i>
-                        Upcoming Matches (Next 14 Days)
+                        <?php echo t('upcoming_matches'); ?>
                     </h3>
                     
                     <?php if (empty($upcomingMatches)): ?>
-                        <p class="text-gray-500 italic">No upcoming matches found.</p>
+                        <p class="text-gray-500 italic"><?php echo t('no_upcoming_matches'); ?></p>
                     <?php else: ?>
                         <div class="space-y-3">
                             <?php foreach (array_slice($upcomingMatches, 0, 5) as $match): ?>
@@ -189,7 +193,7 @@
                         <?php if (count($upcomingMatches) > 5): ?>
                             <div class="mt-4 text-center">
                                 <a href="matches.php" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                    View all <?php echo count($upcomingMatches); ?> upcoming matches
+                                    <?php echo t('view_all_upcoming', [count($upcomingMatches)]); ?>
                                 </a>
                             </div>
                         <?php endif; ?>
@@ -202,13 +206,13 @@
                 <div class="px-4 py-5 sm:p-6">
                     <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
                         <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i>
-                        Matches Without Jury Assignment
+                        <?php echo t('matches_without_jury'); ?>
                     </h3>
                     
                     <?php if (empty($matchesWithoutJury)): ?>
                         <div class="text-green-600">
                             <i class="fas fa-check-circle mr-2"></i>
-                            All matches have jury assignments!
+                            <?php echo t('all_matches_assigned'); ?>
                         </div>
                     <?php else: ?>
                         <div class="space-y-3">
@@ -224,7 +228,7 @@
                                         </div>
                                     </div>
                                     <div class="text-sm text-yellow-700 font-medium">
-                                        Needs Jury
+                                        <?php echo t('needs_jury'); ?>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -233,7 +237,7 @@
                         <?php if (count($matchesWithoutJury) > 5): ?>
                             <div class="mt-4 text-center">
                                 <a href="matches.php?filter=no_jury" class="text-yellow-600 hover:text-yellow-800 text-sm font-medium">
-                                    View all <?php echo count($matchesWithoutJury); ?> unassigned matches
+                                    <?php echo t('view_all_unassigned', [count($matchesWithoutJury)]); ?>
                                 </a>
                             </div>
                         <?php endif; ?>
@@ -247,14 +251,14 @@
             <div class="px-4 py-5 sm:p-6">
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
                     <i class="fas fa-rocket text-purple-600 mr-2"></i>
-                    Quick Actions
+                    <?php echo t('quick_actions'); ?>
                 </h3>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <!-- Add Team button disabled for production -->
-                    <!-- <a href="mnc_teams.php?action=add" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                    <!-- <a href="teams.php?action=add" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                         <i class="fas fa-plus mr-2"></i>
-                        Add Team
+                        <?php echo t('add_team'); ?>
                     </a> -->
                     
                     <!-- Add Match button disabled for production -->
@@ -265,37 +269,37 @@
                     
                     <a href="matches.php?view=planning" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700">
                         <i class="fas fa-brain mr-2"></i>
-                        Auto Plan
+                        <?php echo t('auto_plan'); ?>
                     </a>
                     
                     <a href="test_connection.php" class="flex items-center justify-center px-4 py-3 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                         <i class="fas fa-database mr-2"></i>
-                        Test DB
+                        <?php echo t('test_db'); ?>
                     </a>
                     
                     <a href="constraints.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700">
                         <i class="fas fa-ban mr-2"></i>
-                        Constraints
+                        <?php echo t('constraints'); ?>
                     </a>
                     
                     <a href="advanced_constraints.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700">
                         <i class="fas fa-cogs mr-2"></i>
-                        Advanced Rules
+                        <?php echo t('advanced_rules'); ?>
                     </a>
                     
                     <a href="smart_assignment.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700">
                         <i class="fas fa-robot mr-2"></i>
-                        Smart Assign
+                        <?php echo t('smart_assign'); ?>
                     </a>
                     
                     <a href="fairness.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
                         <i class="fas fa-balance-scale mr-2"></i>
-                        Fairness
+                        <?php echo t('fairness'); ?>
                     </a>
                     
                     <a href="constraint_analysis.php" class="flex items-center justify-center px-4 py-3 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                         <i class="fas fa-search mr-2"></i>
-                        Analysis
+                        <?php echo t('analysis'); ?>
                     </a>
                 </div>
             </div>
@@ -306,32 +310,32 @@
             <div class="px-4 py-5 sm:p-6">
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
                     <i class="fas fa-info-circle text-blue-600 mr-2"></i>
-                    System Information
+                    <?php echo t('system_information'); ?>
                 </h3>
                 
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                     <div>
-                        <span class="font-medium text-gray-700">Database:</span>
+                        <span class="font-medium text-gray-700"><?php echo t('database'); ?>:</span>
                         <span class="text-gray-600"><?php echo $_ENV['DB_NAME'] ?? 'mnc_jury'; ?></span>
                     </div>
                     <div>
-                        <span class="font-medium text-gray-700">Host:</span>
+                        <span class="font-medium text-gray-700"><?php echo t('host'); ?>:</span>
                         <span class="text-gray-600"><?php echo $_ENV['DB_HOST'] ?? 'localhost'; ?></span>
                     </div>
                     <div>
-                        <span class="font-medium text-gray-700">Total All Matches:</span>
+                        <span class="font-medium text-gray-700"><?php echo t('total_all_matches'); ?>:</span>
                         <span class="text-gray-600"><?php echo $matchStats['total_all_matches']; ?></span>
                     </div>
                     <div>
-                        <span class="font-medium text-gray-700">Competitions:</span>
+                        <span class="font-medium text-gray-700"><?php echo t('competitions'); ?>:</span>
                         <span class="text-gray-600"><?php echo $matchStats['competitions']; ?></span>
                     </div>
                     <div>
-                        <span class="font-medium text-gray-700">Classes:</span>
+                        <span class="font-medium text-gray-700"><?php echo t('classes'); ?>:</span>
                         <span class="text-gray-600"><?php echo $matchStats['classes']; ?></span>
                     </div>
                     <div>
-                        <span class="font-medium text-gray-700">Excluded Teams:</span>
+                        <span class="font-medium text-gray-700"><?php echo t('excluded_teams'); ?>:</span>
                         <span class="text-gray-600"><?php echo $teamStats['excluded_teams']; ?></span>
                     </div>
                 </div>
