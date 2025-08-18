@@ -166,8 +166,7 @@ class SmartAssignmentEngine {
     private function getAvailableTeams() {
         $sql = "SELECT jt.id, jt.name
                 FROM jury_teams jt
-                LEFT JOIN excluded_teams et ON jt.id = et.team_id
-                WHERE et.id IS NULL
+                WHERE jt.name NOT IN (SELECT name FROM excluded_teams)
                 ORDER BY jt.name";
         
         $stmt = $this->db->prepare($sql);
