@@ -325,7 +325,10 @@ ob_start();
     <!-- Filters -->
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg mb-6">
         <div class="px-4 py-4 sm:px-6">
+            <h3 class="text-base font-semibold leading-6 text-gray-900 mb-4"><?php echo $lang['filter']; ?> <?php echo $lang['matches']; ?></h3>
             <form method="GET" class="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+                <input type="hidden" name="view" value="<?php echo htmlspecialchars($view); ?>">
+                <input type="hidden" name="lang" value="<?php echo htmlspecialchars($currentLang); ?>">
                 <div>
                     <label for="status" class="block text-sm font-medium text-gray-700"><?php echo $lang['status']; ?></label>
                     <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
