@@ -1,3 +1,25 @@
+<?php
+require_once 'includes/translations.php';
+require_once 'config/database.php';
+require_once 'includes/MncTeamManager.php';
+require_once 'includes/MncMatchManager.php';
+
+try {
+    $database = new Database();
+    $pdo = $database->getConnection();
+    
+    $teamManager = new MncTeamManager($pdo);
+    $matchManager = new MncMatchManager($pdo);
+    
+    $teamStats = $teamManager->getTeamStats();
+    $matchStats = $matchManager->getMatchStats();
+    $upcomingMatches = $matchManager->getUpcomingMatches(14);
+    $matchesWithoutJury = $matchManager->getMatchesWithoutJury();
+    
+} catch (Exception $e) {
+    $error = "Database connection failed: " . $e->getMessage();
+}
+?>
 <!DOCTYPE html>
 <html lang="<?php echo Translations::getCurrentLanguage(); ?>">
 <head>
@@ -9,28 +31,6 @@
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <?php
-    require_once 'includes/translations.php';
-    require_once 'config/database.php';
-    require_once 'includes/MncTeamManager.php';
-    require_once 'includes/MncMatchManager.php';
-    
-    try {
-        $database = new Database();
-        $pdo = $database->getConnection();
-        
-        $teamManager = new MncTeamManager($pdo);
-        $matchManager = new MncMatchManager($pdo);
-        
-        $teamStats = $teamManager->getTeamStats();
-        $matchStats = $matchManager->getMatchStats();
-        $upcomingMatches = $matchManager->getUpcomingMatches(14);
-        $matchesWithoutJury = $matchManager->getMatchesWithoutJury();
-        
-    } catch (Exception $e) {
-        $error = "Database connection failed: " . $e->getMessage();
-    }
-    ?>
 
     <!-- Navigation -->
     <nav class="bg-blue-600 text-white shadow-lg">
