@@ -168,7 +168,10 @@ ob_start();
                                         <div class="space-y-1">
                                             <?php foreach ($analysis['violations'] as $violation): ?>
                                                 <div class="flex items-center gap-2">
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium <?php echo $violation['severity'] === 'HARD' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'; ?>">
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium <?php 
+                                                        echo $violation['severity'] === 'HARD' ? 'bg-red-100 text-red-800' : 
+                                                             ($violation['severity'] === 'BONUS' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'); 
+                                                    ?>">
                                                         <?php echo $violation['severity']; ?>
                                                     </span>
                                                     <span class="text-xs text-gray-600"><?php echo htmlspecialchars($violation['message']); ?></span>

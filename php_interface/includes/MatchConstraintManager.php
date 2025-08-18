@@ -57,17 +57,17 @@ class MatchConstraintManager {
         
         // SOFT CONSTRAINTS (preferences)
         
-        // 4. Prefer not to jury if team has home match same day (but not within 2 hours)
+        // 4. Prefer teams that have home matches same day (they're already at the location)
         $sameDayHomeMatches = $this->getTeamHomeMatches($juryTeamName, $matchDate);
         foreach ($sameDayHomeMatches as $homeMatch) {
             if ($homeMatch['id'] != $match['id']) {
                 $timeDiff = abs(strtotime($match['date_time']) - strtotime($homeMatch['date_time'])) / 3600;
                 if ($timeDiff >= 2) {
                     $violations[] = [
-                        'type' => 'home_match_same_day',
-                        'severity' => 'SOFT',
-                        'message' => "{$juryTeamName} has home match vs {$homeMatch['away_team']} on same day",
-                        'score_penalty' => -50
+                        'type' => 'home_match_same_day_bonus',
+                        'severity' => 'BONUS',
+                        'message' => "{$juryTeamName} has home match vs {$homeMatch['away_team']} on same day (preferred - already at location)",
+                        'score_penalty' => +25  // BONUS points for being at the location
                     ];
                 }
             }
