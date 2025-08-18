@@ -43,7 +43,7 @@
                     <a href="index.php" class="hover:bg-blue-700 px-3 py-2 rounded">
                         <i class="fas fa-home mr-1"></i> Dashboard
                     </a>
-                    <a href="mnc_teams.php" class="hover:bg-blue-700 px-3 py-2 rounded">
+                    <a href="teams.php" class="hover:bg-blue-700 px-3 py-2 rounded">
                         <i class="fas fa-users mr-1"></i> Teams
                     </a>
                     <a href="matches.php" class="hover:bg-blue-700 px-3 py-2 rounded">
