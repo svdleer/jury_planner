@@ -106,11 +106,16 @@ if ($_POST) {
 // Get filter parameters
 $view = $_GET['view'] ?? 'list';
 $statusFilter = $_GET['status'] ?? 'all';
-$teamFilter = $_GET['team'] ?? 'all';
+$homeTeamFilter = $_GET['home_team'] ?? 'all';
+$awayTeamFilter = $_GET['away_team'] ?? 'all';
 $dateFilter = $_GET['date'] ?? 'all';
+$juryStatusFilter = $_GET['jury_status'] ?? 'all';
+$lockStatusFilter = $_GET['lock_status'] ?? 'all';
+$teamFilter = $_GET['team'] ?? 'all'; // Keep for backwards compatibility
 
 // Get data
 $teams = $teamManager->getAllTeams();
+$matchTeams = $matchManager->getUniqueTeamNames();
 
 if ($view === 'planning') {
     $stats = $constraintManager->getAssignmentStatistics();
@@ -119,16 +124,31 @@ if ($view === 'planning') {
     $pageTitle = t('auto_assignment_planning');
     $pageDescription = 'Automatically assign jury teams to matches using constraints and optimization';
 } else {
-    $matches = $matchManager->getMatchesWithDetails($statusFilter, $teamFilter, $dateFilter);
+    $matches = $matchManager->getMatchesWithDetails($statusFilter, $teamFilter, $dateFilter, $homeTeamFilter, $awayTeamFilter, $juryStatusFilter, $lockStatusFilter);
     
-    // Add lock information to each match
-    foreach ($matches as &$match) {
+    // Add lock information to each match and apply lock status filter
+    $filteredMatches = [];
+    foreach ($matches as $match) {
         $lockInfo = $lockManager->getMatchLockInfo($match['id']);
         $match['locked'] = $lockInfo['locked'] ?? false;
         $match['locked_at'] = $lockInfo['locked_at'] ?? null;
         $match['locked_by'] = $lockInfo['locked_by'] ?? null;
+        
+        // Apply lock status filter
+        if ($lockStatusFilter !== 'all') {
+            switch ($lockStatusFilter) {
+                case 'locked':
+                    if (!$match['locked']) continue 2; // Skip this match
+                    break;
+                case 'unlocked':
+                    if ($match['locked']) continue 2; // Skip this match
+                    break;
+            }
+        }
+        
+        $filteredMatches[] = $match;
     }
-    unset($match); // Break the reference
+    $matches = $filteredMatches;
     
     $pageTitle = t('matches_management');
     $pageDescription = 'Manage water polo matches, assign jury teams, and track assignments';
@@ -305,48 +325,85 @@ ob_start();
     <!-- Filters -->
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg mb-6">
         <div class="px-4 py-4 sm:px-6">
-            <form method="GET" class="grid grid-cols-1 gap-4 sm:grid-cols-4">
+            <form method="GET" class="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-6">
                 <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                    <label for="status" class="block text-sm font-medium text-gray-700"><?php echo $lang['status']; ?></label>
                     <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $statusFilter === 'all' ? 'selected' : ''; ?>>All Statuses</option>
-                        <option value="scheduled" <?php echo $statusFilter === 'scheduled' ? 'selected' : ''; ?>>Scheduled</option>
-                        <option value="in_progress" <?php echo $statusFilter === 'in_progress' ? 'selected' : ''; ?>>In Progress</option>
-                        <option value="completed" <?php echo $statusFilter === 'completed' ? 'selected' : ''; ?>>Completed</option>
-                        <option value="cancelled" <?php echo $statusFilter === 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                        <option value="all" <?php echo $statusFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_statuses']; ?></option>
+                        <option value="scheduled" <?php echo $statusFilter === 'scheduled' ? 'selected' : ''; ?>><?php echo $lang['scheduled']; ?></option>
+                        <option value="in_progress" <?php echo $statusFilter === 'in_progress' ? 'selected' : ''; ?>><?php echo $lang['in_progress']; ?></option>
+                        <option value="completed" <?php echo $statusFilter === 'completed' ? 'selected' : ''; ?>><?php echo $lang['completed']; ?></option>
+                        <option value="cancelled" <?php echo $statusFilter === 'cancelled' ? 'selected' : ''; ?>><?php echo $lang['cancelled']; ?></option>
                     </select>
                 </div>
                 
                 <div>
-                    <label for="team" class="block text-sm font-medium text-gray-700">Team</label>
-                    <select name="team" id="team" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $teamFilter === 'all' ? 'selected' : ''; ?>>All Teams</option>
-                        <?php foreach ($teams as $team): ?>
-                            <option value="<?php echo $team['id']; ?>" <?php echo $teamFilter == $team['id'] ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($team['name']); ?>
+                    <label for="home_team" class="block text-sm font-medium text-gray-700"><?php echo $lang['home_team']; ?></label>
+                    <select name="home_team" id="home_team" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
+                        <option value="all" <?php echo $homeTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_teams']; ?></option>
+                        <?php foreach ($matchTeams as $teamName): ?>
+                            <option value="<?php echo htmlspecialchars($teamName); ?>" <?php echo $homeTeamFilter == $teamName ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($teamName); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 
                 <div>
-                    <label for="date" class="block text-sm font-medium text-gray-700">Date Range</label>
-                    <select name="date" id="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $dateFilter === 'all' ? 'selected' : ''; ?>>All Dates</option>
-                        <option value="upcoming" <?php echo $dateFilter === 'upcoming' ? 'selected' : ''; ?>>Upcoming</option>
-                        <option value="today" <?php echo $dateFilter === 'today' ? 'selected' : ''; ?>>Today</option>
-                        <option value="this_week" <?php echo $dateFilter === 'this_week' ? 'selected' : ''; ?>>This Week</option>
-                        <option value="this_month" <?php echo $dateFilter === 'this_month' ? 'selected' : ''; ?>>This Month</option>
+                    <label for="away_team" class="block text-sm font-medium text-gray-700"><?php echo $lang['away_team']; ?></label>
+                    <select name="away_team" id="away_team" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
+                        <option value="all" <?php echo $awayTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_teams']; ?></option>
+                        <?php foreach ($matchTeams as $teamName): ?>
+                            <option value="<?php echo htmlspecialchars($teamName); ?>" <?php echo $awayTeamFilter == $teamName ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($teamName); ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 
-                <div class="flex items-end">
-                    <button type="submit" class="w-full inline-flex justify-center items-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">
+                <div>
+                    <label for="date" class="block text-sm font-medium text-gray-700"><?php echo $lang['date_range']; ?></label>
+                    <select name="date" id="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
+                        <option value="all" <?php echo $dateFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_dates']; ?></option>
+                        <option value="upcoming" <?php echo $dateFilter === 'upcoming' ? 'selected' : ''; ?>><?php echo $lang['upcoming']; ?></option>
+                        <option value="today" <?php echo $dateFilter === 'today' ? 'selected' : ''; ?>><?php echo $lang['today']; ?></option>
+                        <option value="this_week" <?php echo $dateFilter === 'this_week' ? 'selected' : ''; ?>><?php echo $lang['this_week']; ?></option>
+                        <option value="this_month" <?php echo $dateFilter === 'this_month' ? 'selected' : ''; ?>><?php echo $lang['this_month']; ?></option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="jury_status" class="block text-sm font-medium text-gray-700"><?php echo $lang['jury_status']; ?></label>
+                    <select name="jury_status" id="jury_status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
+                        <option value="all" <?php echo $juryStatusFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_statuses']; ?></option>
+                        <option value="assigned" <?php echo $juryStatusFilter === 'assigned' ? 'selected' : ''; ?>><?php echo $lang['assigned']; ?></option>
+                        <option value="unassigned" <?php echo $juryStatusFilter === 'unassigned' ? 'selected' : ''; ?>><?php echo $lang['unassigned']; ?></option>
+                        <option value="partial" <?php echo $juryStatusFilter === 'partial' ? 'selected' : ''; ?>><?php echo $lang['partially_assigned']; ?></option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="lock_status" class="block text-sm font-medium text-gray-700"><?php echo $lang['lock_status']; ?></label>
+                    <select name="lock_status" id="lock_status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
+                        <option value="all" <?php echo $lockStatusFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_statuses']; ?></option>
+                        <option value="locked" <?php echo $lockStatusFilter === 'locked' ? 'selected' : ''; ?>><?php echo $lang['locked']; ?></option>
+                        <option value="unlocked" <?php echo $lockStatusFilter === 'unlocked' ? 'selected' : ''; ?>><?php echo $lang['unlocked']; ?></option>
+                    </select>
+                </div>
+                
+                <div class="col-span-full flex items-end justify-end gap-2">
+                    <button type="submit" class="inline-flex justify-center items-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">
                         <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
                         </svg>
-                        Filter
+                        <?php echo $lang['filter']; ?>
                     </button>
+                    <a href="?view=<?php echo $view; ?>&lang=<?php echo $currentLang; ?>" class="inline-flex justify-center items-center rounded-md bg-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300">
+                        <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <?php echo $lang['clear_filters']; ?>
+                    </a>
                 </div>
             </form>
         </div>
@@ -372,7 +429,8 @@ ob_start();
                         <thead>
                             <tr>
                                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"><?php echo t('date_time'); ?></th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('match'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('home_team'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('away_team'); ?></th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('location'); ?></th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('status'); ?></th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('lock_status'); ?></th>
@@ -393,18 +451,38 @@ ob_start();
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         <div class="flex items-center">
                                             <div class="h-8 w-8 flex-shrink-0">
-                                                <div class="h-8 w-8 rounded-full bg-water-blue-100 flex items-center justify-center">
-                                                    <svg class="h-4 w-4 text-water-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                                <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                                    <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                                                     </svg>
                                                 </div>
                                             </div>
                                             <div class="ml-3">
                                                 <div class="text-sm font-medium text-gray-900">
-                                                    <?php echo htmlspecialchars($match['home_team_name']); ?> vs <?php echo htmlspecialchars($match['away_team_name']); ?>
+                                                    <?php echo htmlspecialchars($match['home_team_name']); ?>
                                                 </div>
                                                 <?php if ($match['competition']): ?>
                                                     <div class="text-sm text-gray-500"><?php echo htmlspecialchars($match['competition']); ?></div>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        <div class="flex items-center">
+                                            <div class="h-8 w-8 flex-shrink-0">
+                                                <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <svg class="h-4 w-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="ml-3">
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    <?php echo htmlspecialchars($match['away_team_name']); ?>
+                                                </div>
+                                                <?php if ($match['class']): ?>
+                                                    <div class="text-sm text-gray-500"><?php echo htmlspecialchars($match['class']); ?></div>
                                                 <?php endif; ?>
                                             </div>
                                         </div>

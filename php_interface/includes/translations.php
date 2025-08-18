@@ -130,6 +130,25 @@ class Translations {
             'select' => 'Select',
             'optional' => 'Optional',
             'required' => 'Required',
+            
+            // Filter labels
+            'all_statuses' => 'All Statuses',
+            'all_teams' => 'All Teams',
+            'all_dates' => 'All Dates',
+            'date_range' => 'Date Range',
+            'jury_status' => 'Jury Status',
+            'partially_assigned' => 'Partially Assigned',
+            'unassigned' => 'Unassigned',
+            'scheduled' => 'Scheduled',
+            'in_progress' => 'In Progress',
+            'completed' => 'Completed',
+            'cancelled' => 'Cancelled',
+            'upcoming' => 'Upcoming',
+            'today' => 'Today',
+            'this_week' => 'This Week',
+            'this_month' => 'This Month',
+            'unlocked' => 'Unlocked',
+            'clear_filters' => 'Clear Filters',
         ],
         
         'nl' => [
@@ -260,6 +279,25 @@ class Translations {
             'select' => 'Selecteer',
             'optional' => 'Optioneel',
             'required' => 'Vereist',
+            
+            // Filter labels
+            'all_statuses' => 'Alle Statussen',
+            'all_teams' => 'Alle Teams',
+            'all_dates' => 'Alle Datums',
+            'date_range' => 'Datumbereik',
+            'jury_status' => 'Jury Status',
+            'partially_assigned' => 'Gedeeltelijk Toegewezen',
+            'unassigned' => 'Niet Toegewezen',
+            'scheduled' => 'Gepland',
+            'in_progress' => 'Bezig',
+            'completed' => 'Voltooid',
+            'cancelled' => 'Geannuleerd',
+            'upcoming' => 'Aankomend',
+            'today' => 'Vandaag',
+            'this_week' => 'Deze Week',
+            'this_month' => 'Deze Maand',
+            'unlocked' => 'Ontgrendeld',
+            'clear_filters' => 'Filters Wissen',
         ]
     ];
     

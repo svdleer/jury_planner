@@ -33,7 +33,7 @@ class MatchManager {
     /**
      * Get matches with filtering and jury assignment details
      */
-    public function getMatchesWithDetails($statusFilter = 'all', $teamFilter = 'all', $dateFilter = 'all') {
+    public function getMatchesWithDetails($statusFilter = 'all', $teamFilter = 'all', $dateFilter = 'all', $homeTeamFilter = 'all', $awayTeamFilter = 'all', $juryStatusFilter = 'all', $lockStatusFilter = 'all') {
         $sql = "
             SELECT m.*, 
                    m.home_team as home_team_name, 
@@ -52,10 +52,22 @@ class MatchManager {
             $params['status'] = $statusFilter;
         }
         
-        // Team filter
+        // Legacy team filter (for backwards compatibility)
         if ($teamFilter !== 'all') {
             $sql .= " AND (m.home_team = :team_name OR m.away_team = :team_name)";
             $params['team_name'] = $teamFilter;
+        }
+        
+        // Home team filter
+        if ($homeTeamFilter !== 'all') {
+            $sql .= " AND m.home_team = :home_team_name";
+            $params['home_team_name'] = $homeTeamFilter;
+        }
+        
+        // Away team filter
+        if ($awayTeamFilter !== 'all') {
+            $sql .= " AND m.away_team = :away_team_name";
+            $params['away_team_name'] = $awayTeamFilter;
         }
         
         // Date filter
@@ -82,12 +94,69 @@ class MatchManager {
         $stmt->execute($params);
         $matches = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        // Get jury assignments for each match
-        foreach ($matches as &$match) {
+        // Get jury assignments for each match and apply jury/lock filters
+        $filteredMatches = [];
+        foreach ($matches as $match) {
             $match['jury_assignments'] = $this->getJuryAssignments($match['id']);
+            
+            // Apply jury status filter
+            if ($juryStatusFilter !== 'all') {
+                $juryCount = count($match['jury_assignments']);
+                switch ($juryStatusFilter) {
+                    case 'assigned':
+                        if ($juryCount == 0) continue; // Skip this match
+                        break;
+                    case 'unassigned':
+                        if ($juryCount > 0) continue; // Skip this match
+                        break;
+                    case 'partial':
+                        // Assuming partial means has some but not full assignment
+                        if ($juryCount == 0 || $juryCount >= 3) continue; // Skip this match
+                        break;
+                }
+            }
+            
+            $filteredMatches[] = $match;
         }
         
-        return $matches;
+        return $filteredMatches;
+        
+        // Get jury assignments for each match and apply filters
+        $filteredMatches = [];
+        foreach ($matches as $match) {
+            $match['jury_assignments'] = $this->getJuryAssignments($match['id']);
+            
+            // Apply jury status filter
+            if ($juryStatusFilter !== 'all') {
+                $assignmentCount = count($match['jury_assignments']);
+                switch ($juryStatusFilter) {
+                    case 'assigned':
+                        if ($assignmentCount == 0) continue 2; // Skip this match
+                        break;
+                    case 'unassigned':
+                        if ($assignmentCount > 0) continue 2; // Skip this match
+                        break;
+                    case 'partial':
+                        // For water polo, typically need 2 jury members, adjust as needed
+                        if ($assignmentCount == 0 || $assignmentCount >= 2) continue 2; // Skip this match
+                        break;
+                }
+            }
+            
+            // Apply lock status filter (placeholder for now, will need MatchLockManager integration)
+            if ($lockStatusFilter !== 'all') {
+                // This will need to be implemented when lock status is available
+                // For now, we'll assume all matches are unlocked
+                if ($lockStatusFilter === 'locked') {
+                    // Skip matches that are not locked
+                    // continue 2;
+                }
+            }
+            
+            $filteredMatches[] = $match;
+        }
+        
+        return $filteredMatches;
     }
     
     /**
@@ -273,6 +342,26 @@ class MatchManager {
         $sql = "DELETE FROM jury_assignments WHERE id = ?";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$assignmentId]);
+    }
+    
+    /**
+     * Get unique team names from matches for filtering
+     */
+    public function getUniqueTeamNames() {
+        $sql = "
+            SELECT DISTINCT team_name FROM (
+                SELECT home_team as team_name FROM home_matches
+                UNION
+                SELECT away_team as team_name FROM home_matches
+            ) teams
+            WHERE team_name IS NOT NULL AND team_name != ''
+            ORDER BY team_name
+        ";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 }
 ?>
