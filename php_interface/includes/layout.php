@@ -1,6 +1,7 @@
 <?php
 // Include app configuration
 require_once __DIR__ . '/../config/app.php';
+require_once __DIR__ . '/translations.php';
 
 // Sanitize output function
 function h($string) {
@@ -71,31 +72,32 @@ function formatTime($time, $format = 'H:i') {
                             <svg class="h-8 w-8 text-water-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                             </svg>
-                            <span class="ml-2 text-xl font-bold text-gray-900"><?php echo h(APP_NAME); ?></span>
+                            <span class="ml-2 text-xl font-bold text-gray-900"><?php echo t('mnc_jury_planner'); ?></span>
                         </div>
                         <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
                             <a href="index.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'index.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
-                                Dashboard
+                                <?php echo t('dashboard'); ?>
                             </a>
                             <a href="teams.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'teams.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
-                                Teams
+                                <?php echo t('teams'); ?>
                             </a>
                             <a href="matches.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'matches.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
-                                Matches
+                                <?php echo t('matches'); ?>
                             </a>
                             <a href="constraints.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraints.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
-                                Constraints
+                                <?php echo t('constraints'); ?>
+                            </a>
+                            <a href="constraint_analysis.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraint_analysis.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
+                                <?php echo t('analysis'); ?>
+                            </a>
+                            <a href="fairness.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'fairness.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
+                                <?php echo t('fairness'); ?>
                             </a>
                         </div>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:items-center">
-                        <button type="button" class="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-water-blue-500 focus:ring-offset-2">
-                            <span class="absolute -inset-1.5"></span>
-                            <span class="sr-only">View notifications</span>
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                            </svg>
-                        </button>
+                        <!-- Language Toggle -->
+                        <?php include __DIR__ . '/language_toggle.php'; ?>
                     </div>
                     <div class="-mr-2 flex items-center sm:hidden">
                         <button type="button" x-data @click="$dispatch('toggle-mobile-menu')" class="relative inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-water-blue-500 focus:ring-offset-2">
@@ -112,10 +114,12 @@ function formatTime($time, $format = 'H:i') {
             <!-- Mobile menu -->
             <div x-data="{ open: false }" @toggle-mobile-menu.window="open = !open" x-show="open" x-cloak class="sm:hidden">
                 <div class="space-y-1 pb-3 pt-2">
-                    <a href="index.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'index.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Dashboard</a>
-                    <a href="teams.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'teams.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Teams</a>
-                    <a href="matches.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'matches.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Matches</a>
-                    <a href="constraints.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraints.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Constraints</a>
+                    <a href="index.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'index.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><?php echo t('dashboard'); ?></a>
+                    <a href="teams.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'teams.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><?php echo t('teams'); ?></a>
+                    <a href="matches.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'matches.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><?php echo t('matches'); ?></a>
+                    <a href="constraints.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraints.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><?php echo t('constraints'); ?></a>
+                    <a href="constraint_analysis.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraint_analysis.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><?php echo t('analysis'); ?></a>
+                    <a href="fairness.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'fairness.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><?php echo t('fairness'); ?></a>
                 </div>
             </div>
         </nav>

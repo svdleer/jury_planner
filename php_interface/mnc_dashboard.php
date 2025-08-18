@@ -175,7 +175,7 @@ try {
                                 <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
                                     <div>
                                         <div class="font-medium text-gray-900">
-                                            <?php echo htmlspecialchars($match['home_team']); ?> vs 
+                                            <?php echo htmlspecialchars($match['home_team']); ?> - 
                                             <?php echo htmlspecialchars($match['away_team']); ?>
                                         </div>
                                         <div class="text-sm text-gray-500">
@@ -220,7 +220,7 @@ try {
                                 <div class="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-200 rounded">
                                     <div>
                                         <div class="font-medium text-gray-900">
-                                            <?php echo htmlspecialchars($match['home_team']); ?> vs 
+                                            <?php echo htmlspecialchars($match['home_team']); ?> - 
                                             <?php echo htmlspecialchars($match['away_team']); ?>
                                         </div>
                                         <div class="text-sm text-gray-500">

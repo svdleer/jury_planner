@@ -29,9 +29,6 @@ require_once 'includes/translations.php';
                 <a href="fairness.php" class="hover:bg-blue-700 px-3 py-2 rounded">
                     <i class="fas fa-balance-scale mr-1"></i> <?php echo t('fairness'); ?>
                 </a>
-                <a href="test_connection.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                    <i class="fas fa-database mr-1"></i> <?php echo t('db_test'); ?>
-                </a>
                 
                 <!-- Language Toggle -->
                 <?php include 'includes/language_toggle.php'; ?>

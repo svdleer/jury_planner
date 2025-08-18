@@ -214,7 +214,7 @@ $content = ob_get_clean();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $pageTitle; ?> - Water Polo Jury Planner</title>
+    <title><?php echo $pageTitle; ?> - Water polo jury planner</title>
     <meta name="description" content="<?php echo $pageDescription; ?>">
     <meta name="author" content="Water Polo Jury Planner">
     
