@@ -149,6 +149,18 @@ class Translations {
             'this_month' => 'This Month',
             'unlocked' => 'Unlocked',
             'clear_filters' => 'Clear Filters',
+            
+            // Analysis page
+            'match_constraint_analysis' => 'Match constraint analysis',
+            'analyze_why_teams_can_or_cannot_be_assigned' => 'Analyze why teams can or cannot be assigned as jury for specific matches',
+            'analyze_constraints_for_jury_assignments' => 'Analyze constraints for jury assignments based on team schedules and match conflicts',
+            'select_match_to_analyze' => 'Select match to analyze',
+            'match_details' => 'Match details',
+            'home_team' => 'Home team',
+            'away_team' => 'Away team',
+            'team_eligibility_analysis' => 'Team eligibility analysis',
+            'no_constraints' => 'No constraints',
+            'constraint_types' => 'Constraint types',
         ],
         
         'nl' => [
@@ -298,6 +310,18 @@ class Translations {
             'this_month' => 'Deze Maand',
             'unlocked' => 'Ontgrendeld',
             'clear_filters' => 'Filters Wissen',
+            
+            // Analysis page  
+            'match_constraint_analysis' => 'Wedstrijd beperkingen analyse',
+            'analyze_why_teams_can_or_cannot_be_assigned' => 'Analyseer waarom teams wel of niet kunnen worden toegewezen als jury voor specifieke wedstrijden',
+            'analyze_constraints_for_jury_assignments' => 'Analyseer beperkingen voor jury toewijzingen gebaseerd op teamschema\'s en wedstrijd conflicten',
+            'select_match_to_analyze' => 'Selecteer wedstrijd om te analyseren',
+            'match_details' => 'Wedstrijd details',
+            'home_team' => 'Thuisteam',
+            'away_team' => 'Uitteam',
+            'team_eligibility_analysis' => 'Team geschiktheids analyse',
+            'no_constraints' => 'Geen beperkingen',
+            'constraint_types' => 'Beperkings types',
         ]
     ];
     

@@ -19,58 +19,12 @@ try {
 } catch (Exception $e) {
     $error = "Database connection failed: " . $e->getMessage();
 }
+
+$pageTitle = t('dashboard');
+$pageDescription = t('welcome_message');
+
+ob_start();
 ?>
-<!DOCTYPE html>
-<html lang="<?php echo Translations::getCurrentLanguage(); ?>">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo t('mnc_jury_planner'); ?> - <?php echo t('dashboard'); ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-</head>
-<body class="bg-gray-50 min-h-screen">
-
-    <!-- Navigation -->
-    <nav class="bg-blue-600 text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <i class="fas fa-swimmer text-2xl mr-3"></i>
-                    <h1 class="text-xl font-bold"><?php echo t('mnc_jury_planner'); ?></h1>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="index.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-home mr-1"></i> <?php echo t('dashboard'); ?>
-                    </a>
-                    <a href="teams.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-users mr-1"></i> <?php echo t('teams'); ?>
-                    </a>
-                    <a href="matches.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-calendar mr-1"></i> <?php echo t('matches'); ?>
-                    </a>
-                    <a href="constraints.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-cog mr-1"></i> <?php echo t('constraints'); ?>
-                    </a>
-                    <a href="constraint_analysis.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-search mr-1"></i> <?php echo t('analysis'); ?>
-                    </a>
-                    <a href="fairness.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-balance-scale mr-1"></i> <?php echo t('fairness'); ?>
-                    </a>
-                    <a href="test_connection.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-database mr-1"></i> <?php echo t('db_test'); ?>
-                    </a>
-                    
-                    <!-- Language Toggle -->
-                    <?php include 'includes/language_toggle.php'; ?>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <?php if (isset($error)): ?>
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                 <i class="fas fa-exclamation-triangle mr-2"></i>
@@ -343,6 +297,8 @@ try {
         </div>
 
         <?php endif; ?>
-    </div>
-</body>
-</html>
+
+<?php
+$content = ob_get_clean();
+include 'includes/layout.php';
+?>

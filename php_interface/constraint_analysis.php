@@ -1,21 +1,24 @@
 <?php
-session_start();
+require_once 'includes/translations.php';
 require_once 'config/database.php';
 require_once 'includes/TeamManager.php';
 require_once 'includes/MatchManager.php';
 require_once 'includes/MatchConstraintManager.php';
 
-$teamManager = new TeamManager($db);
-$matchManager = new MatchManager($db);
-$constraintManager = new MatchConstraintManager($db);
-
-$pageTitle = 'Match Constraint Analysis';
-$pageDescription = 'Analyze constraints for jury assignments based on team schedules and match conflicts';
-
-// Get upcoming matches
-$upcomingMatches = [];
-$teams = [];
 try {
+    $database = new Database();
+    $pdo = $database->getConnection();
+    
+    $teamManager = new TeamManager($pdo);
+    $matchManager = new MatchManager($pdo);
+    $constraintManager = new MatchConstraintManager($pdo);
+
+    $pageTitle = t('analysis');
+    $pageDescription = t('analyze_constraints_for_jury_assignments');
+
+    // Get upcoming matches
+    $upcomingMatches = [];
+    $teams = [];
     $upcomingMatches = $matchManager->getUpcomingMatches(10);
     $teams = $teamManager->getAllTeams();
 } catch (Exception $e) {
@@ -40,8 +43,8 @@ ob_start();
 <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="sm:flex sm:items-center sm:justify-between mb-6">
         <div class="min-w-0 flex-1">
-            <h2 class="text-2xl font-bold leading-7 text-gray-900">Match Constraint Analysis</h2>
-            <p class="mt-1 text-sm text-gray-500">Analyze why teams can or cannot be assigned as jury for specific matches</p>
+            <h2 class="text-2xl font-bold leading-7 text-gray-900"><?php echo t('match_constraint_analysis'); ?></h2>
+            <p class="mt-1 text-sm text-gray-500"><?php echo t('analyze_why_teams_can_or_cannot_be_assigned'); ?></p>
         </div>
     </div>
 
@@ -58,7 +61,7 @@ ob_start();
     <!-- Match Selection -->
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg mb-6">
         <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Select Match to Analyze</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('select_match_to_analyze'); ?></h3>
             <form method="GET" class="flex gap-4 items-end">
                 <div class="flex-1">
                     <label for="match_id" class="block text-sm font-medium text-gray-700 mb-1">Match</label>
@@ -82,18 +85,18 @@ ob_start();
     <!-- Match Details -->
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg mb-6">
         <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Match Details</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('match_details'); ?></h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Date & Time</label>
                     <p class="mt-1 text-sm text-gray-900"><?php echo date('l, F j, Y \a\t H:i', strtotime($selectedMatch['date_time'])); ?></p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Home Team</label>
+                    <label class="block text-sm font-medium text-gray-700"><?php echo t('home_team'); ?></label>
                     <p class="mt-1 text-sm text-gray-900 font-semibold"><?php echo htmlspecialchars($selectedMatch['home_team']); ?></p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Away Team</label>
+                    <label class="block text-sm font-medium text-gray-700"><?php echo t('away_team'); ?></label>
                     <p class="mt-1 text-sm text-gray-900 font-semibold"><?php echo htmlspecialchars($selectedMatch['away_team']); ?></p>
                 </div>
             </div>
@@ -103,7 +106,7 @@ ob_start();
     <!-- Team Constraint Analysis -->
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
         <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Team Eligibility Analysis</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('team_eligibility_analysis'); ?></h3>
             
             <div class="overflow-x-auto">
                 <table class="min-w-full table-auto">
@@ -160,7 +163,7 @@ ob_start();
                                 </td>
                                 <td class="px-4 py-2">
                                     <?php if (empty($analysis['violations'])): ?>
-                                        <span class="text-sm text-gray-500">No constraints</span>
+                                        <span class="text-sm text-gray-500"><?php echo t('no_constraints'); ?></span>
                                     <?php else: ?>
                                         <div class="space-y-1">
                                             <?php foreach ($analysis['violations'] as $violation): ?>
@@ -185,7 +188,7 @@ ob_start();
     <!-- Constraint Types Legend -->
     <div class="mt-6 bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
         <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Constraint Types</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('constraint_types'); ?></h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <?php foreach ($constraintManager->getConstraintTypes() as $type => $info): ?>
                     <div class="border rounded-lg p-3">
@@ -207,77 +210,5 @@ ob_start();
 
 <?php
 $content = ob_get_clean();
+include 'includes/layout.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="en" class="h-full bg-gray-50">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $pageTitle; ?> - Water polo jury planner</title>
-    <meta name="description" content="<?php echo $pageDescription; ?>">
-    <meta name="author" content="Water Polo Jury Planner">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'water-blue': {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            200: '#bfdbfe',
-                            300: '#93c5fd',
-                            400: '#60a5fa',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="h-full bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-water-blue-600 shadow">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <h1 class="text-xl font-bold text-white">
-                        <i class="fas fa-water mr-2"></i>
-                        Water Polo Jury Planner
-                    </h1>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="mnc_dashboard.php" class="text-white hover:bg-water-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-home mr-1"></i> Dashboard
-                    </a>
-                    <a href="matches.php" class="text-white hover:bg-water-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-calendar mr-1"></i> Matches
-                    </a>
-                    <a href="constraints.php" class="text-white hover:bg-water-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-cogs mr-1"></i> Constraints
-                    </a>
-                    <a href="constraint_analysis.php" class="text-white bg-water-blue-700 px-3 py-2 rounded">
-                        <i class="fas fa-chart-line mr-1"></i> Analysis
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main>
-        <?php echo $content; ?>
-    </main>
-</body>
-</html>
