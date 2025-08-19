@@ -41,13 +41,6 @@ ob_start();
 ?>
 
 <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <div class="sm:flex sm:items-center sm:justify-between mb-6">
-        <div class="min-w-0 flex-1">
-            <h2 class="text-2xl font-bold leading-7 text-gray-900"><?php echo t('match_constraint_analysis'); ?></h2>
-            <p class="mt-1 text-sm text-gray-500"><?php echo t('analyze_why_teams_can_or_cannot_be_assigned'); ?></p>
-        </div>
-    </div>
-
     <?php if (isset($error)): ?>
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             <?php echo htmlspecialchars($error); ?>
