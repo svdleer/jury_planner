@@ -161,6 +161,16 @@ class Translations {
             'team_eligibility_analysis' => 'Team eligibility analysis',
             'no_constraints' => 'No constraints',
             'constraint_types' => 'Constraint types',
+            
+            // Constraint messages
+            'dedicated_to_wrong_team' => '{team} is dedicated to {dedicated_team} but this match doesn\'t involve them',
+            'cannot_jury_own_match' => '{team} cannot jury their own match',
+            'away_match_same_day' => '{team} has away match vs {opponent} on same day',
+            'home_match_within_hours' => '{team} has home match vs {opponent} within {hours} hours',
+            'home_match_same_day_bonus' => '{team} has home match vs {opponent} on same day (preferred - already at location)',
+            'same_pool_conflict' => '{team} is in same pool as match participants',
+            'consecutive_weekends' => '{team} has jury duty on consecutive weekends',
+            'recent_assignments' => '{team} has {count} assignments in last 2 weeks',
         ],
         
         'nl' => [
@@ -322,6 +332,16 @@ class Translations {
             'team_eligibility_analysis' => 'Team geschiktheids analyse',
             'no_constraints' => 'Geen beperkingen',
             'constraint_types' => 'Beperkings types',
+            
+            // Constraint messages
+            'dedicated_to_wrong_team' => '{team} is toegewezen aan {dedicated_team} maar deze wedstrijd behelst hen niet',
+            'cannot_jury_own_match' => '{team} kan niet hun eigen wedstrijd jureren',
+            'away_match_same_day' => '{team} heeft uitwedstrijd tegen {opponent} op dezelfde dag',
+            'home_match_within_hours' => '{team} heeft thuiswedstrijd tegen {opponent} binnen {hours} uur',
+            'home_match_same_day_bonus' => '{team} heeft thuiswedstrijd tegen {opponent} op dezelfde dag (voorkeur - al op locatie)',
+            'same_pool_conflict' => '{team} zit in dezelfde poule als wedstrijd deelnemers',
+            'consecutive_weekends' => '{team} heeft jury dienst op opeenvolgende weekenden',
+            'recent_assignments' => '{team} heeft {count} toewijzingen in de laatste 2 weken',
         ]
     ];
     

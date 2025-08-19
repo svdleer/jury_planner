@@ -1,10 +1,23 @@
 <?php
 
+require_once __DIR__ . '/translations.php';
+
 class MatchConstraintManager {
     private $db;
     
     public function __construct($database) {
         $this->db = $database;
+    }
+    
+    /**
+     * Format constraint message with parameters
+     */
+    private function formatConstraintMessage($key, $params = []) {
+        $message = t($key);
+        foreach ($params as $param => $value) {
+            $message = str_replace('{' . $param . '}', $value, $message);
+        }
+        return $message;
     }
     
     /**
@@ -25,7 +38,10 @@ class MatchConstraintManager {
                 $violations[] = [
                     'type' => 'wrong_dedication',
                     'severity' => 'HARD',
-                    'message' => "{$juryTeamName} is dedicated to {$dedicatedTeam} but this match doesn't involve them",
+                    'message' => $this->formatConstraintMessage('dedicated_to_wrong_team', [
+                        'team' => $juryTeamName,
+                        'dedicated_team' => $dedicatedTeam
+                    ]),
                     'score_penalty' => -1000
                 ];
             }
@@ -36,7 +52,9 @@ class MatchConstraintManager {
             $violations[] = [
                 'type' => 'own_match',
                 'severity' => 'HARD',
-                'message' => "{$juryTeamName} cannot jury their own match",
+                'message' => $this->formatConstraintMessage('cannot_jury_own_match', [
+                    'team' => $juryTeamName
+                ]),
                 'score_penalty' => -1000
             ];
         }
@@ -48,7 +66,10 @@ class MatchConstraintManager {
                 $violations[] = [
                     'type' => 'away_match_same_day',
                     'severity' => 'HARD',
-                    'message' => "{$juryTeamName} has away match vs {$awayMatch['home_team']} on same day",
+                    'message' => $this->formatConstraintMessage('away_match_same_day', [
+                        'team' => $juryTeamName,
+                        'opponent' => $awayMatch['home_team']
+                    ]),
                     'score_penalty' => -1000
                 ];
             }
@@ -58,11 +79,15 @@ class MatchConstraintManager {
         $nearbyHomeMatches = $this->getTeamHomeMatchesNearTime($juryTeamName, $match['date_time'], 2);
         foreach ($nearbyHomeMatches as $homeMatch) {
             if ($homeMatch['id'] != $match['id']) {
-                $timeDiff = abs(strtotime($match['date_time']) - strtotime($homeMatch['date_time'])) / 3600;
+                $timeDiff = round(abs(strtotime($match['date_time']) - strtotime($homeMatch['date_time'])) / 3600, 1);
                 $violations[] = [
                     'type' => 'home_match_nearby',
                     'severity' => 'HARD',
-                    'message' => "{$juryTeamName} has home match vs {$homeMatch['away_team']} within {$timeDiff} hours",
+                    'message' => $this->formatConstraintMessage('home_match_within_hours', [
+                        'team' => $juryTeamName,
+                        'opponent' => $homeMatch['away_team'],
+                        'hours' => $timeDiff
+                    ]),
                     'score_penalty' => -1000
                 ];
             }
@@ -79,7 +104,10 @@ class MatchConstraintManager {
                     $violations[] = [
                         'type' => 'home_match_same_day_bonus',
                         'severity' => 'BONUS',
-                        'message' => "{$juryTeamName} has home match vs {$homeMatch['away_team']} on same day (preferred - already at location)",
+                        'message' => $this->formatConstraintMessage('home_match_same_day_bonus', [
+                            'team' => $juryTeamName,
+                            'opponent' => $homeMatch['away_team']
+                        ]),
                         'score_penalty' => +25  // BONUS points for being at the location
                     ];
                 }
@@ -92,7 +120,9 @@ class MatchConstraintManager {
             $violations[] = [
                 'type' => 'same_pool',
                 'severity' => 'SOFT',
-                'message' => "{$juryTeamName} is in same pool as match participants",
+                'message' => $this->formatConstraintMessage('same_pool_conflict', [
+                    'team' => $juryTeamName
+                ]),
                 'score_penalty' => -30
             ];
         }
@@ -103,7 +133,9 @@ class MatchConstraintManager {
             $violations[] = [
                 'type' => 'consecutive_weekends',
                 'severity' => 'SOFT',
-                'message' => "{$juryTeamName} has jury duty on consecutive weekends",
+                'message' => $this->formatConstraintMessage('consecutive_weekends', [
+                    'team' => $juryTeamName
+                ]),
                 'score_penalty' => -20
             ];
         }
@@ -114,7 +146,10 @@ class MatchConstraintManager {
             $violations[] = [
                 'type' => 'recent_assignments',
                 'severity' => 'SOFT',
-                'message' => "{$juryTeamName} has {$recentAssignments} assignments in last 2 weeks",
+                'message' => $this->formatConstraintMessage('recent_assignments', [
+                    'team' => $juryTeamName,
+                    'count' => $recentAssignments
+                ]),
                 'score_penalty' => -10 * $recentAssignments
             ];
         }
