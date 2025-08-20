@@ -24,10 +24,8 @@ class TeamManager {
      * Get all teams with optional filtering
      */
     public function getAllTeams($activeOnly = false) {
-        $sql = "SELECT jt.*, 
-                       dt.name as dedicated_to_name
+        $sql = "SELECT jt.* 
                 FROM jury_teams jt
-                LEFT JOIN jury_teams dt ON jt.dedicated_to_team_id = dt.id
                 ORDER BY jt.name";
         
         $stmt = $this->db->prepare($sql);

@@ -332,35 +332,8 @@ class MatchConstraintManager {
      * Returns the name of the team they're dedicated to, or null if not dedicated
      */
     private function getTeamDedication($juryTeamName) {
-        try {
-            // First get the jury team's dedicated_to_team_id
-            $stmt = $this->db->prepare("
-                SELECT dedicated_to_team_id 
-                FROM jury_teams 
-                WHERE name = ?
-            ");
-            $stmt->execute([$juryTeamName]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if (!$result || !$result['dedicated_to_team_id']) {
-                return null;
-            }
-            
-            // Get the name of the dedicated team
-            $stmt = $this->db->prepare("
-                SELECT name 
-                FROM mnc_teams 
-                WHERE id = ?
-            ");
-            $stmt->execute([$result['dedicated_to_team_id']]);
-            $dedicatedTeam = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            return $dedicatedTeam ? $dedicatedTeam['name'] : null;
-            
-        } catch (Exception $e) {
-            error_log("Error getting team dedication: " . $e->getMessage());
-            return null;
-        }
+        // Team dedication feature not implemented - always return null
+        return null;
     }
 }
 
