@@ -331,25 +331,24 @@ ob_start();
     <!-- Filters -->
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg mb-6">
         <div class="px-4 py-4 sm:px-6">
-            <h3 class="text-base font-semibold leading-6 text-gray-900 mb-4"><?php echo $lang['filter']; ?> <?php echo $lang['matches']; ?></h3>
+            <h3 class="text-base font-semibold leading-6 text-gray-900 mb-4"><?php echo t('filter'); ?> <?php echo t('matches'); ?></h3>
             <form method="GET" class="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-6">
                 <input type="hidden" name="view" value="<?php echo htmlspecialchars($view); ?>">
-                <input type="hidden" name="lang" value="<?php echo htmlspecialchars($currentLang); ?>">
                 <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700"><?php echo $lang['status']; ?></label>
+                    <label for="status" class="block text-sm font-medium text-gray-700"><?php echo t('status'); ?></label>
                     <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $statusFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_statuses']; ?></option>
-                        <option value="scheduled" <?php echo $statusFilter === 'scheduled' ? 'selected' : ''; ?>><?php echo $lang['scheduled']; ?></option>
-                        <option value="in_progress" <?php echo $statusFilter === 'in_progress' ? 'selected' : ''; ?>><?php echo $lang['in_progress']; ?></option>
-                        <option value="completed" <?php echo $statusFilter === 'completed' ? 'selected' : ''; ?>><?php echo $lang['completed']; ?></option>
-                        <option value="cancelled" <?php echo $statusFilter === 'cancelled' ? 'selected' : ''; ?>><?php echo $lang['cancelled']; ?></option>
+                        <option value="all" <?php echo $statusFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_statuses'); ?></option>
+                        <option value="scheduled" <?php echo $statusFilter === 'scheduled' ? 'selected' : ''; ?>><?php echo t('scheduled'); ?></option>
+                        <option value="in_progress" <?php echo $statusFilter === 'in_progress' ? 'selected' : ''; ?>><?php echo t('in_progress'); ?></option>
+                        <option value="completed" <?php echo $statusFilter === 'completed' ? 'selected' : ''; ?>><?php echo t('completed'); ?></option>
+                        <option value="cancelled" <?php echo $statusFilter === 'cancelled' ? 'selected' : ''; ?>><?php echo t('cancelled'); ?></option>
                     </select>
                 </div>
                 
                 <div>
-                    <label for="home_team" class="block text-sm font-medium text-gray-700"><?php echo $lang['home_team']; ?></label>
+                    <label for="home_team" class="block text-sm font-medium text-gray-700"><?php echo t('home_team'); ?></label>
                     <select name="home_team" id="home_team" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $homeTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_teams']; ?></option>
+                        <option value="all" <?php echo $homeTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_teams'); ?></option>
                         <?php foreach ($matchTeams as $teamName): ?>
                             <option value="<?php echo htmlspecialchars($teamName); ?>" <?php echo $homeTeamFilter == $teamName ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($teamName); ?>
@@ -359,9 +358,9 @@ ob_start();
                 </div>
                 
                 <div>
-                    <label for="away_team" class="block text-sm font-medium text-gray-700"><?php echo $lang['away_team']; ?></label>
+                    <label for="away_team" class="block text-sm font-medium text-gray-700"><?php echo t('away_team'); ?></label>
                     <select name="away_team" id="away_team" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $awayTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_teams']; ?></option>
+                        <option value="all" <?php echo $awayTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_teams'); ?></option>
                         <?php foreach ($matchTeams as $teamName): ?>
                             <option value="<?php echo htmlspecialchars($teamName); ?>" <?php echo $awayTeamFilter == $teamName ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($teamName); ?>
@@ -371,21 +370,21 @@ ob_start();
                 </div>
                 
                 <div>
-                    <label for="date" class="block text-sm font-medium text-gray-700"><?php echo $lang['date_range']; ?></label>
+                    <label for="date" class="block text-sm font-medium text-gray-700"><?php echo t('date_range'); ?></label>
                     <select name="date" id="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $dateFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_dates']; ?></option>
-                        <option value="upcoming" <?php echo $dateFilter === 'upcoming' ? 'selected' : ''; ?>><?php echo $lang['upcoming']; ?></option>
-                        <option value="today" <?php echo $dateFilter === 'today' ? 'selected' : ''; ?>><?php echo $lang['today']; ?></option>
-                        <option value="this_week" <?php echo $dateFilter === 'this_week' ? 'selected' : ''; ?>><?php echo $lang['this_week']; ?></option>
-                        <option value="this_month" <?php echo $dateFilter === 'this_month' ? 'selected' : ''; ?>><?php echo $lang['this_month']; ?></option>
+                        <option value="all" <?php echo $dateFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_dates'); ?></option>
+                        <option value="upcoming" <?php echo $dateFilter === 'upcoming' ? 'selected' : ''; ?>><?php echo t('upcoming'); ?></option>
+                        <option value="today" <?php echo $dateFilter === 'today' ? 'selected' : ''; ?>><?php echo t('today'); ?></option>
+                        <option value="this_week" <?php echo $dateFilter === 'this_week' ? 'selected' : ''; ?>><?php echo t('this_week'); ?></option>
+                        <option value="this_month" <?php echo $dateFilter === 'this_month' ? 'selected' : ''; ?>><?php echo t('this_month'); ?></option>
                     </select>
                 </div>
                 
                 <div>
-                    <label for="jury_status" class="block text-sm font-medium text-gray-700"><?php echo $lang['jury_status']; ?></label>
+                    <label for="jury_status" class="block text-sm font-medium text-gray-700"><?php echo t('jury_status'); ?></label>
                     <select name="jury_status" id="jury_status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $juryStatusFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_statuses']; ?></option>
-                        <option value="assigned" <?php echo $juryStatusFilter === 'assigned' ? 'selected' : ''; ?>><?php echo $lang['assigned']; ?></option>
+                        <option value="all" <?php echo $juryStatusFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_statuses'); ?></option>
+                        <option value="assigned" <?php echo $juryStatusFilter === 'assigned' ? 'selected' : ''; ?>><?php echo t('assigned'); ?></option>
                         <option value="unassigned" <?php echo $juryStatusFilter === 'unassigned' ? 'selected' : ''; ?>><?php echo $lang['unassigned']; ?></option>
                         <option value="partial" <?php echo $juryStatusFilter === 'partial' ? 'selected' : ''; ?>><?php echo $lang['partially_assigned']; ?></option>
                     </select>

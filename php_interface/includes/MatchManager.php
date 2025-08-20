@@ -46,10 +46,23 @@ class MatchManager {
         
         $params = [];
         
-        // Status filter
+        // Status filter (based on date/time since home_matches may not have status column)
         if ($statusFilter !== 'all') {
-            $sql .= " AND m.status = :status";
-            $params['status'] = $statusFilter;
+            switch ($statusFilter) {
+                case 'scheduled':
+                    $sql .= " AND m.date_time > NOW()";
+                    break;
+                case 'completed':
+                    $sql .= " AND m.date_time < NOW()";
+                    break;
+                case 'in_progress':
+                    $sql .= " AND DATE(m.date_time) = CURDATE() AND TIME(m.date_time) BETWEEN TIME(DATE_SUB(NOW(), INTERVAL 2 HOUR)) AND TIME(DATE_ADD(NOW(), INTERVAL 2 HOUR))";
+                    break;
+                case 'cancelled':
+                    // For cancelled, we'd need a separate column or flag - for now, show no results
+                    $sql .= " AND 1=0";
+                    break;
+            }
         }
         
         // Legacy team filter (for backwards compatibility)
@@ -99,19 +112,33 @@ class MatchManager {
         foreach ($matches as $match) {
             $match['jury_assignments'] = $this->getJuryAssignments($match['id']);
             
+            // Calculate status based on date/time
+            $matchDateTime = strtotime($match['date_time']);
+            $now = time();
+            $twoHoursAgo = $now - (2 * 60 * 60);
+            $twoHoursFromNow = $now + (2 * 60 * 60);
+            
+            if ($matchDateTime < $twoHoursAgo) {
+                $match['status'] = 'completed';
+            } elseif ($matchDateTime >= $twoHoursAgo && $matchDateTime <= $twoHoursFromNow) {
+                $match['status'] = 'in_progress';
+            } else {
+                $match['status'] = 'scheduled';
+            }
+            
             // Apply jury status filter
             if ($juryStatusFilter !== 'all') {
                 $juryCount = count($match['jury_assignments']);
                 switch ($juryStatusFilter) {
                     case 'assigned':
-                        if ($juryCount == 0) continue; // Skip this match
+                        if ($juryCount == 0) continue 2; // Skip this match
                         break;
                     case 'unassigned':
-                        if ($juryCount > 0) continue; // Skip this match
+                        if ($juryCount > 0) continue 2; // Skip this match
                         break;
                     case 'partial':
                         // Assuming partial means has some but not full assignment
-                        if ($juryCount == 0 || $juryCount >= 3) continue; // Skip this match
+                        if ($juryCount == 0 || $juryCount >= 3) continue 2; // Skip this match
                         break;
                 }
             }
