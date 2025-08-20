@@ -110,18 +110,18 @@ ob_start();
     <!-- Add Exclusion Form -->
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg mb-6">
         <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('exclude_team_from_jury_duty'); ?></h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Exclude Team from Jury Duty</h3>
             <form method="POST" class="flex gap-4 items-end">
                 <input type="hidden" name="action" value="exclude_team">
                 <div class="flex-1">
                     <label for="team_name" class="block text-sm font-medium text-gray-700 mb-1">
-                        <?php echo t('select_team_to_exclude'); ?>
+                        Select Team to Exclude
                     </label>
                     <select id="team_name" 
                             name="team_name" 
                             required
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="">-- <?php echo t('select_team'); ?> --</option>
+                        <option value="">-- Select a team --</option>
                         <?php foreach ($teams as $team): ?>
                             <?php 
                             // Check if this team is already excluded
@@ -143,7 +143,7 @@ ob_start();
                 </div>
                 <button type="submit" 
                         class="inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700">
-                    <?php echo t('exclude_team'); ?>
+                    Exclude Team
                 </button>
             </form>
         </div>
@@ -152,7 +152,7 @@ ob_start();
     <!-- Team Capacities -->
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg mb-6">
         <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('team_capacities'); ?></h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Team Capacities</h3>
             <p class="text-sm text-gray-600 mb-4">Set how many assignments each team can handle (1.0 = standard capacity)</p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -213,8 +213,8 @@ ob_start();
             
             <div class="mt-4">
                 <p class="text-sm text-gray-600">
-                    <?php echo t('use_form_above_to_exclude'); ?>
-                    <?php echo t('excluded_teams_not_assigned'); ?>
+                    Use the form above to exclude teams from jury duty. 
+                    Excluded teams will not be automatically assigned to matches.
                 </p>
             </div>
         </div>
@@ -228,7 +228,7 @@ ob_start();
             
             <!-- Add Custom Constraint Form -->
             <div class="border-b border-gray-200 pb-6 mb-6">
-                <h4 class="text-md font-medium text-gray-900 mb-3"><?php echo t('add_new_constraint'); ?></h4>
+                <h4 class="text-md font-medium text-gray-900 mb-3">Add New Constraint</h4>
                 <form method="POST" class="space-y-4" x-data="{ constraintType: '', showFields: {} }">
                     <input type="hidden" name="action" value="add_custom_constraint">
                     
@@ -300,7 +300,7 @@ ob_start();
             </div>
             
             <!-- Existing Custom Constraints -->
-            <h4 class="text-md font-medium text-gray-900 mb-3"><?php echo t('active_constraints'); ?></h4>
+            <h4 class="text-md font-medium text-gray-900 mb-3">Active Constraints</h4>
             <?php if (empty($customConstraints)): ?>
                 <p class="text-gray-500">No custom constraints defined yet.</p>
             <?php else: ?>

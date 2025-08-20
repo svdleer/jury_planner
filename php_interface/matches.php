@@ -331,24 +331,25 @@ ob_start();
     <!-- Filters -->
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg mb-6">
         <div class="px-4 py-4 sm:px-6">
-            <h3 class="text-base font-semibold leading-6 text-gray-900 mb-4"><?php echo t('filter'); ?> <?php echo t('matches'); ?></h3>
+            <h3 class="text-base font-semibold leading-6 text-gray-900 mb-4"><?php echo $lang['filter']; ?> <?php echo $lang['matches']; ?></h3>
             <form method="GET" class="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-6">
                 <input type="hidden" name="view" value="<?php echo htmlspecialchars($view); ?>">
+                <input type="hidden" name="lang" value="<?php echo htmlspecialchars($currentLang); ?>">
                 <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700"><?php echo t('status'); ?></label>
+                    <label for="status" class="block text-sm font-medium text-gray-700"><?php echo $lang['status']; ?></label>
                     <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $statusFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_statuses'); ?></option>
-                        <option value="scheduled" <?php echo $statusFilter === 'scheduled' ? 'selected' : ''; ?>><?php echo t('scheduled'); ?></option>
-                        <option value="in_progress" <?php echo $statusFilter === 'in_progress' ? 'selected' : ''; ?>><?php echo t('in_progress'); ?></option>
-                        <option value="completed" <?php echo $statusFilter === 'completed' ? 'selected' : ''; ?>><?php echo t('completed'); ?></option>
-                        <option value="cancelled" <?php echo $statusFilter === 'cancelled' ? 'selected' : ''; ?>><?php echo t('cancelled'); ?></option>
+                        <option value="all" <?php echo $statusFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_statuses']; ?></option>
+                        <option value="scheduled" <?php echo $statusFilter === 'scheduled' ? 'selected' : ''; ?>><?php echo $lang['scheduled']; ?></option>
+                        <option value="in_progress" <?php echo $statusFilter === 'in_progress' ? 'selected' : ''; ?>><?php echo $lang['in_progress']; ?></option>
+                        <option value="completed" <?php echo $statusFilter === 'completed' ? 'selected' : ''; ?>><?php echo $lang['completed']; ?></option>
+                        <option value="cancelled" <?php echo $statusFilter === 'cancelled' ? 'selected' : ''; ?>><?php echo $lang['cancelled']; ?></option>
                     </select>
                 </div>
                 
                 <div>
-                    <label for="home_team" class="block text-sm font-medium text-gray-700"><?php echo t('home_team'); ?></label>
+                    <label for="home_team" class="block text-sm font-medium text-gray-700"><?php echo $lang['home_team']; ?></label>
                     <select name="home_team" id="home_team" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $homeTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_teams'); ?></option>
+                        <option value="all" <?php echo $homeTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_teams']; ?></option>
                         <?php foreach ($matchTeams as $teamName): ?>
                             <option value="<?php echo htmlspecialchars($teamName); ?>" <?php echo $homeTeamFilter == $teamName ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($teamName); ?>
@@ -358,9 +359,9 @@ ob_start();
                 </div>
                 
                 <div>
-                    <label for="away_team" class="block text-sm font-medium text-gray-700"><?php echo t('away_team'); ?></label>
+                    <label for="away_team" class="block text-sm font-medium text-gray-700"><?php echo $lang['away_team']; ?></label>
                     <select name="away_team" id="away_team" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $awayTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_teams'); ?></option>
+                        <option value="all" <?php echo $awayTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_teams']; ?></option>
                         <?php foreach ($matchTeams as $teamName): ?>
                             <option value="<?php echo htmlspecialchars($teamName); ?>" <?php echo $awayTeamFilter == $teamName ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($teamName); ?>
@@ -370,32 +371,32 @@ ob_start();
                 </div>
                 
                 <div>
-                    <label for="date" class="block text-sm font-medium text-gray-700"><?php echo t('date_range'); ?></label>
+                    <label for="date" class="block text-sm font-medium text-gray-700"><?php echo $lang['date_range']; ?></label>
                     <select name="date" id="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $dateFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_dates'); ?></option>
-                        <option value="upcoming" <?php echo $dateFilter === 'upcoming' ? 'selected' : ''; ?>><?php echo t('upcoming'); ?></option>
-                        <option value="today" <?php echo $dateFilter === 'today' ? 'selected' : ''; ?>><?php echo t('today'); ?></option>
-                        <option value="this_week" <?php echo $dateFilter === 'this_week' ? 'selected' : ''; ?>><?php echo t('this_week'); ?></option>
-                        <option value="this_month" <?php echo $dateFilter === 'this_month' ? 'selected' : ''; ?>><?php echo t('this_month'); ?></option>
+                        <option value="all" <?php echo $dateFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_dates']; ?></option>
+                        <option value="upcoming" <?php echo $dateFilter === 'upcoming' ? 'selected' : ''; ?>><?php echo $lang['upcoming']; ?></option>
+                        <option value="today" <?php echo $dateFilter === 'today' ? 'selected' : ''; ?>><?php echo $lang['today']; ?></option>
+                        <option value="this_week" <?php echo $dateFilter === 'this_week' ? 'selected' : ''; ?>><?php echo $lang['this_week']; ?></option>
+                        <option value="this_month" <?php echo $dateFilter === 'this_month' ? 'selected' : ''; ?>><?php echo $lang['this_month']; ?></option>
                     </select>
                 </div>
                 
                 <div>
-                    <label for="jury_status" class="block text-sm font-medium text-gray-700"><?php echo t('jury_status'); ?></label>
+                    <label for="jury_status" class="block text-sm font-medium text-gray-700"><?php echo $lang['jury_status']; ?></label>
                     <select name="jury_status" id="jury_status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $juryStatusFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_statuses'); ?></option>
-                        <option value="assigned" <?php echo $juryStatusFilter === 'assigned' ? 'selected' : ''; ?>><?php echo t('assigned'); ?></option>
-                        <option value="unassigned" <?php echo $juryStatusFilter === 'unassigned' ? 'selected' : ''; ?>><?php echo $lang['unassigned']; ?></option>
-                        <option value="partial" <?php echo $juryStatusFilter === 'partial' ? 'selected' : ''; ?>><?php echo $lang['partially_assigned']; ?></option>
+                        <option value="all" <?php echo $juryStatusFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_statuses']; ?></option>
+                        <option value="assigned" <?php echo $juryStatusFilter === 'assigned' ? 'selected' : ''; ?>><?php echo $lang['assigned']; ?></option>
+                        <option value="unassigned" <?php echo $juryStatusFilter === 'unassigned' ? 'selected' : ''; ?>><?php echo t('unassigned'); ?></option>
+                        <option value="partial" <?php echo $juryStatusFilter === 'partial' ? 'selected' : ''; ?>><?php echo t('partially_assigned'); ?></option>
                     </select>
                 </div>
                 
                 <div>
-                    <label for="lock_status" class="block text-sm font-medium text-gray-700"><?php echo $lang['lock_status']; ?></label>
+                    <label for="lock_status" class="block text-sm font-medium text-gray-700"><?php echo t('lock_status'); ?></label>
                     <select name="lock_status" id="lock_status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $lockStatusFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_statuses'); ?></option>
-                        <option value="locked" <?php echo $lockStatusFilter === 'locked' ? 'selected' : ''; ?>><?php echo t('locked'); ?></option>
-                        <option value="unlocked" <?php echo $lockStatusFilter === 'unlocked' ? 'selected' : ''; ?>><?php echo t('unlocked'); ?></option>
+                        <option value="all" <?php echo $lockStatusFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_statuses']; ?></option>
+                        <option value="locked" <?php echo $lockStatusFilter === 'locked' ? 'selected' : ''; ?>><?php echo $lang['locked']; ?></option>
+                        <option value="unlocked" <?php echo $lockStatusFilter === 'unlocked' ? 'selected' : ''; ?>><?php echo $lang['unlocked']; ?></option>
                     </select>
                 </div>
                 
@@ -404,13 +405,13 @@ ob_start();
                         <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
                         </svg>
-                        <?php echo t('filter'); ?>
+                        <?php echo $lang['filter']; ?>
                     </button>
                     <a href="?view=<?php echo $view; ?>&lang=<?php echo $currentLang; ?>" class="inline-flex justify-center items-center rounded-md bg-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300">
                         <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
-                        <?php echo t('clear_filters'); ?>
+                        <?php echo $lang['clear_filters']; ?>
                     </a>
                 </div>
             </form>
@@ -433,18 +434,18 @@ ob_start();
                 </div>
             <?php else: ?>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-300 table-fixed">
+                    <table class="min-w-full divide-y divide-gray-300">
                         <thead>
                             <tr>
-                                <th scope="col" class="w-32 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"><?php echo t('date_time'); ?></th>
-                                <th scope="col" class="w-24 px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('home_team'); ?></th>
-                                <th scope="col" class="w-20 px-3 py-3.5 text-center text-sm font-semibold text-gray-900"><?php echo t('competition'); ?> / <?php echo t('class'); ?></th>
-                                <th scope="col" class="w-24 px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('away_team'); ?></th>
-                                <th scope="col" class="w-20 px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('location'); ?></th>
-                                <th scope="col" class="w-20 px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('status'); ?></th>
-                                <th scope="col" class="w-20 px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('lock_status'); ?></th>
-                                <th scope="col" class="w-32 px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('jury_assignment'); ?></th>
-                                <th scope="col" class="w-20 relative py-3.5 pl-3 pr-4 sm:pr-0">
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"><?php echo t('date_time'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('home_team'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"><?php echo t('competition'); ?> / <?php echo t('class'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('away_team'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('location'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('status'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('lock_status'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('jury_assignment'); ?></th>
+                                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                                     <span class="sr-only"><?php echo t('actions'); ?></span>
                                 </th>
                             </tr>
