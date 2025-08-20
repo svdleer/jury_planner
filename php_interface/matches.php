@@ -162,9 +162,15 @@ ob_start();
     <div class="mb-6">
         <div class="sm:flex sm:items-center sm:justify-between mb-4">
             <div class="min-w-0 flex-1">
-                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                    <?php echo $view === 'planning' ? t('auto_assignment_planning') : t('matches'); ?>
-                </h2>
+                <?php if ($view === 'planning'): ?>
+                    <h2 class="text-xl font-semibold leading-7 text-gray-700">
+                        <i class="fas fa-magic mr-2"></i><?php echo t('auto_assignment_planning'); ?>
+                    </h2>
+                <?php else: ?>
+                    <h2 class="text-xl font-semibold leading-7 text-gray-700">
+                        <i class="fas fa-list mr-2"></i><?php echo t('matches_overview'); ?>
+                    </h2>
+                <?php endif; ?>
             </div>
             <div class="mt-4 flex sm:ml-4 sm:mt-0 space-x-3">
                 <!-- Add Match button disabled for production -->

@@ -68,9 +68,7 @@ ob_start();
     <!-- Header with actions -->
     <div class="sm:flex sm:items-center sm:justify-between mb-6">
         <div class="min-w-0 flex-1">
-            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                <?php echo t('teams'); ?>
-            </h2>
+            <!-- Page title provided by layout -->
         </div>
         <div class="mt-4 flex sm:ml-4 sm:mt-0">
             <!-- Add Team button disabled for production -->

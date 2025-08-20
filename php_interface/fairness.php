@@ -19,13 +19,6 @@ ob_start();
 ?>
 
 <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <div class="sm:flex sm:items-center sm:justify-between mb-6">
-        <div class="min-w-0 flex-1">
-            <h2 class="text-2xl font-bold leading-7 text-gray-900"><?php echo t('fairness_dashboard'); ?></h2>
-            <p class="mt-1 text-sm text-gray-500"><?php echo t('fairness_dashboard_description'); ?></p>
-        </div>
-    </div>
-
     <!-- Fairness Metrics -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <div class="bg-white rounded-lg shadow p-6">
@@ -211,34 +204,5 @@ ob_start();
 
 <?php
 $content = ob_get_clean();
+include 'includes/layout.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $pageTitle; ?> - Water polo jury planner</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100 min-h-screen">
-    <nav class="bg-blue-600 text-white p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold">MNC Jury Planner</h1>
-            <div class="flex items-center space-x-4">
-                <a href="mnc_dashboard.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                    <i class="fas fa-home mr-1"></i> Dashboard
-                </a>
-                <a href="constraints.php" class="hover:bg-blue-700 px-3 py-2 rounded">
-                    <i class="fas fa-cog mr-1"></i> Constraints
-                </a>
-                <a href="fairness.php" class="bg-blue-700 px-3 py-2 rounded">
-                    <i class="fas fa-balance-scale mr-1"></i> Fairness
-                </a>
-            </div>
-        </div>
-    </nav>
-    
-    <?php echo $content; ?>
-</body>
-</html>

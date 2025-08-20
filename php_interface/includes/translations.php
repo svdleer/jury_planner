@@ -67,6 +67,7 @@ class Translations {
                         'auto_assignment_planning' => 'Auto Assignment Planning',
             'auto_assignment_description' => 'Automatically assign jury teams to matches using constraints and optimization',
             'matches_management_description' => 'Manage water polo matches, assign jury teams, and track assignments',
+            'matches_overview' => 'Matches Overview',
             
             // Constraint analysis
             'matches_management' => 'Matches Management',
@@ -247,6 +248,7 @@ class Translations {
                         'auto_assignment_planning' => 'Automatische Toewijzing Planning',
             'auto_assignment_description' => 'Automatisch jury teams toewijzen aan wedstrijden met behulp van beperkingen en optimalisatie',
             'matches_management_description' => 'Beheer waterpolo wedstrijden, wijs jury teams toe en volg toewijzingen',
+            'matches_overview' => 'Wedstrijden Overzicht',
             
             // Constraint analysis
             'matches_management' => 'Wedstrijden Beheer',

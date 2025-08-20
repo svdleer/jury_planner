@@ -31,17 +31,6 @@ ob_start();
                 <?php echo htmlspecialchars($error); ?>
             </div>
         <?php else: ?>
-            
-        <!-- Header -->
-        <div class="bg-white shadow rounded-lg p-6 mb-6">
-            <h2 class="text-2xl font-bold text-gray-900 mb-2">
-                <i class="fas fa-tachometer-alt text-blue-600 mr-2"></i>
-                <?php echo t('jury_management_dashboard'); ?>
-            </h2>
-            <p class="text-gray-600">
-                <?php echo t('welcome_message'); ?>
-            </p>
-        </div>
 
         <!-- Statistics Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
