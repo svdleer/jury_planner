@@ -154,6 +154,19 @@ class MatchConstraintManager {
             ];
         }
         
+        // 9. Improved weekly distribution - check if team had assignment in previous week
+        $lastWeekAssignments = $this->getWeeklyAssignmentCount($juryTeamName, $matchDate, -1); // previous week
+        if ($lastWeekAssignments > 0) {
+            $violations[] = [
+                'type' => 'previous_week_assignment',
+                'severity' => 'SOFT',
+                'message' => $this->formatConstraintMessage('previous_week_assignment', [
+                    'team' => $juryTeamName
+                ]),
+                'score_penalty' => -25 // Higher penalty than general recent assignments
+            ];
+        }
+        
         return $violations;
     }
     
@@ -261,6 +274,39 @@ class MatchConstraintManager {
     }
     
     /**
+     * Get count of assignments for a team in a specific week relative to given date
+     * $weekOffset: -1 = previous week, 0 = current week, 1 = next week
+     */
+    private function getWeeklyAssignmentCount($teamName, $referenceDate, $weekOffset) {
+        // Calculate the start and end of the target week
+        $referenceDateObj = new DateTime($referenceDate);
+        $dayOfWeek = $referenceDateObj->format('w'); // 0 = Sunday, 6 = Saturday
+        
+        // Adjust to get Monday as start of week (ISO standard)
+        $daysToMonday = ($dayOfWeek === 0) ? -6 : -(($dayOfWeek - 1));
+        $weekStart = clone $referenceDateObj;
+        $weekStart->modify("{$daysToMonday} days");
+        
+        // Add week offset
+        if ($weekOffset !== 0) {
+            $weekStart->modify(($weekOffset * 7) . " days");
+        }
+        
+        $weekEnd = clone $weekStart;
+        $weekEnd->modify('+6 days');
+        
+        $sql = "SELECT COUNT(*) FROM jury_assignments ja
+                JOIN home_matches m ON ja.match_id = m.id
+                JOIN jury_teams jt ON ja.team_id = jt.id
+                WHERE jt.name = ?
+                AND DATE(m.date_time) BETWEEN ? AND ?";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$teamName, $weekStart->format('Y-m-d'), $weekEnd->format('Y-m-d')]);
+        return $stmt->fetchColumn();
+    }
+    
+    /**
      * Calculate eligibility score for a team-match combination
      * Higher score = better choice
      */
@@ -323,6 +369,11 @@ class MatchConstraintManager {
                 'name' => 'Recent Assignments',
                 'severity' => 'SOFT',
                 'description' => 'Prefer teams with fewer recent assignments (load balancing)'
+            ],
+            'previous_week_assignment' => [
+                'name' => 'Previous Week Assignment',
+                'severity' => 'SOFT',
+                'description' => 'Prefer teams that didn\'t have jury duty in the previous week'
             ]
         ];
     }

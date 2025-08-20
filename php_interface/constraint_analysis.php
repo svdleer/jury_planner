@@ -57,10 +57,10 @@ ob_start();
             <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('select_match_to_analyze'); ?></h3>
             <form method="GET" class="flex gap-4 items-end">
                 <div class="flex-1">
-                    <label for="match_id" class="block text-sm font-medium text-gray-700 mb-1">Match</label>
+                    <label for="match_id" class="block text-sm font-medium text-gray-700 mb-1"><?php echo t('match'); ?></label>
                     <select name="match_id" id="match_id" onchange="this.form.submit()"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="">-- Select a match --</option>
+                        <option value="">-- <?php echo t('select_match'); ?> --</option>
                         <?php foreach ($upcomingMatches as $match): ?>
                             <option value="<?php echo $match['id']; ?>" <?php echo $match['id'] == $selectedMatchId ? 'selected' : ''; ?>>
                                 <?php echo date('M j, Y H:i', strtotime($match['date_time'])); ?> - 
@@ -81,7 +81,7 @@ ob_start();
             <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('match_details'); ?></h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Date & Time</label>
+                    <label class="block text-sm font-medium text-gray-700"><?php echo t('date_time'); ?></label>
                     <p class="mt-1 text-sm text-gray-900"><?php echo date('l, F j, Y \a\t H:i', strtotime($selectedMatch['date_time'])); ?></p>
                 </div>
                 <div>
@@ -105,10 +105,10 @@ ob_start();
                 <table class="min-w-full table-auto">
                     <thead>
                         <tr class="bg-gray-50">
-                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Team</th>
-                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Eligibility</th>
-                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Score</th>
-                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Constraints</th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900"><?php echo t('team_name'); ?></th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900"><?php echo t('eligibility'); ?></th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900"><?php echo t('score'); ?></th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900"><?php echo t('constraints'); ?></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
@@ -136,16 +136,16 @@ ob_start();
                             <tr class="<?php echo !$analysis['eligible'] ? 'bg-red-50' : ($analysis['score'] > 50 ? 'bg-green-50' : ''); ?>">
                                 <td class="px-4 py-2">
                                     <div class="font-medium text-gray-900"><?php echo htmlspecialchars($analysis['team']['name']); ?></div>
-                                    <div class="text-xs text-gray-500">Capacity: <?php echo $analysis['team']['capacity_factor']; ?></div>
+                                    <div class="text-xs text-gray-500"><?php echo t('capacity'); ?>: <?php echo $analysis['team']['capacity_factor']; ?></div>
                                 </td>
                                 <td class="px-4 py-2">
                                     <?php if ($analysis['eligible']): ?>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            Eligible
+                                            <?php echo t('eligible'); ?>
                                         </span>
                                     <?php else: ?>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            Ineligible
+                                            <?php echo t('ineligible'); ?>
                                         </span>
                                     <?php endif; ?>
                                 </td>
