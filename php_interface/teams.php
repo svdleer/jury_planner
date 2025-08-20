@@ -12,8 +12,8 @@ if ($_POST) {
         if (isset($_POST['action'])) {
             switch ($_POST['action']) {
                 case 'create':
-                    // Team creation disabled for production
-                    $_SESSION['error'] = 'Adding new teams is disabled in production mode.';
+                    $teamManager->createTeam($_POST);
+                    $_SESSION['success'] = 'Team created successfully!';
                     header('Location: teams.php');
                     exit;
                     
@@ -71,7 +71,12 @@ ob_start();
             <!-- Page title provided by layout -->
         </div>
         <div class="mt-4 flex sm:ml-4 sm:mt-0">
-            <!-- Add Team button disabled for production -->
+            <button @click="showCreateModal = true" class="inline-flex items-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-water-blue-600">
+                <svg class="-ml-0.5 mr-1.5 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                </svg>
+                <?php echo t('add_team'); ?>
+            </button>
         </div>
     </div>
 
@@ -86,7 +91,12 @@ ob_start();
                     <h3 class="mt-2 text-sm font-semibold text-gray-900"><?php echo t('no_teams_found'); ?></h3>
                     <p class="mt-1 text-sm text-gray-500"><?php echo t('teams_get_started_message'); ?></p>
                     <div class="mt-6">
-                        <!-- Add Team button disabled for production -->
+                        <button @click="showCreateModal = true" class="inline-flex items-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-water-blue-600">
+                            <svg class="-ml-0.5 mr-1.5 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                            </svg>
+                            <?php echo t('add_team'); ?>
+                        </button>
                     </div>
                 </div>
             <?php else: ?>
@@ -96,7 +106,6 @@ ob_start();
                             <tr>
                                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"><?php echo t('team_name'); ?></th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('weight'); ?></th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('status'); ?></th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('dedicated_to'); ?></th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                                     <span class="sr-only"><?php echo t('actions'); ?></span>
@@ -125,15 +134,8 @@ ob_start();
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <?php echo $team['weight'] >= 1.5 ? 'bg-green-100 text-green-800' : ($team['weight'] >= 1.0 ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'); ?>">
-                                            <?php echo $team['weight']; ?>
+                                            <?php echo number_format($team['weight'], 2); ?>
                                         </span>
-                                    </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        <?php if ($team['is_active']): ?>
-                                            <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"><?php echo t('active'); ?></span>
-                                        <?php else: ?>
-                                            <span class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"><?php echo t('inactive'); ?></span>
-                                        <?php endif; ?>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         <?php echo $team['dedicated_to_name'] ? htmlspecialchars($team['dedicated_to_name']) : '-'; ?>
@@ -194,14 +196,8 @@ ob_start();
                                     </div>
                                     
                                     <div>
-                                        <label for="notes" class="block text-sm font-medium leading-6 text-gray-900">Notes</label>
+                                        <label for="notes" class="block text-sm font-medium leading-6 text-gray-900"><?php echo t('notes'); ?></label>
                                         <textarea name="notes" id="notes" rows="3" x-model="editingTeam.notes" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6"></textarea>
-                                    </div>
-                                    
-                                    <div class="flex items-center">
-                                        <input type="hidden" name="is_active" value="0">
-                                        <input type="checkbox" name="is_active" id="is_active" value="1" x-model="editingTeam.is_active" class="h-4 w-4 rounded border-gray-300 text-water-blue-600 focus:ring-water-blue-600">
-                                        <label for="is_active" class="ml-2 block text-sm text-gray-900"><?php echo t('active'); ?></label>
                                     </div>
                                 </div>
                             </div>
@@ -264,8 +260,7 @@ function teamsApp() {
             name: '',
             weight: 1.0,
             dedicated_to_team_id: '',
-            notes: '',
-            is_active: true
+            notes: ''
         },
         deleteTeamId: null,
         deleteTeamName: '',
@@ -276,7 +271,6 @@ function teamsApp() {
         
         editTeam(team) {
             this.editingTeam = { ...team };
-            this.editingTeam.is_active = Boolean(team.is_active);
             this.showEditModal = true;
         },
         
@@ -294,19 +288,13 @@ function teamsApp() {
                 name: '',
                 weight: 1.0,
                 dedicated_to_team_id: '',
-                notes: '',
-                is_active: true
+                notes: ''
             };
         },
         
         submitForm(event) {
             const form = event.target;
             const formData = new FormData(form);
-            
-            // Convert checkbox value properly
-            if (!this.editingTeam.is_active) {
-                formData.set('is_active', '0');
-            }
             
             // Form will submit normally
             return true;
