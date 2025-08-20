@@ -44,9 +44,11 @@ class Translations {
             // Teams
             'team_name' => 'Team Name',
             'weight' => 'Weight',
+            'dedicated_to_team' => 'Dedicated To Team',
             'dedicated_to' => 'Dedicated to',
             'notes' => 'Notes',
             'active' => 'Active',
+            'inactive' => 'Inactive',
             'actions' => 'Actions',
             'edit' => 'Edit',
             'delete' => 'Delete',
@@ -225,9 +227,11 @@ class Translations {
             // Teams
             'team_name' => 'Team Naam',
             'weight' => 'Gewicht',
+            'dedicated_to_team' => 'Toegewezen Aan Team',
             'dedicated_to' => 'Toegewijd aan',
             'notes' => 'Notities',
             'active' => 'Actief',
+            'inactive' => 'Inactief',
             'actions' => 'Acties',
             'edit' => 'Bewerken',
             'delete' => 'Verwijderen',

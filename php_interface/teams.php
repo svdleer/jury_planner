@@ -130,9 +130,9 @@ ob_start();
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         <?php if ($team['is_active']): ?>
-                                            <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Active</span>
+                                            <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"><?php echo t('active'); ?></span>
                                         <?php else: ?>
-                                            <span class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Inactive</span>
+                                            <span class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"><?php echo t('inactive'); ?></span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -172,18 +172,18 @@ ob_start();
                                 <h3 class="text-base font-semibold leading-6 text-gray-900" x-text="showEditModal ? 'Edit Team' : 'Add New Team'"></h3>
                                 <div class="mt-4 space-y-4">
                                     <div>
-                                        <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Team Name</label>
+                                        <label for="name" class="block text-sm font-medium leading-6 text-gray-900"><?php echo t('team_name'); ?></label>
                                         <input type="text" name="name" id="name" required x-model="editingTeam.name" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
                                     </div>
                                     
                                     <div>
-                                        <label for="weight" class="block text-sm font-medium leading-6 text-gray-900">Weight</label>
+                                        <label for="weight" class="block text-sm font-medium leading-6 text-gray-900"><?php echo t('weight'); ?></label>
                                         <input type="number" step="0.1" min="0" max="5" name="weight" id="weight" x-model="editingTeam.weight" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
                                         <p class="mt-1 text-xs text-gray-500">1.0 = standard capacity, higher values = more assignments</p>
                                     </div>
                                     
                                     <div>
-                                        <label for="dedicated_to_team_id" class="block text-sm font-medium leading-6 text-gray-900">Dedicated To Team</label>
+                                        <label for="dedicated_to_team_id" class="block text-sm font-medium leading-6 text-gray-900"><?php echo t('dedicated_to_team'); ?></label>
                                         <select name="dedicated_to_team_id" id="dedicated_to_team_id" x-model="editingTeam.dedicated_to_team_id" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
                                             <option value="">None</option>
                                             <?php foreach ($teams as $team): ?>
@@ -201,7 +201,7 @@ ob_start();
                                     <div class="flex items-center">
                                         <input type="hidden" name="is_active" value="0">
                                         <input type="checkbox" name="is_active" id="is_active" value="1" x-model="editingTeam.is_active" class="h-4 w-4 rounded border-gray-300 text-water-blue-600 focus:ring-water-blue-600">
-                                        <label for="is_active" class="ml-2 block text-sm text-gray-900">Active</label>
+                                        <label for="is_active" class="ml-2 block text-sm text-gray-900"><?php echo t('active'); ?></label>
                                     </div>
                                 </div>
                             </div>
@@ -210,7 +210,7 @@ ob_start();
                             <button type="submit" class="inline-flex w-full justify-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500 sm:ml-3 sm:w-auto">
                                 <span x-text="showEditModal ? 'Update Team' : 'Create Team'"></span>
                             </button>
-                            <button @click="closeModals" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
+                            <button @click="closeModals" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"><?php echo t('cancel'); ?></button>
                         </div>
                     </form>
                 </div>
@@ -231,7 +231,7 @@ ob_start();
                             </svg>
                         </div>
                         <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                            <h3 class="text-base font-semibold leading-6 text-gray-900">Delete Team</h3>
+                            <h3 class="text-base font-semibold leading-6 text-gray-900"><?php echo t('delete_team'); ?></h3>
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">
                                     Are you sure you want to delete <strong x-text="deleteTeamName"></strong>? This action cannot be undone.
@@ -243,9 +243,9 @@ ob_start();
                         <form method="POST" class="inline">
                             <input type="hidden" name="action" value="delete">
                             <input type="hidden" name="id" :value="deleteTeamId">
-                            <button type="submit" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Delete</button>
+                            <button type="submit" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"><?php echo t('delete'); ?></button>
                         </form>
-                        <button @click="showDeleteModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
+                        <button @click="showDeleteModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"><?php echo t('cancel'); ?></button>
                     </div>
                 </div>
             </div>
