@@ -74,25 +74,15 @@ ob_start();
 
 <div class="max-w-7xl mx-auto p-6" x-data="constraintManager()">
     <div class="min-h-screen">
-        <!-- Header -->
-        <header class="bg-white shadow">
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-3xl font-bold tracking-tight text-gray-900">Advanced Constraint Configuration</h1>
-                        <p class="mt-2 text-sm text-gray-600">Configure jury assignment rules, weights, and penalties</p>
-                    </div>
-                    <div class="flex space-x-4">
-                        <a href="mnc_dashboard.php" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                            <i class="fas fa-arrow-left mr-2"></i>Back to Main
-                        </a>
-                        <button @click="showBulkActions = !showBulkActions" class="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
-                            <i class="fas fa-cogs mr-2"></i>Bulk Actions
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <!-- Action Bar -->
+        <div class="mb-6 flex justify-between items-center">
+            <a href="mnc_dashboard.php" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Main
+            </a>
+            <button @click="showBulkActions = !showBulkActions" class="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
+                <i class="fas fa-cogs mr-2"></i>Bulk Actions
+            </button>
+        </div>
 
         <!-- Statistics Overview -->
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">

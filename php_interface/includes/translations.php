@@ -203,6 +203,10 @@ class Translations {
             // Advanced constraints page
             'advanced_constraint_configuration' => 'Advanced Constraint Configuration',
             'configure_jury_assignment_rules' => 'Configure jury assignment rules, weights, and penalties',
+            
+            // Advanced constraints page
+            'advanced_constraint_configuration' => 'Advanced Constraint Configuration',
+            'configure_jury_assignment_rules' => 'Configure jury assignment rules, weights, and penalties',
             'team_eligibility_analysis' => 'Team Eligibility Analysis',
             'match_details' => 'Match Details',
             'constraint_types' => 'Constraint Types',
