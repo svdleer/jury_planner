@@ -18,6 +18,7 @@ class AdvancedConstraintManager {
     public function __construct($database) {
         $this->db = $database;
         $this->initializeConstraintsTable();
+        $this->cleanupInappropriateConstraints();
     }
     
     /**
@@ -344,6 +345,32 @@ class AdvancedConstraintManager {
                 ]);
             }
         }
+    }
+    
+    /**
+     * Clean up inappropriate constraints that don't make sense for water polo
+     */
+    private function cleanupInappropriateConstraints() {
+        $inappropriateConstraints = [
+            'FALLBACK_NON_WEEKEND_TEAMS',
+            'NON_WEEKEND_TEAMS',
+            'WEEKDAY_ASSIGNMENTS',
+            'NON_WEEKEND_FALLBACK'
+        ];
+        
+        $placeholders = str_repeat('?,', count($inappropriateConstraints) - 1) . '?';
+        $sql = "DELETE FROM constraint_config WHERE constraint_code IN ($placeholders)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($inappropriateConstraints);
+    }
+    
+    /**
+     * Remove constraints by name pattern (e.g., "Non-Weekend" patterns)
+     */
+    public function removeConstraintsByPattern($pattern) {
+        $sql = "DELETE FROM constraint_config WHERE constraint_name LIKE ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(["%$pattern%"]);
     }
     
     /**

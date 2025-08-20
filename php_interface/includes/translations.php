@@ -199,6 +199,10 @@ class Translations {
             'error_adding_constraint' => 'Error adding constraint.',
             'constraint_status_updated' => 'Constraint status updated.',
             'constraint_deleted_successfully' => 'Constraint deleted successfully.',
+            
+            // Advanced constraints page
+            'advanced_constraint_configuration' => 'Advanced Constraint Configuration',
+            'configure_jury_assignment_rules' => 'Configure jury assignment rules, weights, and penalties',
             'team_eligibility_analysis' => 'Team Eligibility Analysis',
             'match_details' => 'Match Details',
             'constraint_types' => 'Constraint Types',
@@ -444,6 +448,10 @@ class Translations {
             'error_adding_constraint' => 'Fout bij toevoegen beperking.',
             'constraint_status_updated' => 'Beperking status bijgewerkt.',
             'constraint_deleted_successfully' => 'Beperking succesvol verwijderd.',
+            
+            // Advanced constraints page
+            'advanced_constraint_configuration' => 'Geavanceerde Beperking Configuratie',
+            'configure_jury_assignment_rules' => 'Configureer jury toewijzing regels, gewichten en straffen',
             'team_eligibility_analysis' => 'Team geschiktheidsanalyse',
             'match_details' => 'Wedstrijd details',
             'constraint_types' => 'Beperkings types',

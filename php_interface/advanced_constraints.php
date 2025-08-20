@@ -1,8 +1,13 @@
 <?php
+session_start();
 require_once 'includes/config.php';
 require_once 'includes/AdvancedConstraintManager.php';
+require_once 'includes/translations.php';
 
 $constraintManager = new AdvancedConstraintManager($pdo);
+
+// Clean up any "Non-Weekend" constraints that don't make sense for water polo
+$constraintManager->removeConstraintsByPattern('Non-Weekend');
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -61,23 +66,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $constraintsByCategory = $constraintManager->getAllConstraintsByCategory();
 $stats = $constraintManager->getConstraintStats();
 
+$pageTitle = t('advanced_constraint_configuration');
+$pageDescription = t('configure_jury_assignment_rules');
+
 ob_start();
 ?>
 
 <div class="max-w-7xl mx-auto p-6" x-data="constraintManager()">
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced constraint configuration - Jury planning system</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-</head>
-<body class="bg-gray-50" x-data="constraintManager()">
     <div class="min-h-screen">
         <!-- Header -->
         <header class="bg-white shadow">
@@ -89,7 +84,7 @@ ob_start();
                     </div>
                     <div class="flex space-x-4">
                         <a href="mnc_dashboard.php" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                            <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                            <i class="fas fa-arrow-left mr-2"></i>Back to Main
                         </a>
                         <button @click="showBulkActions = !showBulkActions" class="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
                             <i class="fas fa-cogs mr-2"></i>Bulk Actions
@@ -99,7 +94,7 @@ ob_start();
             </div>
         </header>
 
-        <!-- Statistics Dashboard -->
+        <!-- Statistics Overview -->
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-6">
                 <div class="bg-white overflow-hidden shadow rounded-lg">
