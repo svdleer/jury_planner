@@ -75,24 +75,6 @@ class MatchConstraintManager {
             }
         }
         
-        // 4. Cannot jury if team has home match within 2 hours
-        $nearbyHomeMatches = $this->getTeamHomeMatchesNearTime($juryTeamName, $match['date_time'], 2);
-        foreach ($nearbyHomeMatches as $homeMatch) {
-            if ($homeMatch['id'] != $match['id']) {
-                $timeDiff = round(abs(strtotime($match['date_time']) - strtotime($homeMatch['date_time'])) / 3600, 1);
-                $violations[] = [
-                    'type' => 'home_match_nearby',
-                    'severity' => 'HARD',
-                    'message' => $this->formatConstraintMessage('home_match_within_hours', [
-                        'team' => $juryTeamName,
-                        'opponent' => $homeMatch['away_team'],
-                        'hours' => $timeDiff
-                    ]),
-                    'score_penalty' => -1000
-                ];
-            }
-        }
-        
         // SOFT CONSTRAINTS (preferences)
         
         // 5. Prefer teams that have home matches same day (they're already at the location)
@@ -180,22 +162,6 @@ class MatchConstraintManager {
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$teamName, $date]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-    
-    /**
-     * Get team's home matches within X hours of given time
-     */
-    private function getTeamHomeMatchesNearTime($teamName, $dateTime, $hoursWindow) {
-        $startTime = date('Y-m-d H:i:s', strtotime($dateTime) - ($hoursWindow * 3600));
-        $endTime = date('Y-m-d H:i:s', strtotime($dateTime) + ($hoursWindow * 3600));
-        
-        $sql = "SELECT * FROM home_matches 
-                WHERE home_team = ? 
-                AND date_time BETWEEN ? AND ?";
-        
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$teamName, $startTime, $endTime]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
@@ -326,11 +292,6 @@ class MatchConstraintManager {
                 'name' => 'Away Match Same Day',
                 'severity' => 'HARD',
                 'description' => 'Team cannot jury when they have away match same day'
-            ],
-            'home_match_nearby' => [
-                'name' => 'Home Match Within 2 Hours',
-                'severity' => 'HARD',
-                'description' => 'Team cannot jury within 2 hours of their home match'
             ],
             'consecutive_weekends' => [
                 'name' => 'Consecutive Weekends',
