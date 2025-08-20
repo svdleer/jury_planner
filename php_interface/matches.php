@@ -332,7 +332,7 @@ ob_start();
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg mb-6">
         <div class="px-4 py-4 sm:px-6">
             <h3 class="text-base font-semibold leading-6 text-gray-900 mb-4"><?php echo $lang['filter']; ?> <?php echo $lang['matches']; ?></h3>
-            <form method="GET" class="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            <form method="GET" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
                 <input type="hidden" name="view" value="<?php echo htmlspecialchars($view); ?>">
                 <input type="hidden" name="lang" value="<?php echo htmlspecialchars($currentLang); ?>">
                 <div>
@@ -400,7 +400,7 @@ ob_start();
                     </select>
                 </div>
                 
-                <div class="col-span-full flex items-end justify-end gap-2">
+                <div class="col-span-full flex items-center justify-end gap-2 mt-4">
                     <button type="submit" class="inline-flex justify-center items-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">
                         <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
