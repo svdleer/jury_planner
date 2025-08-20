@@ -26,19 +26,19 @@ if ($_POST) {
                     if ($stmt->fetchColumn() == 0) {
                         $stmt = $db->prepare("INSERT INTO excluded_teams (name) VALUES (?)");
                         $stmt->execute([$teamName]);
-                        $message = "Team '{$teamName}' excluded successfully.";
+                        $message = t('team_excluded_successfully', [$teamName]);
                     } else {
-                        $message = "Team '{$teamName}' is already excluded.";
+                        $message = t('team_already_excluded', [$teamName]);
                     }
                 }
             } elseif ($_POST['action'] === 'remove_exclusion' && isset($_POST['exclusion_id'])) {
                 $stmt = $db->prepare("DELETE FROM excluded_teams WHERE id = ?");
                 $stmt->execute([$_POST['exclusion_id']]);
-                $message = "Exclusion removed successfully.";
+                $message = t('exclusion_removed_successfully');
             } elseif ($_POST['action'] === 'update_capacity' && isset($_POST['team_id'], $_POST['capacity_factor'])) {
                 $stmt = $db->prepare("UPDATE jury_teams SET capacity_factor = ? WHERE id = ?");
                 $stmt->execute([$_POST['capacity_factor'], $_POST['team_id']]);
-                $message = "Team capacity updated successfully.";
+                $message = t('team_capacity_updated_successfully');
             } elseif ($_POST['action'] === 'add_custom_constraint') {
                 $type = $_POST['constraint_type'];
                 $sourceTeam = $_POST['source_team'];
@@ -48,23 +48,23 @@ if ($_POST) {
                 $reason = $_POST['reason'] ?? '';
                 
                 if ($constraintManager->addConstraint($type, $sourceTeam, $targetTeam, $date, $value, $reason)) {
-                    $message = "Custom constraint added successfully.";
+                    $message = t('custom_constraint_added_successfully');
                 } else {
-                    $message = "Error adding constraint.";
+                    $message = t('error_adding_constraint');
                 }
             } elseif ($_POST['action'] === 'toggle_constraint' && isset($_POST['constraint_id'])) {
                 $isActive = $_POST['is_active'] == '1' ? 0 : 1;
                 if ($constraintManager->updateConstraintStatus($_POST['constraint_id'], $isActive)) {
-                    $message = "Constraint status updated.";
+                    $message = t('constraint_status_updated');
                 }
             } elseif ($_POST['action'] === 'delete_constraint' && isset($_POST['constraint_id'])) {
                 if ($constraintManager->deleteConstraint($_POST['constraint_id'])) {
-                    $message = "Constraint deleted successfully.";
+                    $message = t('constraint_deleted_successfully');
                 }
             }
         }
     } catch (Exception $e) {
-        $message = "Error: " . $e->getMessage();
+        $message = t('error') . ": " . $e->getMessage();
     }
 }
 

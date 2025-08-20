@@ -189,6 +189,16 @@ class Translations {
             'use_form_above_to_exclude' => 'Use the form above to exclude teams from jury duty.',
             'excluded_teams_not_assigned' => 'Excluded teams will not be automatically assigned to matches.',
             'no_upcoming_matches_found' => 'No upcoming matches found.',
+            
+            // Team exclusion messages
+            'team_excluded_successfully' => 'Team \'%s\' excluded successfully.',
+            'team_already_excluded' => 'Team \'%s\' is already excluded.',
+            'exclusion_removed_successfully' => 'Exclusion removed successfully.',
+            'team_capacity_updated_successfully' => 'Team capacity updated successfully.',
+            'custom_constraint_added_successfully' => 'Custom constraint added successfully.',
+            'error_adding_constraint' => 'Error adding constraint.',
+            'constraint_status_updated' => 'Constraint status updated.',
+            'constraint_deleted_successfully' => 'Constraint deleted successfully.',
             'team_eligibility_analysis' => 'Team Eligibility Analysis',
             'match_details' => 'Match Details',
             'constraint_types' => 'Constraint Types',
@@ -424,6 +434,16 @@ class Translations {
             'use_form_above_to_exclude' => 'Gebruik het formulier hierboven om teams uit te sluiten van jury taak.',
             'excluded_teams_not_assigned' => 'Uitgesloten teams worden niet automatisch toegewezen aan wedstrijden.',
             'no_upcoming_matches_found' => 'Geen aankomende wedstrijden gevonden.',
+            
+            // Team exclusion messages
+            'team_excluded_successfully' => 'Team \'%s\' succesvol uitgesloten.',
+            'team_already_excluded' => 'Team \'%s\' is al uitgesloten.',
+            'exclusion_removed_successfully' => 'Uitsluiting succesvol verwijderd.',
+            'team_capacity_updated_successfully' => 'Team capaciteit succesvol bijgewerkt.',
+            'custom_constraint_added_successfully' => 'Aangepaste beperking succesvol toegevoegd.',
+            'error_adding_constraint' => 'Fout bij toevoegen beperking.',
+            'constraint_status_updated' => 'Beperking status bijgewerkt.',
+            'constraint_deleted_successfully' => 'Beperking succesvol verwijderd.',
             'team_eligibility_analysis' => 'Team geschiktheidsanalyse',
             'match_details' => 'Wedstrijd details',
             'constraint_types' => 'Beperkings types',
