@@ -114,19 +114,6 @@ class MatchConstraintManager {
             }
         }
         
-        // 6. Prefer not to jury matches involving teams from same pool/division
-        $poolConflict = $this->checkPoolConflict($juryTeamName, $match['home_team'], $match['away_team']);
-        if ($poolConflict) {
-            $violations[] = [
-                'type' => 'same_pool',
-                'severity' => 'SOFT',
-                'message' => $this->formatConstraintMessage('same_pool_conflict', [
-                    'team' => $juryTeamName
-                ]),
-                'score_penalty' => -30
-            ];
-        }
-        
         // 7. Prefer not to jury consecutive weekends
         $hasConsecutiveWeekends = $this->checkConsecutiveWeekendAssignments($juryTeamName, $matchDate);
         if ($hasConsecutiveWeekends) {
@@ -210,16 +197,6 @@ class MatchConstraintManager {
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$teamName, $startTime, $endTime]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-    
-    /**
-     * Check if jury team is in same pool as match participants
-     * This would need to be implemented based on your pool/division structure
-     */
-    private function checkPoolConflict($juryTeam, $homeTeam, $awayTeam) {
-        // This is a placeholder - you'd need to implement based on your league structure
-        // For now, return false
-        return false;
     }
     
     /**
@@ -354,11 +331,6 @@ class MatchConstraintManager {
                 'name' => 'Home Match Within 2 Hours',
                 'severity' => 'HARD',
                 'description' => 'Team cannot jury within 2 hours of their home match'
-            ],
-            'same_pool' => [
-                'name' => 'Same Pool/Division',
-                'severity' => 'SOFT',
-                'description' => 'Prefer team not to jury matches in their own pool'
             ],
             'consecutive_weekends' => [
                 'name' => 'Consecutive Weekends',
