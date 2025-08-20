@@ -1,6 +1,13 @@
 <?php
 /**
- * Team Management Class
+ * Team     public function getAllTeams() {
+        $sql = "SELECT * FROM jury_teams ORDER BY name";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        
+        return $stmt->fetchAll();
+    }lass
  * Handles all team-related database operations
  */
 
@@ -45,15 +52,14 @@ class TeamManager {
      * Create a new team
      */
     public function createTeam($data) {
-        $sql = "INSERT INTO jury_teams (name, weight, dedicated_to_team_id, notes) 
-                VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO jury_teams (name, weight, notes) 
+                VALUES (?, ?, ?)";
         
         $stmt = $this->db->prepare($sql);
         
         return $stmt->execute([
             $data['name'],
             $data['weight'] ?? 1.0,
-            !empty($data['dedicated_to_team_id']) ? $data['dedicated_to_team_id'] : null,
             $data['notes'] ?? ''
         ]);
     }
@@ -62,7 +68,7 @@ class TeamManager {
      * Update an existing team
      */
     public function updateTeam($id, $data) {
-        $sql = "UPDATE jury_teams SET name = ?, weight = ?, dedicated_to_team_id = ?, notes = ?
+        $sql = "UPDATE jury_teams SET name = ?, weight = ?, notes = ?
                 WHERE id = ?";
         
         $stmt = $this->db->prepare($sql);
@@ -70,7 +76,6 @@ class TeamManager {
         return $stmt->execute([
             $data['name'],
             $data['weight'] ?? 1.0,
-            !empty($data['dedicated_to_team_id']) ? $data['dedicated_to_team_id'] : null,
             $data['notes'] ?? '',
             $id
         ]);
