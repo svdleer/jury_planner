@@ -231,22 +231,17 @@ ob_start();
                         <?php echo t('auto_plan'); ?>
                     </a>
                     
-                    <a href="test_connection.php" class="flex items-center justify-center px-4 py-3 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                        <i class="fas fa-database mr-2"></i>
-                        <?php echo t('test_db'); ?>
-                    </a>
-                    
-                    <a href="constraints.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700">
+                    <a href="constraints.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                         <i class="fas fa-ban mr-2"></i>
                         <?php echo t('constraints'); ?>
                     </a>
                     
-                    <a href="advanced_constraints.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700">
+                    <a href="advanced_constraints.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
                         <i class="fas fa-cogs mr-2"></i>
                         <?php echo t('advanced_rules'); ?>
                     </a>
                     
-                    <a href="smart_assignment.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700">
+                    <a href="smart_assignment.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700">
                         <i class="fas fa-robot mr-2"></i>
                         <?php echo t('smart_assign'); ?>
                     </a>

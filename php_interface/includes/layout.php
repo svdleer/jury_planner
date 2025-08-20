@@ -202,7 +202,7 @@ function formatTime($time, $format = 'H:i') {
                         <span>v<?php echo h(APP_VERSION); ?></span>
                     </div>
                     <div class="flex items-center space-x-4 text-sm text-gray-500">
-                        <span>Built with ❤️ for water polo</span>
+                        <span><?php echo t('built_with_love_for_waterpolo'); ?></span>
                     </div>
                 </div>
             </div>
