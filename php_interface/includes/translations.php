@@ -143,6 +143,24 @@ class Translations {
             'optional' => 'Optional',
             'required' => 'Required',
             
+            // Constraints
+            'exclude_team_from_jury_duty' => 'Exclude Team from Jury Duty',
+            'select_team_to_exclude' => 'Select Team to Exclude',
+            'exclude_team' => 'Exclude Team',
+            'team_capacities' => 'Team Capacities',
+            'active_constraints' => 'Active Constraints',
+            'add_new_constraint' => 'Add New Constraint',
+            'select_team' => 'Select team',
+            'use_form_above_to_exclude' => 'Use the form above to exclude teams from jury duty.',
+            'excluded_teams_not_assigned' => 'Excluded teams will not be automatically assigned to matches.',
+            'no_upcoming_matches_found' => 'No upcoming matches found.',
+            'team_eligibility_analysis' => 'Team Eligibility Analysis',
+            'match_details' => 'Match Details',
+            'constraint_types' => 'Constraint Types',
+            'no_constraints' => 'No constraints',
+            'eligible' => 'Eligible',
+            'ineligible' => 'Ineligible',
+            
             // Filter labels
             'all_statuses' => 'All Statuses',
             'all_teams' => 'All Teams',
@@ -325,6 +343,24 @@ class Translations {
             'select' => 'Selecteer',
             'optional' => 'Optioneel',
             'required' => 'Vereist',
+            
+            // Constraints
+            'exclude_team_from_jury_duty' => 'Team uitsluiten van jury taak',
+            'select_team_to_exclude' => 'Selecteer team om uit te sluiten',
+            'exclude_team' => 'Team uitsluiten',
+            'team_capacities' => 'Team capaciteiten',
+            'active_constraints' => 'Actieve beperkingen',
+            'add_new_constraint' => 'Nieuwe beperking toevoegen',
+            'select_team' => 'Selecteer team',
+            'use_form_above_to_exclude' => 'Gebruik het formulier hierboven om teams uit te sluiten van jury taak.',
+            'excluded_teams_not_assigned' => 'Uitgesloten teams worden niet automatisch toegewezen aan wedstrijden.',
+            'no_upcoming_matches_found' => 'Geen aankomende wedstrijden gevonden.',
+            'team_eligibility_analysis' => 'Team geschiktheidsanalyse',
+            'match_details' => 'Wedstrijd details',
+            'constraint_types' => 'Beperkings types',
+            'no_constraints' => 'Geen beperkingen',
+            'eligible' => 'Geschikt',
+            'ineligible' => 'Niet geschikt',
             
             // Filter labels
             'all_statuses' => 'Alle Statussen',

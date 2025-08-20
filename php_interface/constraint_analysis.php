@@ -47,7 +47,7 @@ ob_start();
         </div>
     <?php elseif (empty($upcomingMatches)): ?>
         <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
-            No upcoming matches found.
+            <?php echo t('no_upcoming_matches_found'); ?>
         </div>
     <?php else: ?>
 
@@ -81,7 +81,7 @@ ob_start();
             <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('match_details'); ?></h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Date & Time</label>
+                    <label class="block text-sm font-medium text-gray-700"><?php echo t('date_time'); ?></label>
                     <p class="mt-1 text-sm text-gray-900"><?php echo date('l, F j, Y \a\t H:i', strtotime($selectedMatch['date_time'])); ?></p>
                 </div>
                 <div>
@@ -141,11 +141,11 @@ ob_start();
                                 <td class="px-4 py-2">
                                     <?php if ($analysis['eligible']): ?>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            Eligible
+                                            <?php echo t('eligible'); ?>
                                         </span>
                                     <?php else: ?>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            Ineligible
+                                            <?php echo t('ineligible'); ?>
                                         </span>
                                     <?php endif; ?>
                                 </td>
