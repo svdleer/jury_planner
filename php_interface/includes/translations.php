@@ -17,6 +17,7 @@ class Translations {
             'jury_management_dashboard' => 'MNC Jury Management Dashboard',
             'welcome_message' => 'Welcome to the MNC Dordrecht jury planning system. Manage teams, matches, and jury assignments.',
             'jury_teams' => 'Jury Teams',
+            'dedicated_teams' => 'Dedicated Teams',
             'mnc_teams' => 'MNC Teams',
             'home_matches' => 'Home Matches',
             'assigned' => 'Assigned',
@@ -63,7 +64,11 @@ class Translations {
             'teams_management_description' => 'Manage jury teams, their weights, and availability',
             'teams_get_started_message' => 'Get started by creating your first jury team.',
             'status' => 'Status',
-            'auto_assignment_planning' => 'Auto Assignment Planning',
+                        'auto_assignment_planning' => 'Auto Assignment Planning',
+            'auto_assignment_description' => 'Automatically assign jury teams to matches using constraints and optimization',
+            'matches_management_description' => 'Manage water polo matches, assign jury teams, and track assignments',
+            
+            // Constraint analysis
             'matches_management' => 'Matches Management',
             'match' => 'Match',
             'lock_status' => 'Lock Status',
@@ -74,6 +79,10 @@ class Translations {
             'assignment_constraints_description' => 'Manage jury assignment constraints, exclusions, and team capacities',
             'fairness_dashboard' => 'Fairness Dashboard',
             'fairness_dashboard_description' => 'Monitor jury assignment fairness and point distribution',
+            'go_competition_scoring' => 'Matches in GO competition series are worth 10 points. Multiple GO matches at the same time count as only one 10-point assignment.',
+            'regular_match_scoring' => 'Standard league matches are worth 10 points each.',
+            'go_competition' => 'GO Competition',
+            'regular_match' => 'Regular Match',
             
             // Matches
             'date_time' => 'Date/Time',
@@ -188,6 +197,7 @@ class Translations {
             'jury_management_dashboard' => 'MNC Jury Beheer Dashboard',
             'welcome_message' => 'Welkom bij het MNC Dordrecht jury planning systeem. Beheer teams, wedstrijden en jury toewijzingen.',
             'jury_teams' => 'Jury Teams',
+            'dedicated_teams' => 'Toegewijde Teams',
             'mnc_teams' => 'MNC Teams',
             'home_matches' => 'Thuiswedstrijden',
             'assigned' => 'Toegewezen',
@@ -234,7 +244,11 @@ class Translations {
             'teams_management_description' => 'Beheer jury teams, hun gewichten en beschikbaarheid',
             'teams_get_started_message' => 'Begin met het aanmaken van je eerste jury team.',
             'status' => 'Status',
-            'auto_assignment_planning' => 'Automatische Toewijzing Planning',
+                        'auto_assignment_planning' => 'Automatische Toewijzing Planning',
+            'auto_assignment_description' => 'Automatisch jury teams toewijzen aan wedstrijden met behulp van beperkingen en optimalisatie',
+            'matches_management_description' => 'Beheer waterpolo wedstrijden, wijs jury teams toe en volg toewijzingen',
+            
+            // Constraint analysis
             'matches_management' => 'Wedstrijden Beheer',
             'match' => 'Wedstrijd',
             'lock_status' => 'Vergrendel Status',
@@ -245,6 +259,10 @@ class Translations {
             'assignment_constraints_description' => 'Beheer jury toewijzing beperkingen, uitsluitingen en team capaciteiten',
             'fairness_dashboard' => 'Eerlijkheid Dashboard',
             'fairness_dashboard_description' => 'Monitor jury toewijzing eerlijkheid en punt verdeling',
+            'go_competition_scoring' => 'Wedstrijden in GO competitie series zijn 10 punten waard. Meerdere GO wedstrijden op hetzelfde moment tellen als slechts één 10-punten toewijzing.',
+            'regular_match_scoring' => 'Standaard competitie wedstrijden zijn elk 10 punten waard.',
+            'go_competition' => 'GO Competitie',
+            'regular_match' => 'Reguliere Wedstrijd',
             
             // Matches
             'date_time' => 'Datum/Tijd',

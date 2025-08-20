@@ -102,7 +102,7 @@ ob_start();
 <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="sm:flex sm:items-center sm:justify-between mb-6">
         <div class="min-w-0 flex-1">
-            <h2 class="text-2xl font-bold leading-7 text-gray-900">Assignment Constraints</h2>
+            <h2 class="text-2xl font-bold leading-7 text-gray-900"><?php echo t('assignment_constraints'); ?></h2>
             <p class="mt-1 text-sm text-gray-500">Manage exclusions and team capacities for jury assignments</p>
         </div>
     </div>

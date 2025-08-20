@@ -122,7 +122,7 @@ if ($view === 'planning') {
     $matches = []; // Initialize as empty array for planning view
     $lockStats = $lockManager->getAssignmentStats();
     $pageTitle = t('auto_assignment_planning');
-    $pageDescription = 'Automatically assign jury teams to matches using constraints and optimization';
+    $pageDescription = t('auto_assignment_description');
 } else {
     $matches = $matchManager->getMatchesWithDetails($statusFilter, $teamFilter, $dateFilter, $homeTeamFilter, $awayTeamFilter, $juryStatusFilter, $lockStatusFilter);
     
@@ -151,7 +151,7 @@ if ($view === 'planning') {
     $matches = $filteredMatches;
     
     $pageTitle = t('matches_management');
-    $pageDescription = 'Manage water polo matches, assign jury teams, and track assignments';
+    $pageDescription = t('matches_management_description');
 }
 
 ob_start();
@@ -163,7 +163,7 @@ ob_start();
         <div class="sm:flex sm:items-center sm:justify-between mb-4">
             <div class="min-w-0 flex-1">
                 <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                    <?php echo $view === 'planning' ? 'Auto Assignment Planning' : 'Matches'; ?>
+                    <?php echo $view === 'planning' ? t('auto_assignment_planning') : t('matches'); ?>
                 </h2>
             </div>
             <div class="mt-4 flex sm:ml-4 sm:mt-0 space-x-3">

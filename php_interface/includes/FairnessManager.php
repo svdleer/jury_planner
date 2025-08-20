@@ -50,14 +50,14 @@ class FairnessManager {
     public function calculateTeamPoints($teamId = null) {
         $teamPoints = [];
         
-        // Get all teams or specific team
+        // Get all teams or specific team, excluding dedicated teams and static team
         if ($teamId) {
-            $teamSql = "SELECT id, name FROM jury_teams WHERE id = ?";
+            $teamSql = "SELECT id, name FROM jury_teams WHERE id = ? AND (dedicated_to_team_id IS NULL OR dedicated_to_team_id = 0)";
             $stmt = $this->db->prepare($teamSql);
             $stmt->execute([$teamId]);
             $teams = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
-            $teamSql = "SELECT id, name FROM jury_teams WHERE id != 99"; // Exclude static team
+            $teamSql = "SELECT id, name FROM jury_teams WHERE id != 99 AND (dedicated_to_team_id IS NULL OR dedicated_to_team_id = 0)"; // Exclude static team and dedicated teams
             $stmt = $this->db->prepare($teamSql);
             $stmt->execute();
             $teams = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -71,7 +71,7 @@ class FairnessManager {
             ];
             
             // Get all assignments for this team
-            $sql = "SELECT m.id, m.date_time, m.home_team, m.away_team
+            $sql = "SELECT m.id, m.date_time, m.home_team, m.away_team, m.competition
                     FROM jury_assignments ja
                     JOIN home_matches m ON ja.match_id = m.id
                     WHERE ja.team_id = ?
@@ -81,15 +81,19 @@ class FairnessManager {
             $stmt->execute([$team['id']]);
             $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            foreach ($assignments as $assignment) {
-                $points = $this->calculateMatchPoints($assignment);
+            // Group GO competition matches by date/time (same time = one assignment)
+            $processedAssignments = $this->groupGoCompetitionMatches($assignments);
+            
+            foreach ($processedAssignments as $assignment) {
+                $points = $assignment['points'];
                 $teamPoints[$team['id']]['total_points'] += $points;
                 $teamPoints[$team['id']]['assignments'][] = [
-                    'match_id' => $assignment['id'],
-                    'date' => $assignment['date_time'],
-                    'match' => $assignment['home_team'] . ' vs ' . $assignment['away_team'],
+                    'match_id' => $assignment['match_id'],
+                    'date' => $assignment['date'],
+                    'match' => $assignment['match'],
                     'points' => $points,
-                    'competition' => 'Standard' // Default since competition column may not exist
+                    'competition' => $assignment['competition'],
+                    'grouped_count' => $assignment['grouped_count'] ?? 1
                 ];
             }
         }
@@ -266,6 +270,57 @@ class FairnessManager {
         }
         
         return $recommendations;
+    }
+    
+    /**
+     * Group GO competition matches by date/time - multiple matches at same time count as one assignment
+     */
+    private function groupGoCompetitionMatches($assignments) {
+        $grouped = [];
+        $goGroups = [];
+        
+        foreach ($assignments as $assignment) {
+            $competition = $assignment['competition'] ?? '';
+            $isGoMatch = stripos($competition, 'go') !== false;
+            
+            if ($isGoMatch) {
+                $timeKey = $assignment['date_time'];
+                
+                if (!isset($goGroups[$timeKey])) {
+                    // First match at this time - create the group
+                    $goGroups[$timeKey] = [
+                        'match_id' => $assignment['id'],
+                        'date' => $assignment['date_time'],
+                        'match' => $assignment['home_team'] . ' vs ' . $assignment['away_team'],
+                        'points' => 10, // GO competition matches are always 10 points total
+                        'competition' => $competition,
+                        'grouped_count' => 1,
+                        'additional_matches' => []
+                    ];
+                } else {
+                    // Additional match at same time - just track it but don't add points
+                    $goGroups[$timeKey]['grouped_count']++;
+                    $goGroups[$timeKey]['additional_matches'][] = $assignment['home_team'] . ' vs ' . $assignment['away_team'];
+                    $goGroups[$timeKey]['match'] .= ' + ' . $assignment['home_team'] . ' vs ' . $assignment['away_team'];
+                }
+            } else {
+                // Non-GO match - process normally
+                $grouped[] = [
+                    'match_id' => $assignment['id'],
+                    'date' => $assignment['date_time'],
+                    'match' => $assignment['home_team'] . ' vs ' . $assignment['away_team'],
+                    'points' => $this->calculateMatchPoints($assignment),
+                    'competition' => $competition
+                ];
+            }
+        }
+        
+        // Add all GO groups to the result
+        foreach ($goGroups as $group) {
+            $grouped[] = $group;
+        }
+        
+        return $grouped;
     }
 }
 

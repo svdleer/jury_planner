@@ -21,8 +21,8 @@ ob_start();
 <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="sm:flex sm:items-center sm:justify-between mb-6">
         <div class="min-w-0 flex-1">
-            <h2 class="text-2xl font-bold leading-7 text-gray-900">Fairness Dashboard</h2>
-            <p class="mt-1 text-sm text-gray-500">Monitor jury assignment fairness and point distribution across teams</p>
+            <h2 class="text-2xl font-bold leading-7 text-gray-900"><?php echo t('fairness_dashboard'); ?></h2>
+            <p class="mt-1 text-sm text-gray-500"><?php echo t('fairness_dashboard_description'); ?></p>
         </div>
     </div>
 
@@ -192,17 +192,17 @@ ob_start();
                 <div class="border rounded-lg p-4">
                     <div class="flex items-center mb-2">
                         <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">10</span>
-                        <span class="font-medium">GO Competition</span>
+                        <span class="font-medium"><?php echo t('go_competition'); ?></span>
                     </div>
-                    <p class="text-sm text-gray-600">Matches in GO competition series are worth 10 points.</p>
+                    <p class="text-sm text-gray-600"><?php echo t('go_competition_scoring'); ?></p>
                 </div>
                 
                 <div class="border rounded-lg p-4">
                     <div class="flex items-center mb-2">
                         <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">10</span>
-                        <span class="font-medium">Regular Match</span>
+                        <span class="font-medium"><?php echo t('regular_match'); ?></span>
                     </div>
-                    <p class="text-sm text-gray-600">Standard league matches are worth 10 points each.</p>
+                    <p class="text-sm text-gray-600"><?php echo t('regular_match_scoring'); ?></p>
                 </div>
             </div>
         </div>
