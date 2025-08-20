@@ -50,14 +50,14 @@ class FairnessManager {
     public function calculateTeamPoints($teamId = null) {
         $teamPoints = [];
         
-        // Get all teams or specific team, excluding dedicated teams and static team
+        // Get all teams or specific team
         if ($teamId) {
-            $teamSql = "SELECT id, name FROM jury_teams WHERE id = ? AND (dedicated_to_team_id IS NULL OR dedicated_to_team_id = 0)";
+            $teamSql = "SELECT id, name FROM jury_teams WHERE id = ?";
             $stmt = $this->db->prepare($teamSql);
             $stmt->execute([$teamId]);
             $teams = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
-            $teamSql = "SELECT id, name FROM jury_teams WHERE id != 99 AND (dedicated_to_team_id IS NULL OR dedicated_to_team_id = 0)"; // Exclude static team and dedicated teams
+            $teamSql = "SELECT id, name FROM jury_teams WHERE id != 99"; // Exclude static team
             $stmt = $this->db->prepare($teamSql);
             $stmt->execute();
             $teams = $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -108,15 +108,13 @@ class MncTeamManager {
     public function getTeamStats() {
         $stats = [];
         
-        // Jury teams count (excluding dedicated teams and static team)
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM jury_teams WHERE id != 99 AND (dedicated_to_team_id IS NULL OR dedicated_to_team_id = 0)");
+        // Jury teams count
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM jury_teams");
         $stmt->execute();
         $stats['jury_teams'] = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
         
-        // Dedicated teams count
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM jury_teams WHERE dedicated_to_team_id IS NOT NULL AND dedicated_to_team_id != 0");
-        $stmt->execute();
-        $stats['dedicated_teams'] = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+        // Dedicated teams count (placeholder - column doesn't exist yet)
+        $stats['dedicated_teams'] = 0;
         
         // MNC teams count
         $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM mnc_teams");
