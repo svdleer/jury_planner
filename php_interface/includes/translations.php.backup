@@ -75,6 +75,7 @@ class Translations {
             'deleting_matches_disabled' => 'Deleting matches is disabled in production mode.',
             'deleting_teams_disabled' => 'Deleting teams is disabled in production mode.',
             'database_connection_failed' => 'Database connection failed',
+        ],
             
             // Teams
             'team_name' => 'Team Name',
