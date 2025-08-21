@@ -1,6 +1,11 @@
 <?php
 require_once 'includes/config.php';
 require_once 'includes/SmartAssignmentEngine.php';
+require_once 'includes/translations.php';
+
+// Initialize translations
+$translations = new Translations();
+$translations->setLanguage($_SESSION['language'] ?? 'en');
 
 $smartEngine = new SmartAssignmentEngine($pdo);
 
@@ -315,6 +320,17 @@ ob_start();
 </div>
 
 <script>
+// Translations for JavaScript
+const translations = {
+    teamAssignedSuccessfully: <?php echo json_encode(t('team_assigned_successfully')); ?>,
+    errorOccurredAutoAssignment: <?php echo json_encode(t('error_occurred_auto_assignment')); ?>,
+    errorOccurredValidation: <?php echo json_encode(t('error_occurred_validation')); ?>,
+    errorGettingRecommendations: <?php echo json_encode(t('error_getting_recommendations')); ?>,
+    errorOccurredGettingRecommendations: <?php echo json_encode(t('error_occurred_getting_recommendations')); ?>,
+    errorAssigningTeam: <?php echo json_encode(t('error_assigning_team')); ?>,
+    errorOccurredDuringAssignment: <?php echo json_encode(t('error_occurred_during_assignment')); ?>
+};
+
 function smartAssignmentApp() {
     return {
         loading: false,
@@ -344,7 +360,7 @@ function smartAssignmentApp() {
                 this.autoResults = await response.json();
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred during auto assignment');
+                alert(translations.errorOccurredAutoAssignment);
             } finally {
                 this.loading = false;
             }
@@ -364,7 +380,7 @@ function smartAssignmentApp() {
                 this.validationResults = await response.json();
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred during validation');
+                alert(translations.errorOccurredValidation);
             } finally {
                 this.loading = false;
             }
@@ -389,11 +405,11 @@ function smartAssignmentApp() {
                     this.recommendations = result.recommendations;
                     this.showRecommendations = true;
                 } else {
-                    alert('Error getting recommendations: ' + result.error);
+                    alert(translations.errorGettingRecommendations + ': ' + result.error);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred getting recommendations');
+                alert(translations.errorOccurredGettingRecommendations);
             } finally {
                 this.loading = false;
             }
@@ -413,15 +429,15 @@ function smartAssignmentApp() {
                 
                 const result = await response.json();
                 if (result.success) {
-                    alert('Team assigned successfully!');
+                    alert(translations.teamAssignedSuccessfully);
                     this.showRecommendations = false;
                     location.reload(); // Refresh to update the unassigned matches list
                 } else {
-                    alert('Error assigning team: ' + result.error);
+                    alert(translations.errorAssigningTeam + ': ' + result.error);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred during assignment');
+                alert(translations.errorOccurredDuringAssignment);
             }
         },
         
