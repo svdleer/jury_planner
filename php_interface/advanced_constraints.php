@@ -232,7 +232,7 @@ ob_start();
                 <div class="bg-white shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
                         <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">
-                            <i class="fas fa-folder mr-2 text-blue-600"></i><?php echo htmlspecialchars($category); ?>
+                            <i class="fas fa-folder mr-2 text-blue-600"></i><?php echo htmlspecialchars(translateConstraintCategory($category)); ?>
                         </h3>
                         
                         <div class="space-y-4">
@@ -249,7 +249,7 @@ ob_start();
                                         <div class="flex-1">
                                             <div class="flex items-center space-x-3">
                                                 <h4 class="text-sm font-medium text-gray-900">
-                                                    <?php echo htmlspecialchars($constraint['constraint_name']); ?>
+                                                    <?php echo htmlspecialchars(translateConstraintName($constraint['constraint_name'], $constraint['constraint_code'])); ?>
                                                 </h4>
                                                 
                                                 <!-- Constraint Type Badge -->
@@ -280,7 +280,7 @@ ob_start();
                                             </div>
                                             
                                             <p class="mt-2 text-sm text-gray-600">
-                                                <?php echo htmlspecialchars($constraint['description']); ?>
+                                                <?php echo htmlspecialchars(translateConstraintDescription($constraint['description'], $constraint['constraint_code'])); ?>
                                             </p>
                                             
                                             <div class="mt-2 text-xs text-gray-500">

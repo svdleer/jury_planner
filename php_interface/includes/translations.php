@@ -48,6 +48,15 @@ class Translations {
             'hard' => 'Hard',
             'soft' => 'Soft',
             
+            // Constraint names and descriptions
+            'fairness_balance' => 'Fairness & Balance',
+            'avoid_repeated_first_last_match' => 'Avoid Repeated First/Last Match',
+            'avoid_repeated_first_last_description' => 'Avoid assigning the same team repeatedly to the first or last match of the day.',
+            'even_season_distribution' => 'Even Season Distribution',
+            'even_season_distribution_description' => 'Spread the total number of officiated matches per team evenly across the season.',
+            'historical_point_threshold' => 'Historical Point Threshold',
+            'historical_point_threshold_description' => 'Respect historical point/credit differences; keep point gaps within a threshold (e.g. ≤4 points).',
+            
             // Success messages
             'team_created_successfully' => 'Team created successfully!',
             'team_updated_successfully' => 'Team updated successfully!',
@@ -581,6 +590,15 @@ class Translations {
             'hard' => 'Hard',
             'soft' => 'Zacht',
             
+            // Constraint names and descriptions
+            'fairness_balance' => 'Eerlijkheid & Balans',
+            'avoid_repeated_first_last_match' => 'Vermijd Herhaalde Eerste/Laatste Wedstrijd',
+            'avoid_repeated_first_last_description' => 'Vermijd het herhaaldelijk toewijzen van hetzelfde team aan de eerste of laatste wedstrijd van de dag.',
+            'even_season_distribution' => 'Gelijkmatige Seizoensverdeling',
+            'even_season_distribution_description' => 'Spreid het totale aantal geleide wedstrijden per team gelijkmatig over het seizoen.',
+            'historical_point_threshold' => 'Historische Puntdrempel',
+            'historical_point_threshold_description' => 'Respecteer historische punt/krediet verschillen; houd puntenverschillen binnen een drempel (bijv. ≤4 punten).',
+            
             // Success messages
             'team_created_successfully' => 'Team succesvol aangemaakt!',
             'team_updated_successfully' => 'Team succesvol bijgewerkt!',
@@ -653,6 +671,55 @@ class Translations {
 // Convenience function for translations
 function t($key, $params = []) {
     return Translations::get($key, $params);
+}
+
+// Helper function to translate constraint names based on constraint code
+function translateConstraintName($constraintName, $constraintCode) {
+    $codeToKeyMap = [
+        'AVOID_REPEATED_FIRST_LAST' => 'avoid_repeated_first_last_match',
+        'EVEN_SEASON_DISTRIBUTION' => 'even_season_distribution', 
+        'HISTORICAL_POINT_THRESHOLD' => 'historical_point_threshold',
+    ];
+    
+    // Check if we have a translation for this constraint code
+    if (isset($codeToKeyMap[$constraintCode])) {
+        return t($codeToKeyMap[$constraintCode]);
+    }
+    
+    // Fallback to original name if no translation found
+    return $constraintName;
+}
+
+// Helper function to translate constraint descriptions based on constraint code
+function translateConstraintDescription($description, $constraintCode) {
+    $codeToKeyMap = [
+        'AVOID_REPEATED_FIRST_LAST' => 'avoid_repeated_first_last_description',
+        'EVEN_SEASON_DISTRIBUTION' => 'even_season_distribution_description',
+        'HISTORICAL_POINT_THRESHOLD' => 'historical_point_threshold_description',
+    ];
+    
+    // Check if we have a translation for this constraint code
+    if (isset($codeToKeyMap[$constraintCode])) {
+        return t($codeToKeyMap[$constraintCode]);
+    }
+    
+    // Fallback to original description if no translation found
+    return $description;
+}
+
+// Helper function to translate constraint category names
+function translateConstraintCategory($categoryName) {
+    $categoryMap = [
+        'Fairness & Balance' => 'fairness_balance',
+    ];
+    
+    // Check if we have a translation for this category
+    if (isset($categoryMap[$categoryName])) {
+        return t($categoryMap[$categoryName]);
+    }
+    
+    // Fallback to original category name if no translation found
+    return $categoryName;
 }
 
 // Initialize translations
