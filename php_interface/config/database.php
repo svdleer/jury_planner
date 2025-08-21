@@ -4,6 +4,8 @@
  * Connects to the same MySQL database used by the Python application
  */
 
+require_once __DIR__ . '/../includes/translations.php';
+
 class Database {
     private $host;
     private $username;
@@ -34,7 +36,7 @@ class Database {
             return $this->connection;
         } catch (PDOException $e) {
             error_log("Database connection failed: " . $e->getMessage());
-            throw new Exception("Database connection failed. Please check your configuration.");
+            throw new Exception(t('database_connection_failed'));
         }
     }
     

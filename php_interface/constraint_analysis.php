@@ -22,7 +22,7 @@ try {
     $upcomingMatches = $matchManager->getUpcomingMatches(10);
     $teams = $teamManager->getAllTeams();
 } catch (Exception $e) {
-    $error = "Error loading data: " . $e->getMessage();
+    $error = t('error_loading_data') . ": " . $e->getMessage();
 }
 
 // Selected match for analysis

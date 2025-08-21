@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/translations.php';
+
 class AssignmentConstraintManager {
     private $db;
     private $customConstraintManager;
@@ -70,7 +72,7 @@ class AssignmentConstraintManager {
             
         } catch (Exception $e) {
             $this->db->rollBack();
-            $results['message'] = 'Error during auto-assignment: ' . $e->getMessage();
+            $results['message'] = t('error_during_auto_assignment') . ': ' . $e->getMessage();
         }
         
         return $results;

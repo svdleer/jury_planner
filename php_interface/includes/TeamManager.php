@@ -12,6 +12,7 @@
  */
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/translations.php';
 
 class TeamManager {
     private $db;
@@ -89,7 +90,7 @@ class TeamManager {
         $checkStmt->execute([$id]);
         
         if ($checkStmt->fetchColumn() > 0) {
-            throw new Exception("Cannot delete team with existing assignments");
+            throw new Exception(t('cannot_delete_team_with_assignments'));
         }
         
         $sql = "DELETE FROM jury_teams WHERE id = ?";
