@@ -12,6 +12,17 @@ if (isset($_GET['lang'])) {
 // Get current language for template
 $currentLang = Translations::getCurrentLanguage();
 
+// Create compatibility $lang array for any legacy code
+$lang = [];
+if (class_exists('Translations')) {
+    $langKeys = ['filter', 'matches', 'status', 'all_statuses', 'scheduled', 'in_progress', 'completed', 'cancelled', 
+                 'home_team', 'away_team', 'all_teams', 'date_range', 'all_dates', 'upcoming', 'today', 'this_week', 
+                 'this_month', 'jury_status', 'assigned'];
+    foreach ($langKeys as $key) {
+        $lang[$key] = t($key);
+    }
+}
+
 $constraintManager = new AdvancedConstraintManager($pdo);
 
 // Clean up any "Non-Weekend" constraints that don't make sense for water polo
@@ -78,9 +89,14 @@ $stats = $constraintManager->getConstraintStats();
 $pageTitle = t('advanced_constraint_configuration');
 $pageDescription = t('configure_jury_assignment_rules');
 
+// Debug: Let's test if translations are working
+$debugLang = Translations::getCurrentLanguage();
+$debugTitle = t('advanced_constraint_configuration');
+
 ob_start();
 ?>
 
+<!-- Debug: Current language is <?php echo $debugLang; ?>, Title: <?php echo $debugTitle; ?> -->
 <div class="max-w-7xl mx-auto p-6" x-data="constraintManager()">
     <div class="min-h-screen">
         <!-- Action Bar -->
