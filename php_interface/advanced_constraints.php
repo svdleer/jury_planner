@@ -4,6 +4,14 @@ require_once 'includes/config.php';
 require_once 'includes/AdvancedConstraintManager.php';
 require_once 'includes/translations.php';
 
+// Handle language parameter
+if (isset($_GET['lang'])) {
+    Translations::setLanguage($_GET['lang']);
+}
+
+// Get current language for template
+$currentLang = Translations::getCurrentLanguage();
+
 $constraintManager = new AdvancedConstraintManager($pdo);
 
 // Clean up any "Non-Weekend" constraints that don't make sense for water polo
@@ -66,6 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $constraintsByCategory = $constraintManager->getAllConstraintsByCategory();
 $stats = $constraintManager->getConstraintStats();
 
+// Set page variables after language is initialized
 $pageTitle = t('advanced_constraint_configuration');
 $pageDescription = t('configure_jury_assignment_rules');
 
