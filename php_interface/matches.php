@@ -181,10 +181,10 @@ ob_start();
         <div class="border-b border-gray-200">
             <nav class="-mb-px flex space-x-8">
                 <a href="matches.php" class="<?php echo $view === 'list' ? 'border-water-blue-500 text-water-blue-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> whitespace-nowrap border-b-2 py-2 px-1 text-sm font-medium">
-                    Matches List
+                    <?php echo t('matches_list'); ?>
                 </a>
                 <a href="matches.php?view=planning" class="<?php echo $view === 'planning' ? 'border-water-blue-500 text-water-blue-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> whitespace-nowrap border-b-2 py-2 px-1 text-sm font-medium">
-                    Auto Planning
+                    <?php echo t('auto_planning'); ?>
                 </a>
             </nav>
         </div>
@@ -196,7 +196,7 @@ ob_start();
             <!-- Auto Assignment Controls -->
             <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
                 <div class="px-4 py-5 sm:p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Auto Assignment Controls</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('auto_assignment_controls'); ?></h3>
                     
                     <form method="POST" class="space-y-4">
                         <input type="hidden" name="action" value="auto_assign">
@@ -205,14 +205,14 @@ ob_start();
                             <div>
                                 <label class="flex items-center">
                                     <input type="checkbox" name="prefer_low_usage" class="rounded border-gray-300 text-water-blue-600 focus:ring-water-blue-500">
-                                    <span class="ml-2 text-sm text-gray-700">Prefer teams with fewer assignments</span>
+                                    <span class="ml-2 text-sm text-gray-700"><?php echo t('prefer_teams_fewer_assignments'); ?></span>
                                 </label>
                             </div>
                             
                             <div>
                                 <label class="flex items-center">
                                     <input type="checkbox" name="prefer_high_capacity" class="rounded border-gray-300 text-water-blue-600 focus:ring-water-blue-500">
-                                    <span class="ml-2 text-sm text-gray-700">Prefer teams with higher capacity</span>
+                                    <span class="ml-2 text-sm text-gray-700"><?php echo t('prefer_teams_higher_capacity'); ?></span>
                                 </label>
                             </div>
                         </div>
@@ -222,7 +222,7 @@ ob_start();
                                 <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                 </svg>
-                                Run Auto Assignment
+                                <?php echo t('run_auto_assignment'); ?>
                             </button>
                         </div>
                     </form>
@@ -232,15 +232,15 @@ ob_start();
             <!-- Reset Controls -->
             <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
                 <div class="px-4 py-5 sm:p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Reset Controls</h3>
-                    <p class="text-sm text-gray-600 mb-4">Use these controls to reset jury assignments. Locked matches will be preserved unless force reset is enabled.</p>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('reset_controls'); ?></h3>
+                    <p class="text-sm text-gray-600 mb-4"><?php echo t('reset_controls_description'); ?></p>
                     
                     <div class="flex flex-wrap gap-3">
                         <button @click="showResetAllModal = true" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                             <svg class="-ml-1 mr-2 h-5 w-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                             </svg>
-                            Reset All Assignments
+                            <?php echo t('reset_all_assignments'); ?>
                         </button>
                         
                         <button @click="showUnassignAllModal = true" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-orange-700 bg-orange-50 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
@@ -259,14 +259,14 @@ ob_start();
                     <!-- Team Assignment Counts -->
                     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
                         <div class="px-4 py-5 sm:p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Team Assignment Status</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('team_assignment_status'); ?></h3>
                             <div class="space-y-3">
                                 <?php foreach ($stats['team_assignments'] as $team): ?>
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm font-medium text-gray-900"><?php echo htmlspecialchars($team['name']); ?></span>
                                         <div class="flex items-center space-x-2">
-                                            <span class="text-sm text-gray-600"><?php echo $team['assignment_count']; ?> assignments</span>
-                                            <span class="text-xs text-gray-500">(capacity: <?php echo $team['capacity_factor']; ?>)</span>
+                                            <span class="text-sm text-gray-600"><?php echo $team['assignment_count']; ?> <?php echo t('assignments'); ?></span>
+                                            <span class="text-xs text-gray-500">(<?php echo t('capacity'); ?>: <?php echo $team['capacity_factor']; ?>)</span>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -277,18 +277,18 @@ ob_start();
                     <!-- Match Assignment Overview -->
                     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
                         <div class="px-4 py-5 sm:p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Match Assignment Overview</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('match_assignment_overview'); ?></h3>
                             <div class="space-y-3">
                                 <div class="flex justify-between">
-                                    <span class="text-sm font-medium text-gray-900">Total Matches:</span>
+                                    <span class="text-sm font-medium text-gray-900"><?php echo t('total_matches'); ?>:</span>
                                     <span class="text-sm text-gray-600"><?php echo $stats['match_status']['total_matches']; ?></span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-sm font-medium text-green-700">Assigned:</span>
+                                    <span class="text-sm font-medium text-green-700"><?php echo t('assigned'); ?>:</span>
                                     <span class="text-sm text-green-600"><?php echo $stats['match_status']['assigned_matches']; ?></span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-sm font-medium text-red-700">Unassigned:</span>
+                                    <span class="text-sm font-medium text-red-700"><?php echo t('unassigned'); ?>:</span>
                                     <span class="text-sm text-red-600"><?php echo $stats['match_status']['unassigned_matches']; ?></span>
                                 </div>
                             </div>
@@ -299,22 +299,22 @@ ob_start();
                     <?php if (isset($lockStats)): ?>
                         <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
                             <div class="px-4 py-5 sm:p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Lock Status Overview</h3>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('lock_status_overview'); ?></h3>
                                 <div class="space-y-3">
                                     <div class="flex justify-between">
-                                        <span class="text-sm font-medium text-gray-900">Total Matches:</span>
+                                        <span class="text-sm font-medium text-gray-900"><?php echo t('total_matches'); ?>:</span>
                                         <span class="text-sm text-gray-600"><?php echo $lockStats['total_matches']; ?></span>
                                     </div>
                                     <div class="flex justify-between">
-                                        <span class="text-sm font-medium text-red-700">Locked:</span>
+                                        <span class="text-sm font-medium text-red-700"><?php echo t('locked'); ?>:</span>
                                         <span class="text-sm text-red-600"><?php echo $lockStats['locked_matches']; ?></span>
                                     </div>
                                     <div class="flex justify-between">
-                                        <span class="text-sm font-medium text-green-700">Unlocked:</span>
+                                        <span class="text-sm font-medium text-green-700"><?php echo t('unlocked'); ?>:</span>
                                         <span class="text-sm text-green-600"><?php echo $lockStats['unlocked_matches']; ?></span>
                                     </div>
                                     <div class="flex justify-between">
-                                        <span class="text-sm font-medium text-blue-700">Locked with Assignments:</span>
+                                        <span class="text-sm font-medium text-blue-700"><?php echo t('locked_with_assignments'); ?>:</span>
                                         <span class="text-sm text-blue-600"><?php echo $lockStats['locked_matches_with_assignments']; ?></span>
                                     </div>
                                 </div>
@@ -331,25 +331,25 @@ ob_start();
     <!-- Filters -->
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg mb-6">
         <div class="px-4 py-4 sm:px-6">
-            <h3 class="text-base font-semibold leading-6 text-gray-900 mb-4"><?php echo $lang['filter']; ?> <?php echo $lang['matches']; ?></h3>
+            <h3 class="text-base font-semibold leading-6 text-gray-900 mb-4"><?php echo t('filter'); ?> <?php echo t('matches'); ?></h3>
             <form method="GET" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
                 <input type="hidden" name="view" value="<?php echo htmlspecialchars($view); ?>">
                 <input type="hidden" name="lang" value="<?php echo htmlspecialchars($currentLang); ?>">
                 <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700"><?php echo $lang['status']; ?></label>
+                    <label for="status" class="block text-sm font-medium text-gray-700"><?php echo t('status'); ?></label>
                     <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $statusFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_statuses']; ?></option>
-                        <option value="scheduled" <?php echo $statusFilter === 'scheduled' ? 'selected' : ''; ?>><?php echo $lang['scheduled']; ?></option>
-                        <option value="in_progress" <?php echo $statusFilter === 'in_progress' ? 'selected' : ''; ?>><?php echo $lang['in_progress']; ?></option>
-                        <option value="completed" <?php echo $statusFilter === 'completed' ? 'selected' : ''; ?>><?php echo $lang['completed']; ?></option>
-                        <option value="cancelled" <?php echo $statusFilter === 'cancelled' ? 'selected' : ''; ?>><?php echo $lang['cancelled']; ?></option>
+                        <option value="all" <?php echo $statusFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_statuses'); ?></option>
+                        <option value="scheduled" <?php echo $statusFilter === 'scheduled' ? 'selected' : ''; ?>><?php echo t('scheduled'); ?></option>
+                        <option value="in_progress" <?php echo $statusFilter === 'in_progress' ? 'selected' : ''; ?>><?php echo t('in_progress'); ?></option>
+                        <option value="completed" <?php echo $statusFilter === 'completed' ? 'selected' : ''; ?>><?php echo t('completed'); ?></option>
+                        <option value="cancelled" <?php echo $statusFilter === 'cancelled' ? 'selected' : ''; ?>><?php echo t('cancelled'); ?></option>
                     </select>
                 </div>
                 
                 <div>
-                    <label for="home_team" class="block text-sm font-medium text-gray-700"><?php echo $lang['home_team']; ?></label>
+                    <label for="home_team" class="block text-sm font-medium text-gray-700"><?php echo t('home_team'); ?></label>
                     <select name="home_team" id="home_team" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $homeTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_teams']; ?></option>
+                        <option value="all" <?php echo $homeTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_teams'); ?></option>
                         <?php foreach ($matchTeams as $teamName): ?>
                             <option value="<?php echo htmlspecialchars($teamName); ?>" <?php echo $homeTeamFilter == $teamName ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($teamName); ?>
@@ -359,9 +359,9 @@ ob_start();
                 </div>
                 
                 <div>
-                    <label for="away_team" class="block text-sm font-medium text-gray-700"><?php echo $lang['away_team']; ?></label>
+                    <label for="away_team" class="block text-sm font-medium text-gray-700"><?php echo t('away_team'); ?></label>
                     <select name="away_team" id="away_team" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $awayTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_teams']; ?></option>
+                        <option value="all" <?php echo $awayTeamFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_teams'); ?></option>
                         <?php foreach ($matchTeams as $teamName): ?>
                             <option value="<?php echo htmlspecialchars($teamName); ?>" <?php echo $awayTeamFilter == $teamName ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($teamName); ?>
@@ -371,21 +371,21 @@ ob_start();
                 </div>
                 
                 <div>
-                    <label for="date" class="block text-sm font-medium text-gray-700"><?php echo $lang['date_range']; ?></label>
+                    <label for="date" class="block text-sm font-medium text-gray-700"><?php echo t('date_range'); ?></label>
                     <select name="date" id="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $dateFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_dates']; ?></option>
-                        <option value="upcoming" <?php echo $dateFilter === 'upcoming' ? 'selected' : ''; ?>><?php echo $lang['upcoming']; ?></option>
-                        <option value="today" <?php echo $dateFilter === 'today' ? 'selected' : ''; ?>><?php echo $lang['today']; ?></option>
-                        <option value="this_week" <?php echo $dateFilter === 'this_week' ? 'selected' : ''; ?>><?php echo $lang['this_week']; ?></option>
-                        <option value="this_month" <?php echo $dateFilter === 'this_month' ? 'selected' : ''; ?>><?php echo $lang['this_month']; ?></option>
+                        <option value="all" <?php echo $dateFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_dates'); ?></option>
+                        <option value="upcoming" <?php echo $dateFilter === 'upcoming' ? 'selected' : ''; ?>><?php echo t('upcoming'); ?></option>
+                        <option value="today" <?php echo $dateFilter === 'today' ? 'selected' : ''; ?>><?php echo t('today'); ?></option>
+                        <option value="this_week" <?php echo $dateFilter === 'this_week' ? 'selected' : ''; ?>><?php echo t('this_week'); ?></option>
+                        <option value="this_month" <?php echo $dateFilter === 'this_month' ? 'selected' : ''; ?>><?php echo t('this_month'); ?></option>
                     </select>
                 </div>
                 
                 <div>
-                    <label for="jury_status" class="block text-sm font-medium text-gray-700"><?php echo $lang['jury_status']; ?></label>
+                    <label for="jury_status" class="block text-sm font-medium text-gray-700"><?php echo t('jury_status'); ?></label>
                     <select name="jury_status" id="jury_status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $juryStatusFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_statuses']; ?></option>
-                        <option value="assigned" <?php echo $juryStatusFilter === 'assigned' ? 'selected' : ''; ?>><?php echo $lang['assigned']; ?></option>
+                        <option value="all" <?php echo $juryStatusFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_statuses'); ?></option>
+                        <option value="assigned" <?php echo $juryStatusFilter === 'assigned' ? 'selected' : ''; ?>><?php echo t('assigned'); ?></option>
                         <option value="unassigned" <?php echo $juryStatusFilter === 'unassigned' ? 'selected' : ''; ?>><?php echo t('unassigned'); ?></option>
                         <option value="partial" <?php echo $juryStatusFilter === 'partial' ? 'selected' : ''; ?>><?php echo t('partially_assigned'); ?></option>
                     </select>
@@ -394,9 +394,9 @@ ob_start();
                 <div>
                     <label for="lock_status" class="block text-sm font-medium text-gray-700"><?php echo t('lock_status'); ?></label>
                     <select name="lock_status" id="lock_status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-water-blue-500 focus:ring-water-blue-500 sm:text-sm">
-                        <option value="all" <?php echo $lockStatusFilter === 'all' ? 'selected' : ''; ?>><?php echo $lang['all_statuses']; ?></option>
-                        <option value="locked" <?php echo $lockStatusFilter === 'locked' ? 'selected' : ''; ?>><?php echo $lang['locked']; ?></option>
-                        <option value="unlocked" <?php echo $lockStatusFilter === 'unlocked' ? 'selected' : ''; ?>><?php echo $lang['unlocked']; ?></option>
+                        <option value="all" <?php echo $lockStatusFilter === 'all' ? 'selected' : ''; ?>><?php echo t('all_statuses'); ?></option>
+                        <option value="locked" <?php echo $lockStatusFilter === 'locked' ? 'selected' : ''; ?>><?php echo t('locked'); ?></option>
+                        <option value="unlocked" <?php echo $lockStatusFilter === 'unlocked' ? 'selected' : ''; ?>><?php echo t('unlocked'); ?></option>
                     </select>
                 </div>
                 
@@ -405,13 +405,13 @@ ob_start();
                         <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
                         </svg>
-                        <?php echo $lang['filter']; ?>
+                        <?php echo t('filter'); ?>
                     </button>
                     <a href="?view=<?php echo $view; ?>&lang=<?php echo $currentLang; ?>" class="inline-flex justify-center items-center rounded-md bg-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300">
                         <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
-                        <?php echo $lang['clear_filters']; ?>
+                        <?php echo t('clear_filters'); ?>
                     </a>
                 </div>
             </form>
@@ -441,7 +441,6 @@ ob_start();
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('home_team'); ?></th>
                                 <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"><?php echo t('competition'); ?> / <?php echo t('class'); ?></th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('away_team'); ?></th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('location'); ?></th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('status'); ?></th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('lock_status'); ?></th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('jury_assignment'); ?></th>
@@ -500,12 +499,6 @@ ob_start();
                                                 </div>
                                             </div>
                                         </div>
-                                    </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        <div class="text-gray-900"><?php echo htmlspecialchars($match['location']); ?></div>
-                                        <?php if ($match['pool_name']): ?>
-                                            <div class="text-gray-500"><?php echo htmlspecialchars($match['pool_name']); ?></div>
-                                        <?php endif; ?>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         <?php
@@ -664,11 +657,6 @@ ob_start();
                                             <label for="match_time" class="block text-sm font-medium leading-6 text-gray-900">Time</label>
                                             <input type="time" name="match_time" id="match_time" required x-model="editingMatch.match_time" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
                                         </div>
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="location" class="block text-sm font-medium leading-6 text-gray-900">Location</label>
-                                        <input type="text" name="location" id="location" required x-model="editingMatch.location" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
                                     </div>
                                     
                                     <div>
@@ -883,7 +871,6 @@ function matchesApp() {
             away_team_id: '',
             match_date: '',
             match_time: '',
-            location: '',
             pool_name: '',
             competition: '',
             status: 'scheduled',
@@ -1015,7 +1002,6 @@ function matchesApp() {
                 away_team_id: '',
                 match_date: '',
                 match_time: '',
-                location: '',
                 pool_name: '',
                 competition: '',
                 status: 'scheduled',
