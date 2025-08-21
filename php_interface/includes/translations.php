@@ -226,6 +226,8 @@ class Translations {
             'selected_constraints_disabled' => 'Selected constraints disabled!',
             'constraint_updated_successfully' => 'Constraint updated successfully!',
             'failed_to_update_constraint' => 'Failed to update constraint.',
+            'hard' => 'Hard',
+            'soft' => 'Soft',
             
             // Advanced constraints page
             'advanced_constraint_configuration' => 'Advanced Constraint Configuration',
@@ -502,6 +504,8 @@ class Translations {
             'selected_constraints_disabled' => 'Geselecteerde beperkingen uitgeschakeld!',
             'constraint_updated_successfully' => 'Beperking succesvol bijgewerkt!',
             'failed_to_update_constraint' => 'Fout bij bijwerken beperking.',
+            'hard' => 'Hard',
+            'soft' => 'Zacht',
             'team_eligibility_analysis' => 'Team geschiktheidsanalyse',
             'match_details' => 'Wedstrijd details',
             'constraint_types' => 'Beperkings types',

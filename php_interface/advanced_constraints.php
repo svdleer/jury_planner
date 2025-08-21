@@ -89,14 +89,9 @@ $stats = $constraintManager->getConstraintStats();
 $pageTitle = t('advanced_constraint_configuration');
 $pageDescription = t('configure_jury_assignment_rules');
 
-// Debug: Let's test if translations are working
-$debugLang = Translations::getCurrentLanguage();
-$debugTitle = t('advanced_constraint_configuration');
-
 ob_start();
 ?>
 
-<!-- Debug: Current language is <?php echo $debugLang; ?>, Title: <?php echo $debugTitle; ?> -->
 <div class="max-w-7xl mx-auto p-6" x-data="constraintManager()">
     <div class="min-h-screen">
         <!-- Action Bar -->
@@ -260,7 +255,7 @@ ob_start();
                                                 <!-- Constraint Type Badge -->
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?php echo $constraint['constraint_type'] === 'hard' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'; ?>">
                                                     <i class="fas <?php echo $constraint['constraint_type'] === 'hard' ? 'fa-exclamation-triangle' : 'fa-balance-scale'; ?> mr-1"></i>
-                                                    <?php echo ucfirst($constraint['constraint_type']); ?>
+                                                    <?php echo $constraint['constraint_type'] === 'hard' ? t('hard') : t('soft'); ?>
                                                 </span>
                                                 
                                                 <!-- Status Badge -->
