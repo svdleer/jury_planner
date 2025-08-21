@@ -13,19 +13,19 @@ if ($_POST) {
             switch ($_POST['action']) {
                 case 'create':
                     $teamManager->createTeam($_POST);
-                    $_SESSION['success'] = 'Team created successfully!';
+                    $_SESSION['success'] = t('team_created_successfully');
                     header('Location: teams.php');
                     exit;
                     
                 case 'update':
                     $teamManager->updateTeam($_POST['id'], $_POST);
-                    $_SESSION['success'] = 'Team updated successfully!';
+                    $_SESSION['success'] = t('team_updated_successfully');
                     header('Location: teams.php');
                     exit;
                     
                 case 'delete':
                     // Team deletion disabled for production
-                    $_SESSION['error'] = 'Deleting teams is disabled in production mode.';
+                    $_SESSION['error'] = t('deleting_teams_disabled');
                     header('Location: teams.php');
                     exit;
                     
@@ -36,7 +36,7 @@ if ($_POST) {
                         $_POST['available'] === '1',
                         $_POST['reason']
                     );
-                    $_SESSION['success'] = 'Team availability updated!';
+                    $_SESSION['success'] = t('team_availability_updated');
                     header('Location: teams.php?view=availability&id=' . $_POST['team_id']);
                     exit;
             }

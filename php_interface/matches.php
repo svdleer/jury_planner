@@ -22,63 +22,63 @@ if ($_POST) {
             switch ($_POST['action']) {
                 case 'create':
                     // Match creation disabled for production
-                    $_SESSION['error'] = 'Adding new matches is disabled in production mode.';
+                    $_SESSION['error'] = t('adding_matches_disabled');
                     header('Location: matches.php');
                     exit;
                     
                 case 'update':
                     $matchManager->updateMatch($_POST['id'], $_POST);
-                    $_SESSION['success'] = 'Match updated successfully!';
+                    $_SESSION['success'] = t('match_updated_successfully');
                     header('Location: matches.php');
                     exit;
                     
                 case 'delete':
                     // Match deletion disabled for production
-                    $_SESSION['error'] = 'Deleting matches is disabled in production mode.';
+                    $_SESSION['error'] = t('deleting_matches_disabled');
                     header('Location: matches.php');
                     exit;
                     
                 case 'assign_jury':
                     $matchManager->assignJuryTeam($_POST['match_id'], $_POST['jury_team_id']);
-                    $_SESSION['success'] = 'Jury team assigned successfully!';
+                    $_SESSION['success'] = t('jury_team_assigned_successfully');
                     header('Location: matches.php');
                     exit;
                     
                 case 'remove_jury':
                     $matchManager->removeJuryAssignment($_POST['assignment_id']);
-                    $_SESSION['success'] = 'Jury assignment removed!';
+                    $_SESSION['success'] = t('jury_assignment_removed');
                     header('Location: matches.php');
                     exit;
                     
                 case 'lock_match':
                     $lockManager->lockMatch($_POST['match_id'], 'User');
-                    $_SESSION['success'] = 'Match locked successfully!';
+                    $_SESSION['success'] = t('match_locked_successfully');
                     header('Location: matches.php');
                     exit;
                     
                 case 'unlock_match':
                     $lockManager->unlockMatch($_POST['match_id']);
-                    $_SESSION['success'] = 'Match unlocked successfully!';
+                    $_SESSION['success'] = t('match_unlocked_successfully');
                     header('Location: matches.php');
                     exit;
                     
                 case 'reset_match':
                     $lockManager->resetMatchAssignments($_POST['match_id']);
-                    $_SESSION['success'] = 'Match assignments reset successfully!';
+                    $_SESSION['success'] = t('match_assignments_reset_successfully');
                     header('Location: matches.php');
                     exit;
                     
                 case 'reset_all':
                     $forceIncludeLocked = isset($_POST['force_include_locked']);
                     $lockManager->resetAllAssignments($forceIncludeLocked);
-                    $_SESSION['success'] = 'All assignments reset successfully!';
+                    $_SESSION['success'] = t('all_assignments_reset_successfully');
                     header('Location: matches.php');
                     exit;
                     
                 case 'unassign_all':
                     $forceIncludeLocked = isset($_POST['force_include_locked']);
                     $lockManager->resetAllAssignments($forceIncludeLocked);
-                    $_SESSION['success'] = 'All jury assignments removed successfully!';
+                    $_SESSION['success'] = t('all_jury_assignments_removed_successfully');
                     header('Location: matches.php');
                     exit;
                     

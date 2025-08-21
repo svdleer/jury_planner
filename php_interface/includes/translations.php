@@ -44,6 +44,30 @@ class Translations {
             // Footer
             'built_with_love_for_waterpolo' => 'Built with ❤️ for waterpolo',
             
+            // Constraint types
+            'hard' => 'Hard',
+            'soft' => 'Soft',
+            
+            // Success messages
+            'team_created_successfully' => 'Team created successfully!',
+            'team_updated_successfully' => 'Team updated successfully!',
+            'team_availability_updated' => 'Team availability updated!',
+            'match_updated_successfully' => 'Match updated successfully!',
+            'jury_team_assigned_successfully' => 'Jury team assigned successfully!',
+            'jury_assignment_removed' => 'Jury assignment removed!',
+            'match_locked_successfully' => 'Match locked successfully!',
+            'match_unlocked_successfully' => 'Match unlocked successfully!',
+            'match_assignments_reset_successfully' => 'Match assignments reset successfully!',
+            'all_assignments_reset_successfully' => 'All assignments reset successfully!',
+            'all_jury_assignments_removed_successfully' => 'All jury assignments removed successfully!',
+            
+            // Error messages
+            'adding_matches_disabled' => 'Adding new matches is disabled in production mode.',
+            'deleting_matches_disabled' => 'Deleting matches is disabled in production mode.',
+            'deleting_teams_disabled' => 'Deleting teams is disabled in production mode.',
+            'database_connection_failed' => 'Database connection failed',
+        ],
+            
             // Teams
             'team_name' => 'Team Name',
             'weight' => 'Weight',
@@ -552,6 +576,29 @@ class Translations {
             'consecutive_weekends' => '{team} heeft jury dienst op opeenvolgende weekenden',
             'recent_assignments' => '{team} heeft {count} toewijzingen in de laatste 2 weken',
             'previous_week_assignment' => '{team} had jury dienst in de vorige week',
+            
+            // Constraint types
+            'hard' => 'Hard',
+            'soft' => 'Zacht',
+            
+            // Success messages
+            'team_created_successfully' => 'Team succesvol aangemaakt!',
+            'team_updated_successfully' => 'Team succesvol bijgewerkt!',
+            'team_availability_updated' => 'Team beschikbaarheid bijgewerkt!',
+            'match_updated_successfully' => 'Wedstrijd succesvol bijgewerkt!',
+            'jury_team_assigned_successfully' => 'Jury team succesvol toegewezen!',
+            'jury_assignment_removed' => 'Jury toewijzing verwijderd!',
+            'match_locked_successfully' => 'Wedstrijd succesvol vergrendeld!',
+            'match_unlocked_successfully' => 'Wedstrijd succesvol ontgrendeld!',
+            'match_assignments_reset_successfully' => 'Wedstrijd toewijzingen succesvol gereset!',
+            'all_assignments_reset_successfully' => 'Alle toewijzingen succesvol gereset!',
+            'all_jury_assignments_removed_successfully' => 'Alle jury toewijzingen succesvol verwijderd!',
+            
+            // Error messages
+            'adding_matches_disabled' => 'Nieuwe wedstrijden toevoegen is uitgeschakeld in productie modus.',
+            'deleting_matches_disabled' => 'Wedstrijden verwijderen is uitgeschakeld in productie modus.',
+            'deleting_teams_disabled' => 'Teams verwijderen is uitgeschakeld in productie modus.',
+            'database_connection_failed' => 'Database verbinding mislukt',
         ]
     ];
     

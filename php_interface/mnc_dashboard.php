@@ -17,7 +17,7 @@ try {
     $matchesWithoutJury = $matchManager->getMatchesWithoutJury();
     
 } catch (Exception $e) {
-    $error = "Database connection failed: " . $e->getMessage();
+    $error = t('database_connection_failed') . ": " . $e->getMessage();
 }
 
 $pageTitle = t('dashboard');
