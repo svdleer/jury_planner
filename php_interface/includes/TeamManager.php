@@ -25,9 +25,8 @@ class TeamManager {
      * Get all teams with optional filtering
      */
     public function getAllTeams($activeOnly = false) {
-        $sql = "SELECT jt.*, mt.name as dedicated_to_team_name 
+        $sql = "SELECT jt.* 
                 FROM jury_teams jt
-                LEFT JOIN mnc_teams mt ON jt.dedicated_to_team_id = mt.id
                 ORDER BY jt.name";
         
         $stmt = $this->db->prepare($sql);
@@ -35,10 +34,14 @@ class TeamManager {
         
         $teams = $stmt->fetchAll();
         
-        // Special case for H1/H2 jury team - they can serve both H1 and H2
+        // Add dedicated teams information for each jury team
         foreach ($teams as &$team) {
+            $team['dedicated_teams'] = $this->getTeamDedications($team['id']);
+            $team['dedicated_to_team_name'] = $this->formatDedicationDisplay($team['dedicated_teams']);
+            
+            // Special case for H1/H2 jury team - they can serve both H1 and H2
             if ($team['name'] === 'H1/H2') {
-                $team['dedicated_to_team_name'] = 'H1 & H2';
+                $team['dedicated_to_team_name'] = 'H1 & H2 (Special)';
                 $team['is_h1h2_special'] = true;
             }
         }
@@ -47,53 +50,154 @@ class TeamManager {
     }
     
     /**
+     * Get dedicated teams for a jury team
+     */
+    public function getTeamDedications($juryTeamId) {
+        $sql = "SELECT mt.id, mt.name 
+                FROM jury_team_dedications jtd
+                JOIN mnc_teams mt ON jtd.dedicated_to_team_id = mt.id
+                WHERE jtd.jury_team_id = ?
+                ORDER BY mt.name";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$juryTeamId]);
+        
+        return $stmt->fetchAll();
+    }
+    
+    /**
+     * Format dedication display text
+     */
+    public function formatDedicationDisplay($dedicatedTeams) {
+        if (empty($dedicatedTeams)) {
+            return null;
+        }
+        
+        $teamNames = array_map(function($team) {
+            return $team['name'];
+        }, $dedicatedTeams);
+        
+        if (count($teamNames) == 1) {
+            return $teamNames[0];
+        } else {
+            return implode(', ', $teamNames);
+        }
+    }
+    
+    /**
+     * Set team dedications (replace all existing dedications)
+     */
+    public function setTeamDedications($juryTeamId, $dedicatedTeamIds) {
+        try {
+            $this->db->beginTransaction();
+            
+            // Remove existing dedications
+            $deleteSQL = "DELETE FROM jury_team_dedications WHERE jury_team_id = ?";
+            $stmt = $this->db->prepare($deleteSQL);
+            $stmt->execute([$juryTeamId]);
+            
+            // Add new dedications
+            if (!empty($dedicatedTeamIds)) {
+                $insertSQL = "INSERT INTO jury_team_dedications (jury_team_id, dedicated_to_team_id) VALUES (?, ?)";
+                $stmt = $this->db->prepare($insertSQL);
+                
+                foreach ($dedicatedTeamIds as $teamId) {
+                    if ($teamId) { // Skip empty values
+                        $stmt->execute([$juryTeamId, $teamId]);
+                    }
+                }
+            }
+            
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
+            throw $e;
+        }
+    }
+    
+    /**
      * Get a specific team by ID
      */
     public function getTeamById($id) {
-        $sql = "SELECT jt.*, mt.name as dedicated_to_team_name 
+        $sql = "SELECT jt.* 
                 FROM jury_teams jt
-                LEFT JOIN mnc_teams mt ON jt.dedicated_to_team_id = mt.id
                 WHERE jt.id = ?";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         
-        return $stmt->fetch();
+        $team = $stmt->fetch();
+        
+        if ($team) {
+            $team['dedicated_teams'] = $this->getTeamDedications($team['id']);
+            $team['dedicated_to_team_name'] = $this->formatDedicationDisplay($team['dedicated_teams']);
+        }
+        
+        return $team;
     }
     
     /**
      * Create a new team
      */
     public function createTeam($data) {
-        $sql = "INSERT INTO jury_teams (name, weight, dedicated_to_team_id, notes) 
-                VALUES (?, ?, ?, ?)";
-        
-        $stmt = $this->db->prepare($sql);
-        
-        return $stmt->execute([
-            $data['name'],
-            $data['weight'] ?? 1.0,
-            $data['dedicated_to_team_id'] ?? null,
-            $data['notes'] ?? ''
-        ]);
+        try {
+            $this->db->beginTransaction();
+            
+            $sql = "INSERT INTO jury_teams (name, weight, notes) 
+                    VALUES (?, ?, ?)";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $data['name'],
+                $data['weight'] ?? 1.0,
+                $data['notes'] ?? ''
+            ]);
+            
+            $teamId = $this->db->lastInsertId();
+            
+            // Handle multiple dedications
+            if (isset($data['dedicated_to_team_ids']) && is_array($data['dedicated_to_team_ids'])) {
+                $this->setTeamDedications($teamId, $data['dedicated_to_team_ids']);
+            }
+            
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
+            throw $e;
+        }
     }
     
     /**
      * Update an existing team
      */
     public function updateTeam($id, $data) {
-        $sql = "UPDATE jury_teams SET name = ?, weight = ?, dedicated_to_team_id = ?, notes = ?
-                WHERE id = ?";
-        
-        $stmt = $this->db->prepare($sql);
-        
-        return $stmt->execute([
-            $data['name'],
-            $data['weight'] ?? 1.0,
-            $data['dedicated_to_team_id'] ?? null,
-            $data['notes'] ?? '',
-            $id
-        ]);
+        try {
+            $this->db->beginTransaction();
+            
+            $sql = "UPDATE jury_teams SET name = ?, weight = ?, notes = ?
+                    WHERE id = ?";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $data['name'],
+                $data['weight'] ?? 1.0,
+                $data['notes'] ?? '',
+                $id
+            ]);
+            
+            // Handle multiple dedications
+            if (isset($data['dedicated_to_team_ids']) && is_array($data['dedicated_to_team_ids'])) {
+                $this->setTeamDedications($id, $data['dedicated_to_team_ids']);
+            }
+            
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
+            throw $e;
+        }
     }
     
     /**

@@ -195,14 +195,24 @@ ob_start();
                                     </div>
                                     
                                     <div>
-                                        <label for="dedicated_to_team_id" class="block text-sm font-medium leading-6 text-gray-900"><?php echo t('dedicated_to'); ?></label>
-                                        <select name="dedicated_to_team_id" id="dedicated_to_team_id" x-model="editingTeam.dedicated_to_team_id" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
-                                            <option value=""><?php echo t('not_dedicated'); ?></option>
-                                            <?php foreach ($mncTeams as $mncTeam): ?>
-                                                <option value="<?php echo $mncTeam['id']; ?>"><?php echo htmlspecialchars($mncTeam['name']); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                        <p class="mt-1 text-xs text-gray-500">Select a team this jury team is dedicated to (optional)</p>
+                                        <label class="block text-sm font-medium leading-6 text-gray-900"><?php echo t('dedicated_to'); ?></label>
+                                        <div class="mt-2 max-h-48 overflow-y-auto border border-gray-300 rounded-md p-3">
+                                            <div class="space-y-2">
+                                                <?php foreach ($mncTeams as $mncTeam): ?>
+                                                    <label class="flex items-center">
+                                                        <input 
+                                                            type="checkbox" 
+                                                            name="dedicated_to_team_ids[]" 
+                                                            value="<?php echo $mncTeam['id']; ?>"
+                                                            x-model="editingTeam.dedicated_to_team_ids"
+                                                            class="h-4 w-4 text-water-blue-600 focus:ring-water-blue-500 border-gray-300 rounded"
+                                                        >
+                                                        <span class="ml-2 text-sm text-gray-700"><?php echo htmlspecialchars($mncTeam['name']); ?></span>
+                                                    </label>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </div>
+                                        <p class="mt-1 text-xs text-gray-500">Select teams this jury team is dedicated to (multiple selections allowed)</p>
                                     </div>
                                     
                                     <div>
@@ -269,7 +279,7 @@ function teamsApp() {
             id: null,
             name: '',
             weight: 1.0,
-            dedicated_to_team_id: '',
+            dedicated_to_team_ids: [],
             notes: ''
         },
         deleteTeamId: null,
@@ -281,6 +291,10 @@ function teamsApp() {
         
         editTeam(team) {
             this.editingTeam = { ...team };
+            // Convert dedicated teams to array of IDs for checkboxes
+            this.editingTeam.dedicated_to_team_ids = team.dedicated_teams 
+                ? team.dedicated_teams.map(t => t.id.toString()) 
+                : [];
             this.showEditModal = true;
         },
         
@@ -297,7 +311,7 @@ function teamsApp() {
                 id: null,
                 name: '',
                 weight: 1.0,
-                dedicated_to_team_id: '',
+                dedicated_to_team_ids: [],
                 notes: ''
             };
         },
