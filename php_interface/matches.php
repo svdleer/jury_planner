@@ -903,7 +903,7 @@ function matchesApp() {
         },
         
         removeJuryAssignment(assignmentId) {
-            if (confirm('Are you sure you want to remove this jury assignment?')) {
+            if (confirm(window.JuryPlanner.translations.confirmRemoveJuryAssignment)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.innerHTML = `
@@ -916,7 +916,7 @@ function matchesApp() {
         },
         
         lockMatch(matchId, matchName) {
-            if (confirm(`Lock match "${matchName}"? This will prevent changes to jury assignments.`)) {
+            if (confirm(window.JuryPlanner.translations.lockMatchConfirm.replace('{0}', matchName))) {
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.innerHTML = `
@@ -929,7 +929,7 @@ function matchesApp() {
         },
         
         unlockMatch(matchId, matchName) {
-            if (confirm(`Unlock match "${matchName}"? This will allow changes to jury assignments.`)) {
+            if (confirm(window.JuryPlanner.translations.unlockMatchConfirm.replace('{0}', matchName))) {
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.innerHTML = `
@@ -942,7 +942,7 @@ function matchesApp() {
         },
         
         resetMatchAssignments(matchId, matchName) {
-            if (confirm(`Reset all jury assignments for match "${matchName}"? This action cannot be undone.`)) {
+            if (confirm(window.JuryPlanner.translations.resetMatchAssignmentsConfirm.replace('{0}', matchName))) {
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.innerHTML = `

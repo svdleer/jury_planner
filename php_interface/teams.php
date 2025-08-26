@@ -162,13 +162,13 @@ ob_start();
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                         <div class="flex justify-end space-x-2">
-                                            <button @click="editTeam(<?php echo htmlspecialchars(json_encode($team)); ?>)" class="text-water-blue-600 hover:text-water-blue-900" title="<?php echo $team['name'] === 'H1/H2' ? 'Edit team (dedication is automatic for H1/H2)' : 'Edit team'; ?>">
+                                            <button @click="editTeam(<?php echo htmlspecialchars(json_encode($team)); ?>)" class="text-water-blue-600 hover:text-water-blue-900" title="<?php echo $team['name'] === 'H1/H2' ? t('edit_team_h1h2_tooltip') : t('edit_team_tooltip'); ?>">>
                                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                                 </svg>
                                             </button>
                                             <?php if ($team['name'] === 'H1/H2'): ?>
-                                                <span class="inline-flex items-center text-xs text-blue-600" title="Special team with automatic dedication">
+                                                <span class="inline-flex items-center text-xs text-blue-600" title="<?php echo t('special_team_with_automatic_dedication'); ?>">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                     </svg>
@@ -198,7 +198,7 @@ ob_start();
                         
                         <div>
                             <div class="mt-3 text-center sm:mt-0 sm:text-left">
-                                <h3 class="text-base font-semibold leading-6 text-gray-900" x-text="showEditModal ? 'Edit Team' : 'Add New Team'"></h3>
+                                <h3 class="text-base font-semibold leading-6 text-gray-900" x-text="showEditModal ? '<?php echo t('edit_team_modal'); ?>' : '<?php echo t('add_new_team'); ?>'"></h3>
                                 <div class="mt-4 space-y-4">
                                     <div>
                                         <label for="name" class="block text-sm font-medium leading-6 text-gray-900"><?php echo t('team_name'); ?></label>
@@ -219,9 +219,9 @@ ob_start();
                                                     <svg class="h-5 w-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                     </svg>
-                                                    <span class="text-sm font-medium text-blue-900">H1/H2 Special Team</span>
+                                                    <span class="text-sm font-medium text-blue-900"><?php echo t('h1h2_special_team'); ?></span>
                                                 </div>
-                                                <p class="mt-1 text-sm text-blue-700">This team is automatically dedicated to both H1 and H2 teams. Dedication cannot be changed.</p>
+                                                <p class="mt-1 text-sm text-blue-700"><?php echo t('h1h2_special_dedication_message'); ?></p>
                                             </div>
                                         </template>
                                         <template x-if="editingTeam.name !== 'H1/H2'">
@@ -242,7 +242,7 @@ ob_start();
                                                 </div>
                                             </div>
                                         </template>
-                                        <p class="mt-1 text-xs text-gray-500" x-show="editingTeam.name !== 'H1/H2'">Select teams this jury team is dedicated to (multiple selections allowed)</p>
+                                        <p class="mt-1 text-xs text-gray-500" x-show="editingTeam.name !== 'H1/H2'"><?php echo t('multiple_dedications_helper'); ?></p>
                                     </div>
                                     
                                     <div>
@@ -254,7 +254,7 @@ ob_start();
                         </div>
                         <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                             <button type="submit" class="inline-flex w-full justify-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500 sm:ml-3 sm:w-auto">
-                                <span x-text="showEditModal ? 'Update Team' : 'Create Team'"></span>
+                                <span x-text="showEditModal ? '<?php echo t('update_team'); ?>' : '<?php echo t('create_team'); ?>'"></span>
                             </button>
                             <button @click="closeModals" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"><?php echo t('cancel'); ?></button>
                         </div>

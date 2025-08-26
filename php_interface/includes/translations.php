@@ -70,6 +70,25 @@ class Translations {
             'all_assignments_reset_successfully' => 'All assignments reset successfully!',
             'all_jury_assignments_removed_successfully' => 'All jury assignments removed successfully!',
             
+            // Modal and UI texts
+            'add_new_team' => 'Add New Team',
+            'edit_team_modal' => 'Edit Team',
+            'create_team' => 'Create Team',
+            'update_team' => 'Update Team',
+            'edit_team_h1h2_tooltip' => 'Edit team (dedication is automatic for H1/H2)',
+            'edit_team_tooltip' => 'Edit team',
+            'special_team_with_automatic_dedication' => 'Special team with automatic dedication',
+            'h1h2_special_team' => 'H1/H2 Special Team',
+            'h1h2_special_dedication_message' => 'This team is automatically dedicated to both H1 and H2 teams. Dedication cannot be changed.',
+            'multiple_dedications_helper' => 'Select teams this jury team is dedicated to (multiple selections allowed)',
+            
+            // Common UI elements
+            'open_main_menu' => 'Open main menu',
+            'confirm_remove_jury_assignment' => 'Are you sure you want to remove this jury assignment?',
+            'lock_match_confirm' => 'Lock match "{0}"? This will prevent changes to jury assignments.',
+            'unlock_match_confirm' => 'Unlock match "{0}"? This will allow changes to jury assignments.',
+            'reset_match_assignments_confirm' => 'Reset all jury assignments for match "{0}"? This action cannot be undone.',
+            
             // Error messages
             'adding_matches_disabled' => 'Adding new matches is disabled in production mode.',
             'deleting_matches_disabled' => 'Deleting matches is disabled in production mode.',
@@ -670,6 +689,25 @@ class Translations {
             'match_assignments_reset_successfully' => 'Wedstrijd toewijzingen succesvol gereset!',
             'all_assignments_reset_successfully' => 'Alle toewijzingen succesvol gereset!',
             'all_jury_assignments_removed_successfully' => 'Alle jury toewijzingen succesvol verwijderd!',
+            
+            // Modal and UI texts
+            'add_new_team' => 'Nieuw Team Toevoegen',
+            'edit_team_modal' => 'Team Bewerken',
+            'create_team' => 'Team Aanmaken',
+            'update_team' => 'Team Bijwerken',
+            'edit_team_h1h2_tooltip' => 'Team bewerken (toewijzing is automatisch voor H1/H2)',
+            'edit_team_tooltip' => 'Team bewerken',
+            'special_team_with_automatic_dedication' => 'Speciaal team met automatische toewijzing',
+            'h1h2_special_team' => 'H1/H2 Speciaal Team',
+            'h1h2_special_dedication_message' => 'Dit team is automatisch toegewezen aan zowel H1 als H2 teams. Toewijzing kan niet worden gewijzigd.',
+            'multiple_dedications_helper' => 'Selecteer teams waaraan dit jury team is toegewezen (meerdere selecties toegestaan)',
+            
+            // Common UI elements
+            'open_main_menu' => 'Hoofdmenu openen',
+            'confirm_remove_jury_assignment' => 'Weet je zeker dat je deze jury toewijzing wilt verwijderen?',
+            'lock_match_confirm' => 'Wedstrijd "{0}" vergrendelen? Dit voorkomt wijzigingen in jury toewijzingen.',
+            'unlock_match_confirm' => 'Wedstrijd "{0}" ontgrendelen? Dit staat wijzigingen in jury toewijzingen toe.',
+            'reset_match_assignments_confirm' => 'Alle jury toewijzingen voor wedstrijd "{0}" resetten? Deze actie kan niet ongedaan worden gemaakt.',
             
             // Error messages
             'adding_matches_disabled' => 'Nieuwe wedstrijden toevoegen is uitgeschakeld in productie modus.',
