@@ -52,6 +52,7 @@ $teamId = $_GET['id'] ?? null;
 $view = $_GET['view'] ?? 'list';
 
 $teams = $teamManager->getAllTeams();
+$mncTeams = $teamManager->getAllMncTeams();
 $editTeam = null;
 
 if ($teamId && in_array($action, ['edit', 'view'])) {
@@ -106,6 +107,7 @@ ob_start();
                             <tr>
                                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"><?php echo t('team_name'); ?></th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('weight'); ?></th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"><?php echo t('dedicated_to'); ?></th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                                     <span class="sr-only"><?php echo t('actions'); ?></span>
                                 </th>
@@ -135,6 +137,15 @@ ob_start();
                                         <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <?php echo $team['weight'] >= 1.5 ? 'bg-green-100 text-green-800' : ($team['weight'] >= 1.0 ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'); ?>">
                                             <?php echo number_format($team['weight'], 2); ?>
                                         </span>
+                                    </td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        <?php if ($team['dedicated_to_team_name']): ?>
+                                            <span class="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-800">
+                                                <?php echo htmlspecialchars($team['dedicated_to_team_name']); ?>
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="text-gray-400">-</span>
+                                        <?php endif; ?>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                         <div class="flex justify-end space-x-2">
@@ -178,6 +189,17 @@ ob_start();
                                         <label for="weight" class="block text-sm font-medium leading-6 text-gray-900"><?php echo t('weight'); ?></label>
                                         <input type="number" step="0.1" min="0" max="5" name="weight" id="weight" x-model="editingTeam.weight" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
                                         <p class="mt-1 text-xs text-gray-500">1.0 = standard capacity, higher values = more assignments</p>
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="dedicated_to_team_id" class="block text-sm font-medium leading-6 text-gray-900"><?php echo t('dedicated_to'); ?></label>
+                                        <select name="dedicated_to_team_id" id="dedicated_to_team_id" x-model="editingTeam.dedicated_to_team_id" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
+                                            <option value=""><?php echo t('not_dedicated'); ?></option>
+                                            <?php foreach ($mncTeams as $mncTeam): ?>
+                                                <option value="<?php echo $mncTeam['id']; ?>"><?php echo htmlspecialchars($mncTeam['name']); ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <p class="mt-1 text-xs text-gray-500">Select a team this jury team is dedicated to (optional)</p>
                                     </div>
                                     
                                     <div>
@@ -244,6 +266,7 @@ function teamsApp() {
             id: null,
             name: '',
             weight: 1.0,
+            dedicated_to_team_id: '',
             notes: ''
         },
         deleteTeamId: null,
@@ -271,6 +294,7 @@ function teamsApp() {
                 id: null,
                 name: '',
                 weight: 1.0,
+                dedicated_to_team_id: '',
                 notes: ''
             };
         },

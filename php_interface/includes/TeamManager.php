@@ -25,8 +25,9 @@ class TeamManager {
      * Get all teams with optional filtering
      */
     public function getAllTeams($activeOnly = false) {
-        $sql = "SELECT jt.* 
+        $sql = "SELECT jt.*, mt.name as dedicated_to_team_name 
                 FROM jury_teams jt
+                LEFT JOIN mnc_teams mt ON jt.dedicated_to_team_id = mt.id
                 ORDER BY jt.name";
         
         $stmt = $this->db->prepare($sql);
@@ -39,7 +40,10 @@ class TeamManager {
      * Get a specific team by ID
      */
     public function getTeamById($id) {
-        $sql = "SELECT * FROM jury_teams WHERE id = ?";
+        $sql = "SELECT jt.*, mt.name as dedicated_to_team_name 
+                FROM jury_teams jt
+                LEFT JOIN mnc_teams mt ON jt.dedicated_to_team_id = mt.id
+                WHERE jt.id = ?";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
@@ -51,14 +55,15 @@ class TeamManager {
      * Create a new team
      */
     public function createTeam($data) {
-        $sql = "INSERT INTO jury_teams (name, weight, notes) 
-                VALUES (?, ?, ?)";
+        $sql = "INSERT INTO jury_teams (name, weight, dedicated_to_team_id, notes) 
+                VALUES (?, ?, ?, ?)";
         
         $stmt = $this->db->prepare($sql);
         
         return $stmt->execute([
             $data['name'],
             $data['weight'] ?? 1.0,
+            $data['dedicated_to_team_id'] ?? null,
             $data['notes'] ?? ''
         ]);
     }
@@ -67,7 +72,7 @@ class TeamManager {
      * Update an existing team
      */
     public function updateTeam($id, $data) {
-        $sql = "UPDATE jury_teams SET name = ?, weight = ?, notes = ?
+        $sql = "UPDATE jury_teams SET name = ?, weight = ?, dedicated_to_team_id = ?, notes = ?
                 WHERE id = ?";
         
         $stmt = $this->db->prepare($sql);
@@ -75,9 +80,31 @@ class TeamManager {
         return $stmt->execute([
             $data['name'],
             $data['weight'] ?? 1.0,
+            $data['dedicated_to_team_id'] ?? null,
             $data['notes'] ?? '',
             $id
         ]);
+    }
+    
+    /**
+     * Get all MNC teams for dedicated team selection (excluding those not available for jury duty)
+     * Special case: H1 and H2 teams are included because they can be served by the H1/H2 jury team
+     */
+    public function getAllMncTeams() {
+        $sql = "SELECT mt.id, mt.name 
+                FROM mnc_teams mt
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM excluded_teams et 
+                    WHERE LOWER(mt.name) LIKE CONCAT('%', LOWER(et.name), '%')
+                    AND et.name NOT IN ('h1', 'h2')  -- H1 and H2 are special case
+                )
+                OR mt.name LIKE '%H1%' OR mt.name LIKE '%H2%'  -- Always include H1/H2 teams
+                ORDER BY mt.name";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        
+        return $stmt->fetchAll();
     }
     
     /**
