@@ -139,24 +139,41 @@ ob_start();
                                         </span>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        <?php if ($team['dedicated_to_team_name']): ?>
-                                            <span class="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-800">
-                                                <?php echo htmlspecialchars($team['dedicated_to_team_name']); ?>
-                                                <?php if ($team['name'] === 'H1/H2'): ?>
-                                                    <span class="ml-1 text-xs">(Both teams)</span>
-                                                <?php endif; ?>
-                                            </span>
+                                        <?php if ($team['name'] === 'H1/H2'): ?>
+                                            <div class="flex items-center">
+                                                <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                    H1 & H2 (Special)
+                                                </span>
+                                            </div>
+                                        <?php elseif (!empty($team['dedicated_teams'])): ?>
+                                            <div class="flex flex-wrap gap-1">
+                                                <?php foreach ($team['dedicated_teams'] as $dedicatedTeam): ?>
+                                                    <span class="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-800">
+                                                        <?php echo htmlspecialchars($dedicatedTeam['name']); ?>
+                                                    </span>
+                                                <?php endforeach; ?>
+                                            </div>
                                         <?php else: ?>
                                             <span class="text-gray-400">-</span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                         <div class="flex justify-end space-x-2">
-                                            <button @click="editTeam(<?php echo htmlspecialchars(json_encode($team)); ?>)" class="text-water-blue-600 hover:text-water-blue-900">
+                                            <button @click="editTeam(<?php echo htmlspecialchars(json_encode($team)); ?>)" class="text-water-blue-600 hover:text-water-blue-900" title="<?php echo $team['name'] === 'H1/H2' ? 'Edit team (dedication is automatic for H1/H2)' : 'Edit team'; ?>">
                                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                                 </svg>
                                             </button>
+                                            <?php if ($team['name'] === 'H1/H2'): ?>
+                                                <span class="inline-flex items-center text-xs text-blue-600" title="Special team with automatic dedication">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                </span>
+                                            <?php endif; ?>
                                             <!-- Delete button disabled for production -->
                                         </div>
                                     </td>
@@ -196,23 +213,36 @@ ob_start();
                                     
                                     <div>
                                         <label class="block text-sm font-medium leading-6 text-gray-900"><?php echo t('dedicated_to'); ?></label>
-                                        <div class="mt-2 max-h-48 overflow-y-auto border border-gray-300 rounded-md p-3">
-                                            <div class="space-y-2">
-                                                <?php foreach ($mncTeams as $mncTeam): ?>
-                                                    <label class="flex items-center">
-                                                        <input 
-                                                            type="checkbox" 
-                                                            name="dedicated_to_team_ids[]" 
-                                                            value="<?php echo $mncTeam['id']; ?>"
-                                                            x-model="editingTeam.dedicated_to_team_ids"
-                                                            class="h-4 w-4 text-water-blue-600 focus:ring-water-blue-500 border-gray-300 rounded"
-                                                        >
-                                                        <span class="ml-2 text-sm text-gray-700"><?php echo htmlspecialchars($mncTeam['name']); ?></span>
-                                                    </label>
-                                                <?php endforeach; ?>
+                                        <template x-if="editingTeam.name === 'H1/H2'">
+                                            <div class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                                                <div class="flex items-center">
+                                                    <svg class="h-5 w-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                    <span class="text-sm font-medium text-blue-900">H1/H2 Special Team</span>
+                                                </div>
+                                                <p class="mt-1 text-sm text-blue-700">This team is automatically dedicated to both H1 and H2 teams. Dedication cannot be changed.</p>
                                             </div>
-                                        </div>
-                                        <p class="mt-1 text-xs text-gray-500">Select teams this jury team is dedicated to (multiple selections allowed)</p>
+                                        </template>
+                                        <template x-if="editingTeam.name !== 'H1/H2'">
+                                            <div class="mt-2 max-h-48 overflow-y-auto border border-gray-300 rounded-md p-3">
+                                                <div class="space-y-2">
+                                                    <?php foreach ($mncTeams as $mncTeam): ?>
+                                                        <label class="flex items-center">
+                                                            <input 
+                                                                type="checkbox" 
+                                                                name="dedicated_to_team_ids[]" 
+                                                                value="<?php echo $mncTeam['id']; ?>"
+                                                                x-model="editingTeam.dedicated_to_team_ids"
+                                                                class="h-4 w-4 text-water-blue-600 focus:ring-water-blue-500 border-gray-300 rounded"
+                                                            >
+                                                            <span class="ml-2 text-sm text-gray-700"><?php echo htmlspecialchars($mncTeam['name']); ?></span>
+                                                        </label>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <p class="mt-1 text-xs text-gray-500" x-show="editingTeam.name !== 'H1/H2'">Select teams this jury team is dedicated to (multiple selections allowed)</p>
                                     </div>
                                     
                                     <div>
