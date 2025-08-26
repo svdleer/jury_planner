@@ -142,6 +142,9 @@ ob_start();
                                         <?php if ($team['dedicated_to_team_name']): ?>
                                             <span class="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-800">
                                                 <?php echo htmlspecialchars($team['dedicated_to_team_name']); ?>
+                                                <?php if ($team['name'] === 'H1/H2'): ?>
+                                                    <span class="ml-1 text-xs">(Both teams)</span>
+                                                <?php endif; ?>
                                             </span>
                                         <?php else: ?>
                                             <span class="text-gray-400">-</span>

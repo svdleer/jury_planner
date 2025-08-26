@@ -33,7 +33,17 @@ class TeamManager {
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         
-        return $stmt->fetchAll();
+        $teams = $stmt->fetchAll();
+        
+        // Special case for H1/H2 jury team - they can serve both H1 and H2
+        foreach ($teams as &$team) {
+            if ($team['name'] === 'H1/H2') {
+                $team['dedicated_to_team_name'] = 'H1 & H2';
+                $team['is_h1h2_special'] = true;
+            }
+        }
+        
+        return $teams;
     }
     
     /**
@@ -105,6 +115,67 @@ class TeamManager {
         $stmt->execute();
         
         return $stmt->fetchAll();
+    }
+    
+    /**
+     * Check if a jury team can serve a specific match based on dedication rules
+     * @param string $juryTeamName Name of the jury team
+     * @param string $homeTeamName Home team name
+     * @param string $awayTeamName Away team name
+     * @param bool $isLastMatchOfDay Whether this is the last match of the day (overrides dedication rules)
+     */
+    public function canJuryTeamServeMatch($juryTeamName, $homeTeamName, $awayTeamName, $isLastMatchOfDay = false) {
+        // Exception: Last match of the day - any team can serve if needed
+        if ($isLastMatchOfDay) {
+            return true;
+        }
+        
+        // Special case: H1/H2 jury team can serve both H1 and H2 matches
+        if ($juryTeamName === 'H1/H2') {
+            return (strpos($homeTeamName, 'H1') !== false || strpos($homeTeamName, 'H2') !== false ||
+                    strpos($awayTeamName, 'H1') !== false || strpos($awayTeamName, 'H2') !== false);
+        }
+        
+        // Get the team's dedication
+        $sql = "SELECT mt.name as dedicated_team_name 
+                FROM jury_teams jt
+                LEFT JOIN mnc_teams mt ON jt.dedicated_to_team_id = mt.id
+                WHERE jt.name = ?";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$juryTeamName]);
+        $result = $stmt->fetch();
+        
+        // If not dedicated to any team, can serve any match
+        if (!$result || !$result['dedicated_team_name']) {
+            return true;
+        }
+        
+        // If dedicated, can only serve matches involving their dedicated team
+        $dedicatedTeam = $result['dedicated_team_name'];
+        return ($homeTeamName === $dedicatedTeam || $awayTeamName === $dedicatedTeam);
+    }
+    
+    /**
+     * Check if a match is the last match of the day
+     * @param string $matchDateTime DateTime in YYYY-MM-DD HH:MM:SS format
+     */
+    public function isLastMatchOfDay($matchDateTime) {
+        $matchDate = date('Y-m-d', strtotime($matchDateTime));
+        
+        $sql = "SELECT MAX(date_time) as latest_datetime 
+                FROM matches 
+                WHERE DATE(date_time) = ?";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$matchDate]);
+        $result = $stmt->fetch();
+        
+        if (!$result || !$result['latest_datetime']) {
+            return false;
+        }
+        
+        return $matchDateTime >= $result['latest_datetime'];
     }
     
     /**
