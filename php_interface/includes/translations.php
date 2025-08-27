@@ -373,6 +373,25 @@ class Translations {
             'unassign_all_jury_teams_description' => 'This will remove all jury team assignments from all matches. Locked matches will be preserved unless you force unassign.',
             'force_unassign_locked_matches' => 'Also unassign locked matches (force unassign)',
             
+            // New fairness and constraint analysis keys
+            'vs' => 'vs',
+            'fairness_score' => 'Fairness Score',
+            'point_spread' => 'Point Spread',
+            'min_points' => 'Min Points',
+            'max_points' => 'Max Points',
+            'fairness_recommendations' => 'Fairness Recommendations',
+            'team_points_distribution' => 'Team Points Distribution',
+            'rank' => 'Rank',
+            'team' => 'Team',
+            'total_points' => 'Total Points',
+            'avg_points_per_match' => 'Avg Points/Match',
+            'needs_more' => 'Needs More',
+            'above_average' => 'Above Average',
+            'balanced' => 'Balanced',
+            'point_assignment_rules' => 'Point Assignment Rules',
+            'first_and_last_match' => 'First & Last Match',
+            'first_last_match_description' => 'Season opener and finale matches are worth 15 points due to higher importance.',
+            
             // Analysis page
             'match_constraint_analysis' => 'Match constraint analysis',
             'analyze_why_teams_can_or_cannot_be_assigned' => 'Analyze why teams can or cannot be assigned as jury for specific matches',
@@ -709,6 +728,25 @@ class Translations {
             'reset_all' => 'Alles Resetten',
             'unassign_all_jury_teams_description' => 'Dit zal alle jury team toewijzingen van alle wedstrijden verwijderen. Vergrendelde wedstrijden worden behouden tenzij je geforceerd ontoewijst.',
             'force_unassign_locked_matches' => 'Ook vergrendelde wedstrijden ontoewijzen (geforceerd ontoewijzen)',
+            
+            // New fairness and constraint analysis keys
+            'vs' => 'tegen',
+            'fairness_score' => 'Eerlijkheid Score',
+            'point_spread' => 'Punten Spreiding',
+            'min_points' => 'Min Punten',
+            'max_points' => 'Max Punten',
+            'fairness_recommendations' => 'Eerlijkheid Aanbevelingen',
+            'team_points_distribution' => 'Team Punten Verdeling',
+            'rank' => 'Rang',
+            'team' => 'Team',
+            'total_points' => 'Totaal Punten',
+            'avg_points_per_match' => 'Gem Punten/Wedstrijd',
+            'needs_more' => 'Heeft Meer Nodig',
+            'above_average' => 'Boven Gemiddeld',
+            'balanced' => 'Gebalanceerd',
+            'point_assignment_rules' => 'Punt Toewijzing Regels',
+            'first_and_last_match' => 'Eerste & Laatste Wedstrijd',
+            'first_last_match_description' => 'Seizoen opener en finale wedstrijden zijn 15 punten waard vanwege hoger belang.',
             
             // Analysis page  
             'match_constraint_analysis' => 'Wedstrijd beperkingen analyse',

@@ -29,7 +29,7 @@ ob_start();
                     </div>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Fairness Score</p>
+                    <p class="text-sm font-medium text-gray-500"><?php echo t('fairness_score'); ?></p>
                     <p class="text-2xl font-bold text-gray-900"><?php echo round($metrics['fairness_score'], 1); ?>%</p>
                 </div>
             </div>
@@ -43,7 +43,7 @@ ob_start();
                     </div>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Point Spread</p>
+                    <p class="text-sm font-medium text-gray-500"><?php echo t('point_spread'); ?></p>
                     <p class="text-2xl font-bold text-gray-900"><?php echo $metrics['points_difference']; ?></p>
                 </div>
             </div>
@@ -57,7 +57,7 @@ ob_start();
                     </div>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Min Points</p>
+                    <p class="text-sm font-medium text-gray-500"><?php echo t('min_points'); ?></p>
                     <p class="text-2xl font-bold text-gray-900"><?php echo $metrics['min_points']; ?></p>
                 </div>
             </div>
@@ -71,7 +71,7 @@ ob_start();
                     </div>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Max Points</p>
+                    <p class="text-sm font-medium text-gray-500"><?php echo t('max_points'); ?></p>
                     <p class="text-2xl font-bold text-gray-900"><?php echo $metrics['max_points']; ?></p>
                 </div>
             </div>
@@ -81,7 +81,7 @@ ob_start();
     <!-- Recommendations -->
     <?php if (!empty($recommendations)): ?>
     <div class="mb-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Fairness Recommendations</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('fairness_recommendations'); ?></h3>
         <div class="space-y-3">
             <?php foreach ($recommendations as $rec): ?>
                 <div class="border-l-4 p-4 <?php 
@@ -103,18 +103,18 @@ ob_start();
     <!-- Team Points Table -->
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
         <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Team Points Distribution</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('team_points_distribution'); ?></h3>
             
             <div class="overflow-x-auto">
                 <table class="min-w-full table-auto">
                     <thead>
                         <tr class="bg-gray-50">
-                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Rank</th>
-                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Team</th>
-                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Total Points</th>
-                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Assignments</th>
-                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Avg Points/Match</th>
-                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900">Status</th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900"><?php echo t('rank'); ?></th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900"><?php echo t('team'); ?></th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900"><?php echo t('total_points'); ?></th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900"><?php echo t('assignments'); ?></th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900"><?php echo t('avg_points_per_match'); ?></th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-900"><?php echo t('status'); ?></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
@@ -141,7 +141,7 @@ ob_start();
                                     </span>
                                 </td>
                                 <td class="px-4 py-2">
-                                    <span class="text-sm text-gray-600"><?php echo $assignmentCount; ?> matches</span>
+                                    <span class="text-sm text-gray-600"><?php echo $assignmentCount; ?> <?php echo t('matches'); ?></span>
                                 </td>
                                 <td class="px-4 py-2">
                                     <span class="text-sm text-gray-600"><?php echo $avgPointsPerMatch; ?></span>
@@ -149,15 +149,15 @@ ob_start();
                                 <td class="px-4 py-2">
                                     <?php if ($isBelowAvg): ?>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            Needs More
+                                            <?php echo t('needs_more'); ?>
                                         </span>
                                     <?php elseif ($isAboveAvg): ?>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            Above Average
+                                            <?php echo t('above_average'); ?>
                                         </span>
                                     <?php else: ?>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                            Balanced
+                                            <?php echo t('balanced'); ?>
                                         </span>
                                     <?php endif; ?>
                                 </td>
@@ -172,14 +172,14 @@ ob_start();
     <!-- Point Assignment Rules -->
     <div class="mt-6 bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg">
         <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Point Assignment Rules</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4"><?php echo t('point_assignment_rules'); ?></h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="border rounded-lg p-4">
                     <div class="flex items-center mb-2">
                         <span class="w-8 h-8 bg-yellow-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">15</span>
-                        <span class="font-medium">First & Last Match</span>
+                        <span class="font-medium"><?php echo t('first_and_last_match'); ?></span>
                     </div>
-                    <p class="text-sm text-gray-600">Season opener and finale matches are worth 15 points due to higher importance.</p>
+                    <p class="text-sm text-gray-600"><?php echo t('first_last_match_description'); ?></p>
                 </div>
                 
                 <div class="border rounded-lg p-4">

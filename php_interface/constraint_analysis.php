@@ -47,7 +47,7 @@ ob_start();
         </div>
     <?php elseif (empty($upcomingMatches)): ?>
         <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
-            No upcoming matches found.
+            <?php echo t('no_upcoming_matches_found'); ?>
         </div>
     <?php else: ?>
 
@@ -64,7 +64,7 @@ ob_start();
                         <?php foreach ($upcomingMatches as $match): ?>
                             <option value="<?php echo $match['id']; ?>" <?php echo $match['id'] == $selectedMatchId ? 'selected' : ''; ?>>
                                 <?php echo date('M j, Y H:i', strtotime($match['date_time'])); ?> - 
-                                <?php echo htmlspecialchars($match['home_team']); ?> vs 
+                                <?php echo htmlspecialchars($match['home_team']); ?> <?php echo t('vs'); ?> 
                                 <?php echo htmlspecialchars($match['away_team']); ?>
                             </option>
                         <?php endforeach; ?>
