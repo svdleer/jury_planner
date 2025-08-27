@@ -1089,6 +1089,13 @@ class Translations {
             'rec_rest_between_matches_desc' => 'Voeg rustperiode beperkingen toe om team burn-out te voorkomen',
             'rec_max_assignments_desc' => 'Beperk dagelijkse toewijzingen om kwaliteit te waarborgen',
             'rec_workload_distribution_desc' => 'Overweeg werklastverdeling beperkingen toe te voegen',
+            
+            // Optimization statistics
+            'total_runs' => 'Totaal Uitgevoerd',
+            'avg_score' => 'Gemiddelde Score',
+            'satisfaction_rate' => 'Tevredenheidspercentage',
+            'avg_time' => 'Gemiddelde Tijd',
+            'missing_constraints' => 'Ontbrekende Beperkingen',
         ]
     ];
     
