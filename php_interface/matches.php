@@ -534,7 +534,7 @@ ob_start();
                                                 <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
                                                 </svg>
-                                                Unlocked
+                                                <?php echo t('unlocked'); ?>
                                             </span>
                                         <?php endif; ?>
                                     </td>
@@ -672,10 +672,10 @@ ob_start();
                                     <div>
                                         <label for="status" class="block text-sm font-medium leading-6 text-gray-900">Status</label>
                                         <select name="status" id="status" x-model="editingMatch.status" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
-                                            <option value="scheduled">Scheduled</option>
-                                            <option value="in_progress">In Progress</option>
-                                            <option value="completed">Completed</option>
-                                            <option value="cancelled">Cancelled</option>
+                                            <option value="scheduled"><?php echo t('scheduled'); ?></option>
+                                            <option value="in_progress"><?php echo t('in_progress'); ?></option>
+                                            <option value="completed"><?php echo t('completed'); ?></option>
+                                            <option value="cancelled"><?php echo t('cancelled'); ?></option>
                                         </select>
                                     </div>
                                     

@@ -69,6 +69,9 @@ class Translations {
             'match_assignments_reset_successfully' => 'Match assignments reset successfully!',
             'all_assignments_reset_successfully' => 'All assignments reset successfully!',
             'all_jury_assignments_removed_successfully' => 'All jury assignments removed successfully!',
+            'lock_match_confirm' => 'Are you sure you want to lock the match: {0}? This will prevent automatic assignment changes.',
+            'unlock_match_confirm' => 'Are you sure you want to unlock the match: {0}? This will allow automatic assignment changes.',
+            'reset_match_assignments_confirm' => 'Are you sure you want to reset all jury assignments for match: {0}? This action cannot be undone.',
             
             // Modal and UI texts
             'add_new_team' => 'Add New Team',
@@ -690,6 +693,9 @@ class Translations {
             'match_assignments_reset_successfully' => 'Wedstrijd toewijzingen succesvol gereset!',
             'all_assignments_reset_successfully' => 'Alle toewijzingen succesvol gereset!',
             'all_jury_assignments_removed_successfully' => 'Alle jury toewijzingen succesvol verwijderd!',
+            'lock_match_confirm' => 'Weet je zeker dat je de wedstrijd wilt vergrendelen: {0}? Dit voorkomt automatische toewijzingswijzigingen.',
+            'unlock_match_confirm' => 'Weet je zeker dat je de wedstrijd wilt ontgrendelen: {0}? Dit staat automatische toewijzingswijzigingen toe.',
+            'reset_match_assignments_confirm' => 'Weet je zeker dat je alle jury toewijzingen voor wedstrijd wilt resetten: {0}? Deze actie kan niet ongedaan worden gemaakt.',
             
             // Modal and UI texts
             'add_new_team' => 'Nieuw Team Toevoegen',
