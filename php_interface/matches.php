@@ -525,7 +525,7 @@ ob_start();
                                                 </span>
                                                 <?php if ($match['locked_by']): ?>
                                                     <div class="ml-2 text-xs text-gray-500" title="Locked at <?php echo $match['locked_at']; ?>">
-                                                        by <?php echo htmlspecialchars($match['locked_by']); ?>
+                                                        <?php echo htmlspecialchars($match['locked_by']); ?>
                                                     </div>
                                                 <?php endif; ?>
                                             </div>
