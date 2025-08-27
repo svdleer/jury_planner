@@ -71,7 +71,7 @@ ob_start();
         <div class="min-w-0 flex-1">
             <!-- Page title provided by layout -->
         </div>
-        <div class="mt-4 flex sm:ml-4 sm:mt-0">
+        <div class="mt-4 flex sm:ml-4 sm:mt-0" style="display: none;">
             <button @click="showCreateModal = true" class="inline-flex items-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-water-blue-600">
                 <svg class="-ml-0.5 mr-1.5 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
@@ -91,7 +91,7 @@ ob_start();
                     </svg>
                     <h3 class="mt-2 text-sm font-semibold text-gray-900"><?php echo t('no_teams_found'); ?></h3>
                     <p class="mt-1 text-sm text-gray-500"><?php echo t('teams_get_started_message'); ?></p>
-                    <div class="mt-6">
+                    <div class="mt-6" style="display: none;">
                         <button @click="showCreateModal = true" class="inline-flex items-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-water-blue-600">
                             <svg class="-ml-0.5 mr-1.5 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
@@ -208,7 +208,7 @@ ob_start();
                                     <div>
                                         <label for="weight" class="block text-sm font-medium leading-6 text-gray-900"><?php echo t('weight'); ?></label>
                                         <input type="number" step="0.1" min="0" max="5" name="weight" id="weight" x-model="editingTeam.weight" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
-                                        <p class="mt-1 text-xs text-gray-500">1.0 = standard capacity, higher values = more assignments</p>
+                                        <p class="mt-1 text-xs text-gray-500"><?php echo t('weight_capacity_helper'); ?></p>
                                     </div>
                                     
                                     <div>

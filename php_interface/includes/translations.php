@@ -81,6 +81,7 @@ class Translations {
             'h1h2_special_team' => 'H1/H2 Special Team',
             'h1h2_special_dedication_message' => 'This team is automatically dedicated to both H1 and H2 teams. Dedication cannot be changed.',
             'multiple_dedications_helper' => 'Select teams this jury team is dedicated to (multiple selections allowed)',
+            'weight_capacity_helper' => '1.0 = standard capacity, higher values = more assignments',
             
             // Common UI elements
             'open_main_menu' => 'Open main menu',
@@ -701,6 +702,7 @@ class Translations {
             'h1h2_special_team' => 'H1/H2 Speciaal Team',
             'h1h2_special_dedication_message' => 'Dit team is automatisch toegewezen aan zowel H1 als H2 teams. Toewijzing kan niet worden gewijzigd.',
             'multiple_dedications_helper' => 'Selecteer teams waaraan dit jury team is toegewezen (meerdere selecties toegestaan)',
+            'weight_capacity_helper' => '1.0 = standaard capaciteit, hogere waarden = meer toewijzingen',
             
             // Common UI elements
             'open_main_menu' => 'Hoofdmenu openen',
