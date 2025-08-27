@@ -222,8 +222,8 @@ function formatTime($time, $format = 'H:i') {
             // Translations for JavaScript
             translations: {
                 confirmRemoveJuryAssignment: '<?php echo t('confirm_remove_jury_assignment'); ?>',
-                lockMatchConfirm: '<?php echo t('lock_match_confirm'); ?>',
-                unlockMatchConfirm: '<?php echo t('unlock_match_confirm'); ?>',
+                lockMatchConfirm: '<?php echo t('lockMatchConfirm'); ?>',
+                unlockMatchConfirm: '<?php echo t('unlockMatchConfirm'); ?>',
                 resetMatchAssignmentsConfirm: '<?php echo t('reset_match_assignments_confirm'); ?>'
             },
             

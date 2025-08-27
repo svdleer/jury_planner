@@ -453,7 +453,7 @@ ob_start();
                             <?php foreach ($matches as $match): ?>
                                 <tr class="hover:bg-gray-50">
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 sm:pl-0">
-                                        <div class="text-sm font-medium text-gray-900"><?php echo date('l', strtotime($match['match_date'])); ?></div>
+                                        <div class="text-sm font-medium text-gray-900"><?php echo translateDayName(date('l', strtotime($match['match_date']))); ?></div>
                                         <div class="text-sm text-gray-900"><?php echo date('M j, Y', strtotime($match['match_date'])); ?></div>
                                         <div class="text-sm text-gray-500"><?php echo date('H:i', strtotime($match['match_time'])); ?></div>
                                     </td>
@@ -592,13 +592,6 @@ ob_start();
                                                 </button>
                                             <?php endif; ?>
                                             
-                                            <!-- Edit button -->
-                                            <button @click="editMatch(<?php echo htmlspecialchars(json_encode($match)); ?>)" class="text-water-blue-600 hover:text-water-blue-900" title="Edit match">
-                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                </svg>
-                                            </button>
-                                            
                                             <!-- Delete button disabled for production -->
                                         </div>
                                     </td>
@@ -608,93 +601,6 @@ ob_start();
                     </table>
                 </div>
             <?php endif; ?>
-        </div>
-    </div>
-
-    <!-- Create/Edit Match Modal -->
-    <div x-show="showCreateModal || showEditModal" x-cloak class="relative z-50" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-        <div class="fixed inset-0 z-10 overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <div class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
-                    <form method="POST">
-                        <input type="hidden" name="action" :value="showEditModal ? 'update' : 'create'">
-                        <input x-show="showEditModal" type="hidden" name="id" :value="editingMatch?.id">
-                        
-                        <div>
-                            <div class="mt-3 text-center sm:mt-0 sm:text-left">
-                                <h3 class="text-base font-semibold leading-6 text-gray-900" x-text="showEditModal ? 'Edit Match' : 'Add New Match'"></h3>
-                                <div class="mt-4 space-y-4">
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label for="home_team_id" class="block text-sm font-medium leading-6 text-gray-900">Home Team</label>
-                                            <select name="home_team_id" id="home_team_id" required x-model="editingMatch.home_team_id" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
-                                                <option value="">Select team</option>
-                                                <?php foreach ($teams as $team): ?>
-                                                    <option value="<?php echo $team['id']; ?>"><?php echo htmlspecialchars($team['name']); ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </div>
-                                        
-                                        <div>
-                                            <label for="away_team_id" class="block text-sm font-medium leading-6 text-gray-900">Away Team</label>
-                                            <select name="away_team_id" id="away_team_id" required x-model="editingMatch.away_team_id" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
-                                                <option value="">Select team</option>
-                                                <?php foreach ($teams as $team): ?>
-                                                    <option value="<?php echo $team['id']; ?>"><?php echo htmlspecialchars($team['name']); ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label for="match_date" class="block text-sm font-medium leading-6 text-gray-900">Date</label>
-                                            <input type="date" name="match_date" id="match_date" required x-model="editingMatch.match_date" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
-                                        </div>
-                                        
-                                        <div>
-                                            <label for="match_time" class="block text-sm font-medium leading-6 text-gray-900">Time</label>
-                                            <input type="time" name="match_time" id="match_time" required x-model="editingMatch.match_time" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
-                                        </div>
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="pool_name" class="block text-sm font-medium leading-6 text-gray-900">Pool Name</label>
-                                        <input type="text" name="pool_name" id="pool_name" x-model="editingMatch.pool_name" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="competition" class="block text-sm font-medium leading-6 text-gray-900">Competition</label>
-                                        <input type="text" name="competition" id="competition" x-model="editingMatch.competition" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="status" class="block text-sm font-medium leading-6 text-gray-900">Status</label>
-                                        <select name="status" id="status" x-model="editingMatch.status" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
-                                            <option value="scheduled"><?php echo t('scheduled'); ?></option>
-                                            <option value="in_progress"><?php echo t('in_progress'); ?></option>
-                                            <option value="completed"><?php echo t('completed'); ?></option>
-                                            <option value="cancelled"><?php echo t('cancelled'); ?></option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="notes" class="block text-sm font-medium leading-6 text-gray-900">Notes</label>
-                                        <textarea name="notes" id="notes" rows="3" x-model="editingMatch.notes" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                            <button type="submit" class="inline-flex w-full justify-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500 sm:ml-3 sm:w-auto">
-                                <span x-text="showEditModal ? 'Update Match' : 'Create Match'"></span>
-                            </button>
-                            <button @click="closeModals" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -857,25 +763,12 @@ ob_start();
 <script>
 function matchesApp() {
     return {
-        showCreateModal: false,
-        showEditModal: false,
         showDeleteModal: false,
         showJuryModal: false,
         showResetAllModal: false,
         showUnassignAllModal: false,
         forceIncludeLocked: false,
         forceIncludeLockedUnassign: false,
-        editingMatch: {
-            id: null,
-            home_team_id: '',
-            away_team_id: '',
-            match_date: '',
-            match_time: '',
-            pool_name: '',
-            competition: '',
-            status: 'scheduled',
-            notes: ''
-        },
         deleteMatchId: null,
         deleteMatchName: '',
         assignJuryMatchId: null,
@@ -883,11 +776,6 @@ function matchesApp() {
         
         init() {
             // Initialize component
-        },
-        
-        editMatch(match) {
-            this.editingMatch = { ...match };
-            this.showEditModal = true;
         },
         
         deleteMatch(id, name) {
@@ -989,24 +877,11 @@ function matchesApp() {
         },
         
         closeModals() {
-            this.showCreateModal = false;
-            this.showEditModal = false;
             this.showJuryModal = false;
             this.showResetAllModal = false;
             this.showUnassignAllModal = false;
             this.forceIncludeLocked = false;
             this.forceIncludeLockedUnassign = false;
-            this.editingMatch = {
-                id: null,
-                home_team_id: '',
-                away_team_id: '',
-                match_date: '',
-                match_time: '',
-                pool_name: '',
-                competition: '',
-                status: 'scheduled',
-                notes: ''
-            };
         }
     }
 }

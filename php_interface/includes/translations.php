@@ -344,6 +344,19 @@ class Translations {
             'unlocked' => 'Unlocked',
             'clear_filters' => 'Clear filters',
             
+            // Days of the week
+            'monday' => 'Monday',
+            'tuesday' => 'Tuesday', 
+            'wednesday' => 'Wednesday',
+            'thursday' => 'Thursday',
+            'friday' => 'Friday',
+            'saturday' => 'Saturday',
+            'sunday' => 'Sunday',
+            
+            // Lock/unlock confirmation messages
+            'lockMatchConfirm' => 'Are you sure you want to lock the match: {0}? This will prevent changes to jury assignments.',
+            'unlockMatchConfirm' => 'Are you sure you want to unlock the match: {0}? This will allow changes to jury assignments.',
+            
             // Analysis page
             'match_constraint_analysis' => 'Match constraint analysis',
             'analyze_why_teams_can_or_cannot_be_assigned' => 'Analyze why teams can or cannot be assigned as jury for specific matches',
@@ -649,6 +662,19 @@ class Translations {
             'unlocked' => 'Ontgrendeld',
             'clear_filters' => 'Filters wissen',
             
+            // Days of the week
+            'monday' => 'Maandag',
+            'tuesday' => 'Dinsdag',
+            'wednesday' => 'Woensdag', 
+            'thursday' => 'Donderdag',
+            'friday' => 'Vrijdag',
+            'saturday' => 'Zaterdag',
+            'sunday' => 'Zondag',
+            
+            // Lock/unlock confirmation messages
+            'lockMatchConfirm' => 'Weet je zeker dat je de wedstrijd wilt vergrendelen: {0}? Dit voorkomt wijzigingen in jury toewijzingen.',
+            'unlockMatchConfirm' => 'Weet je zeker dat je de wedstrijd wilt ontgrendelen: {0}? Dit staat wijzigingen in jury toewijzingen toe.',
+            
             // Analysis page  
             'match_constraint_analysis' => 'Wedstrijd beperkingen analyse',
             'analyze_why_teams_can_or_cannot_be_assigned' => 'Analyseer waarom teams wel of niet kunnen worden toegewezen als jury voor specifieke wedstrijden',
@@ -827,6 +853,27 @@ function translateConstraintCategory($categoryName) {
     
     // Fallback to original category name if no translation found
     return $categoryName;
+}
+
+// Helper function to translate day names
+function translateDayName($englishDayName) {
+    $dayMap = [
+        'Monday' => 'monday',
+        'Tuesday' => 'tuesday', 
+        'Wednesday' => 'wednesday',
+        'Thursday' => 'thursday',
+        'Friday' => 'friday',
+        'Saturday' => 'saturday',
+        'Sunday' => 'sunday'
+    ];
+    
+    // Check if we have a translation for this day
+    if (isset($dayMap[$englishDayName])) {
+        return t($dayMap[$englishDayName]);
+    }
+    
+    // Fallback to original day name if no translation found
+    return $englishDayName;
 }
 
 // Initialize translations
