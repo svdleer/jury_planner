@@ -513,6 +513,12 @@ class Translations {
             'confirm_import_python_templates' => 'Import Python constraint templates?',
             'confirm_import_all_constraints' => 'Import all available constraints (PHP + Python)?',
             
+            // Recommendation descriptions
+            'rec_team_unavailability_desc' => 'Add team unavailability constraints for planned absences',
+            'rec_rest_between_matches_desc' => 'Add rest period constraints to prevent team burnout',
+            'rec_max_assignments_desc' => 'Limit daily assignments to ensure quality',
+            'rec_workload_distribution_desc' => 'Consider adding workload distribution constraints',
+            
             // Python availability messages
             'python_optimization_unavailable' => 'Python Optimization Unavailable',
             'reason' => 'Reason',
@@ -1077,6 +1083,12 @@ class Translations {
             'confirm_import_php_constraints' => 'PHP hardgecodeerde beperkingen importeren?',
             'confirm_import_python_templates' => 'Python beperkingen sjablonen importeren?',
             'confirm_import_all_constraints' => 'Alle beschikbare beperkingen importeren (PHP + Python)?',
+            
+            // Recommendation descriptions
+            'rec_team_unavailability_desc' => 'Voeg team onbeschikbaarheid beperkingen toe voor geplande afwezigheden',
+            'rec_rest_between_matches_desc' => 'Voeg rustperiode beperkingen toe om team burn-out te voorkomen',
+            'rec_max_assignments_desc' => 'Beperk dagelijkse toewijzingen om kwaliteit te waarborgen',
+            'rec_workload_distribution_desc' => 'Overweeg werklastverdeling beperkingen toe te voegen',
         ]
     ];
     

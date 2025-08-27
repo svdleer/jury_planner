@@ -530,7 +530,7 @@ class OptimizationInterface {
             $recommendations['missing_constraints'][] = [
                 'type' => 'team_unavailable',
                 'priority' => 'high',
-                'description' => 'Add team unavailability constraints for planned absences'
+                'description' => t('rec_team_unavailability_desc')
             ];
         }
         
@@ -538,7 +538,7 @@ class OptimizationInterface {
             $recommendations['missing_constraints'][] = [
                 'type' => 'rest_between_matches',
                 'priority' => 'medium',
-                'description' => 'Add rest period constraints to prevent team burnout'
+                'description' => t('rec_rest_between_matches_desc')
             ];
         }
         
@@ -546,14 +546,14 @@ class OptimizationInterface {
             $recommendations['missing_constraints'][] = [
                 'type' => 'max_assignments_per_day',
                 'priority' => 'high', 
-                'description' => 'Limit daily assignments to ensure quality'
+                'description' => t('rec_max_assignments_desc')
             ];
         }
         
         // Load balancing recommendations
         if (count($teams) > 5) {
             $recommendations['load_balancing'][] = [
-                'description' => 'Consider adding workload distribution constraints',
+                'description' => t('rec_workload_distribution_desc'),
                 'suggested_constraint' => 'max_duties_per_period',
                 'parameters' => ['max_duties' => 3, 'period_days' => 14]
             ];
