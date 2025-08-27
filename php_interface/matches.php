@@ -511,7 +511,7 @@ ob_start();
                                         $statusColor = $statusColors[$match['status']] ?? 'bg-gray-50 text-gray-600 ring-gray-500/10';
                                         ?>
                                         <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset <?php echo $statusColor; ?>">
-                                            <?php echo ucfirst(str_replace('_', ' ', $match['status'])); ?>
+                                            <?php echo t($match['status']); ?>
                                         </span>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
