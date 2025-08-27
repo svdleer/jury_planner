@@ -390,7 +390,14 @@ class Translations {
             'balanced' => 'Balanced',
             'point_assignment_rules' => 'Point Assignment Rules',
             'first_and_last_match' => 'First & Last Match',
-            'first_last_match_description' => 'Season opener and finale matches are worth 15 points due to higher importance.',
+                        'first_last_match_description' => 'Season opener and finale matches are worth 15 points due to higher importance.',
+            
+            // Fairness recommendation messages
+            'large_point_spread_detected' => 'Large point spread detected ({points} points). Consider prioritizing teams with fewer points.',
+            'poor_fairness_score' => 'Poor fairness score ({score}%). Immediate rebalancing recommended.',
+            'team_below_average' => 'Team \'{team}\' has {points} points (below average of {average}). Consider prioritizing for next assignments.',
+            
+            // Common UI elements
             
             // Constraint type names and descriptions
             'wrong_team_dedication' => 'Wrong Team Dedication',
@@ -775,6 +782,11 @@ class Translations {
             'recent_assignments_description' => 'Voorkeur voor teams met minder recente toewijzingen (load balancing)',
             'previous_week_assignment' => 'Vorige Week Toewijzing',
             'previous_week_assignment_description' => 'Voorkeur voor teams die geen jury dienst hadden in de vorige week',
+            
+            // Fairness recommendation messages
+            'large_point_spread_detected' => 'Grote punten spreiding gedetecteerd ({points} punten). Overweeg teams met minder punten te prioriteren.',
+            'poor_fairness_score' => 'Slechte eerlijkheid score ({score}%). Onmiddellijke herbalancering aanbevolen.',
+            'team_below_average' => 'Team \'{team}\' heeft {points} punten (onder gemiddelde van {average}). Overweeg prioriteit te geven voor volgende toewijzingen.',
             
             // Analysis page  
             'match_constraint_analysis' => 'Wedstrijd beperkingen analyse',

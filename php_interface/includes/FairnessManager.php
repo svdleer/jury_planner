@@ -245,16 +245,20 @@ class FairnessManager {
         $recommendations = [];
         
         if ($metrics['points_difference'] > 10) {
+            $message = Translations::get('large_point_spread_detected');
+            $message = str_replace('{points}', $metrics['points_difference'], $message);
             $recommendations[] = [
                 'type' => 'warning',
-                'message' => "Large point spread detected ({$metrics['points_difference']} points). Consider prioritizing teams with fewer points."
+                'message' => $message
             ];
         }
         
         if ($metrics['fairness_score'] < 70) {
+            $message = Translations::get('poor_fairness_score');
+            $message = str_replace('{score}', $metrics['fairness_score'], $message);
             $recommendations[] = [
                 'type' => 'danger',
-                'message' => "Poor fairness score ({$metrics['fairness_score']}%). Immediate rebalancing recommended."
+                'message' => $message
             ];
         }
         
@@ -262,9 +266,14 @@ class FairnessManager {
         $avgPoints = $metrics['average_points'];
         foreach ($teamPoints as $teamData) {
             if ($teamData['total_points'] < $avgPoints - 5) {
+                $message = Translations::get('team_below_average');
+                $message = str_replace('{team}', $teamData['team_name'], $message);
+                $message = str_replace('{points}', $teamData['total_points'], $message);
+                $message = str_replace('{average}', round($avgPoints, 1), $message);
+                
                 $recommendations[] = [
                     'type' => 'info',
-                    'message' => "Team '{$teamData['team_name']}' has {$teamData['total_points']} points (below average of " . round($avgPoints, 1) . "). Consider prioritizing for next assignments."
+                    'message' => $message
                 ];
             }
         }
