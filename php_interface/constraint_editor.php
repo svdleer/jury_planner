@@ -710,24 +710,40 @@ document.getElementById('rule_type').addEventListener('change', function() {
                 <!-- Preview Results -->
                 <?php if (isset($previewResult)): ?>
                 <div class="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                    <h3 class="font-medium text-gray-800 mb-2"><?php echo t('optimization_preview'); ?></h3>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-medium text-gray-800"><?php echo t('optimization_preview'); ?></h3>
+                        <?php if (isset($previewResult['fallback_used']) && $previewResult['fallback_used']): ?>
+                            <span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">
+                                <?php echo t('using_php_optimizer'); ?>
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                    
                     <?php if ($previewResult['success']): ?>
                         <div class="grid grid-cols-2 gap-4 text-sm">
                             <div>
                                 <span class="text-gray-600"><?php echo t('optimization_score'); ?>:</span>
-                                <span class="font-medium"><?php echo number_format($previewResult['optimization_score'], 2); ?></span>
+                                <span class="font-medium"><?php echo number_format($previewResult['optimization_score'] ?? 0, 2); ?></span>
                             </div>
                             <div>
                                 <span class="text-gray-600"><?php echo t('assignments'); ?>:</span>
-                                <span class="font-medium"><?php echo count($previewResult['assignments']); ?></span>
+                                <span class="font-medium"><?php echo count($previewResult['assignments'] ?? []); ?></span>
                             </div>
                             <div>
                                 <span class="text-gray-600"><?php echo t('constraints_satisfied'); ?>:</span>
-                                <span class="font-medium"><?php echo $previewResult['constraints_satisfied']; ?>/<?php echo $previewResult['total_constraints']; ?></span>
+                                <span class="font-medium"><?php echo ($previewResult['constraints_satisfied'] ?? 0); ?>/<?php echo ($previewResult['total_constraints'] ?? 0); ?></span>
                             </div>
                             <div>
                                 <span class="text-gray-600"><?php echo t('execution_time'); ?>:</span>
-                                <span class="font-medium"><?php echo number_format($previewResult['execution_time'], 2); ?>s</span>
+                                <span class="font-medium"><?php echo number_format($previewResult['solver_time'] ?? $previewResult['execution_time'] ?? 0, 2); ?>s</span>
+                            </div>
+                        </div>
+                        
+                        <?php if (isset($previewResult['fallback_used']) && $previewResult['fallback_used']): ?>
+                        <div class="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+                            <strong><?php echo t('note'); ?>:</strong> <?php echo t('preview_using_php_fallback'); ?>
+                        </div>
+                        <?php endif; ?>
                             </div>
                         </div>
                     <?php else: ?>

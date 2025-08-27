@@ -550,6 +550,8 @@ class Translations {
             'fallback_optimizer_notice' => 'A basic PHP optimizer will be used instead. It provides simpler assignment logic but may not be as efficient as the Python optimizer.',
             'using_php_optimizer' => 'Using PHP optimizer',
             'unknown_error' => 'Unknown error occurred',
+            'note' => 'Note',
+            'preview_using_php_fallback' => 'This preview was generated using the PHP fallback optimizer. Results may differ from the full Python optimization.',
         ],
 
         'nl' => [
@@ -993,6 +995,8 @@ class Translations {
             'fallback_optimizer_notice' => 'Een eenvoudige PHP optimalisator wordt gebruikt. Deze biedt simpelere toewijzingslogica maar is mogelijk niet zo efficiënt als de Python optimalisator.',
             'using_php_optimizer' => 'PHP optimalisator gebruikt',
             'unknown_error' => 'Onbekende fout opgetreden',
+            'note' => 'Opmerking',
+            'preview_using_php_fallback' => 'Deze voorvertoning werd gegenereerd met de PHP fallback optimalisator. Resultaten kunnen verschillen van de volledige Python optimalisatie.',
             
             // Constraint types
             'hard' => 'Hard',

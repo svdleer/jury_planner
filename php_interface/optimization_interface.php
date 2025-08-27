@@ -280,7 +280,19 @@ class OptimizationInterface {
             throw new Exception('Shell execution functions are disabled on this server. Python optimization is not available.');
         }
         
-        // Try different Python commands
+        // First, check if wrapper script exists (preferred method)
+        $wrapperScript = __DIR__ . '/../run_python_optimization.sh';
+        if (file_exists($wrapperScript) && is_executable($wrapperScript)) {
+            return $wrapperScript;
+        }
+        
+        // Second, check for virtual environment Python
+        $venvPython = __DIR__ . '/../venv/bin/python3';
+        if (file_exists($venvPython)) {
+            return $venvPython;
+        }
+        
+        // Finally, try system Python commands
         $pythonCmds = ['python3', 'python', '/usr/bin/python3', '/usr/local/bin/python3'];
         
         foreach ($pythonCmds as $cmd) {
@@ -290,7 +302,7 @@ class OptimizationInterface {
             }
         }
         
-        return 'python3'; // Fallback
+        return null; // No Python found
     }
     
     /**
@@ -345,19 +357,21 @@ class OptimizationInterface {
      * Preview optimization without saving results
      */
     public function previewOptimization($options = []) {
+        $options['preview_only'] = true;
+        
         // Check if Python optimization is available
         $availability = $this->isPythonOptimizationAvailable();
-        if (!$availability['available']) {
-            return [
-                'success' => false,
-                'error' => $availability['reason'],
-                'suggestion' => $availability['suggestion'],
-                'step' => 'availability_check'
-            ];
-        }
         
-        $options['preview_only'] = true;
-        return $this->runOptimization($options);
+        if ($availability['available']) {
+            // Use Python optimization
+            return $this->runOptimization($options);
+        } else {
+            // Use PHP fallback optimizer for preview
+            $result = $this->phpOptimizer->runSimpleOptimization($options);
+            $result['fallback_used'] = true;
+            $result['fallback_reason'] = $availability['reason'];
+            return $result;
+        }
     }
     
     /**
