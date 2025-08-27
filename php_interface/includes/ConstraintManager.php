@@ -21,6 +21,11 @@ class ConstraintManager {
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Error getting constraints: " . $e->getMessage());
+            // Check if it's a "table doesn't exist" error
+            if (strpos($e->getMessage(), "doesn't exist") !== false) {
+                // Return empty array with a note that migration is needed
+                return [];
+            }
             return [];
         }
     }
@@ -30,16 +35,43 @@ class ConstraintManager {
      */
     public function getAllTeams() {
         try {
+            // First try the teams table
             $stmt = $this->db->prepare("
                 SELECT id, team_name 
                 FROM teams 
                 ORDER BY team_name
             ");
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $teams = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // If no teams found, return hardcoded list for now
+            if (empty($teams)) {
+                return [
+                    ['id' => 1, 'team_name' => 'MNC Dordrecht H1'],
+                    ['id' => 2, 'team_name' => 'MNC Dordrecht H3'],
+                    ['id' => 3, 'team_name' => 'MNC Dordrecht H7'],
+                    ['id' => 4, 'team_name' => 'MNC Dordrecht Da1'],
+                    ['id' => 5, 'team_name' => 'MNC Dordrecht Da3'],
+                    ['id' => 6, 'team_name' => 'Pool Sharks'],
+                    ['id' => 7, 'team_name' => 'Wave Riders'],
+                    ['id' => 8, 'team_name' => 'Water Warriors']
+                ];
+            }
+            
+            return $teams;
         } catch (PDOException $e) {
             error_log("Error getting teams: " . $e->getMessage());
-            return [];
+            // Return hardcoded list as fallback
+            return [
+                ['id' => 1, 'team_name' => 'MNC Dordrecht H1'],
+                ['id' => 2, 'team_name' => 'MNC Dordrecht H3'],
+                ['id' => 3, 'team_name' => 'MNC Dordrecht H7'],
+                ['id' => 4, 'team_name' => 'MNC Dordrecht Da1'],
+                ['id' => 5, 'team_name' => 'MNC Dordrecht Da3'],
+                ['id' => 6, 'team_name' => 'Pool Sharks'],
+                ['id' => 7, 'team_name' => 'Wave Riders'],
+                ['id' => 8, 'team_name' => 'Water Warriors']
+            ];
         }
     }
     

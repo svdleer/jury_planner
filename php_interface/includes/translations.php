@@ -455,6 +455,9 @@ class Translations {
             'constraints_import_failed' => 'Failed to import constraints',
             'imported' => 'imported',
             'skipped' => 'skipped (already exist)',
+            'database_migration_required' => 'Database Migration Required',
+            'database_migration_description' => 'The constraint editor requires database tables that don\'t exist yet. Please run the migration to create them.',
+            'run_migration' => 'Run Migration',
             
             // Common UI elements
             
@@ -905,6 +908,9 @@ class Translations {
             'constraints_import_failed' => 'Importeren van beperkingen mislukt',
             'imported' => 'geïmporteerd',
             'skipped' => 'overgeslagen (bestaan al)',
+            'database_migration_required' => 'Database Migratie Vereist',
+            'database_migration_description' => 'De beperkingen editor vereist database tabellen die nog niet bestaan. Voer de migratie uit om ze aan te maken.',
+            'run_migration' => 'Migratie Uitvoeren',
             
             // Analysis page  
             'match_constraint_analysis' => 'Wedstrijd beperkingen analyse',
