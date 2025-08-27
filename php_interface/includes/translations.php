@@ -42,7 +42,7 @@ class Translations {
             'excluded_teams' => 'Excluded teams',
             
             // Footer
-            'built_with_love_for_waterpolo' => 'Built with ❤️ for waterpolo',
+            'built_with_love_for_waterpolo' => 'Built with ❤️ for Waterpolo',
             
             // Constraint types
             'hard' => 'Hard',
@@ -402,7 +402,7 @@ class Translations {
             'excluded_teams' => 'Uitgesloten teams',
             
             // Footer
-            'built_with_love_for_waterpolo' => 'Gemaakt met ❤️ voor waterpolo',
+            'built_with_love_for_waterpolo' => 'Gemaakt met ❤️ voor Waterpolo',
             
             // Teams
             'team_name' => 'Team naam',
@@ -449,7 +449,7 @@ class Translations {
             'locked_with_assignments' => 'Vergrendeld met toewijzingen',
             'matches_list' => 'Wedstrijden lijst',
             'auto_planning' => 'Auto planning',
-            'matches_management_description' => 'Beheer waterpolo wedstrijden, wijs jury teams toe en volg toewijzingen',
+            'matches_management_description' => 'Beheer Waterpolo wedstrijden, wijs jury teams toe en volg toewijzingen',
             'matches_overview' => 'Wedstrijden overzicht',
             
             // Constraint analysis
