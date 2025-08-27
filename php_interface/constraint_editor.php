@@ -17,19 +17,19 @@ if ($_POST) {
     
     if ($action === 'create_constraint') {
         $result = $constraintManager->createConstraint($_POST);
-        $message = $result['success'] ? t('constraint_created_success') : $result['error'];
+        $message = $result['success'] ? t('constraint_created_success') : ($result['error'] ?? t('unknown_error'));
         $messageType = $result['success'] ? 'success' : 'error';
     } elseif ($action === 'update_constraint') {
         $result = $constraintManager->updateConstraint($_POST['constraint_id'], $_POST);
-        $message = $result['success'] ? t('constraint_updated_success') : $result['error'];
+        $message = $result['success'] ? t('constraint_updated_success') : ($result['error'] ?? t('unknown_error'));
         $messageType = $result['success'] ? 'success' : 'error';
     } elseif ($action === 'delete_constraint') {
         $result = $constraintManager->deleteConstraint($_POST['constraint_id']);
-        $message = $result['success'] ? t('constraint_deleted_success') : $result['error'];
+        $message = $result['success'] ? t('constraint_deleted_success') : ($result['error'] ?? t('unknown_error'));
         $messageType = $result['success'] ? 'success' : 'error';
     } elseif ($action === 'toggle_constraint') {
         $result = $constraintManager->toggleConstraint($_POST['constraint_id']);
-        $message = $result['success'] ? t('constraint_toggled_success') : $result['error'];
+        $message = $result['success'] ? t('constraint_toggled_success') : ($result['error'] ?? t('unknown_error'));
         $messageType = $result['success'] ? 'success' : 'error';
     } elseif ($action === 'import_constraints') {
         $result = $constraintManager->importExistingConstraints();
@@ -70,7 +70,7 @@ if ($_POST) {
             $message = t('optimization_success') . " " . $result['imported_assignments'] . " " . t('assignments_imported');
             $messageType = 'success';
         } else {
-            $message = t('optimization_failed') . ": " . $result['error'];
+            $message = t('optimization_failed') . ": " . ($result['error'] ?? t('unknown_error'));
             $messageType = 'error';
         }
     } elseif ($action === 'preview_optimization') {
@@ -89,6 +89,7 @@ $constraints = $constraintManager->getAllConstraints();
 $teams = $constraintManager->getAllTeams();
 $optimizationStats = $optimizationInterface->getOptimizationHistory();
 $recommendations = $optimizationInterface->getConstraintRecommendations();
+$pythonAvailability = $optimizationInterface->isPythonOptimizationAvailable();
 
 // Check if database tables exist
 $tablesExist = true;
@@ -600,8 +601,34 @@ document.getElementById('rule_type').addEventListener('change', function() {
         </div>
         
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Python Availability Status -->
+            <?php if (!$pythonAvailability['available']): ?>
+            <div class="lg:col-span-3 mb-6">
+                <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <h3 class="font-medium text-amber-800"><?php echo t('python_optimization_unavailable'); ?></h3>
+                    </div>
+                    <div class="mt-2 text-sm text-amber-700">
+                        <p><strong><?php echo t('reason'); ?>:</strong> <?php echo htmlspecialchars($pythonAvailability['reason']); ?></p>
+                        <p><strong><?php echo t('suggestion'); ?>:</strong> <?php echo htmlspecialchars($pythonAvailability['suggestion']); ?></p>
+                    </div>
+                    <div class="mt-3 p-3 bg-amber-100 rounded border-l-4 border-amber-400">
+                        <p class="text-sm text-amber-800">
+                            <strong><?php echo t('alternative_solution'); ?>:</strong> 
+                            <?php echo t('use_constraint_editor_manually'); ?> 
+                            <a href="matches.php" class="underline"><?php echo t('matches_page'); ?></a> 
+                            <?php echo t('for_manual_assignment'); ?>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+            
             <!-- Optimization Controls -->
-            <div class="lg:col-span-2">
+            <div class="lg:col-span-2 <?php echo !$pythonAvailability['available'] ? 'opacity-50 pointer-events-none' : ''; ?>">
                 <form method="POST" class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -704,7 +731,7 @@ document.getElementById('rule_type').addEventListener('change', function() {
                             </div>
                         </div>
                     <?php else: ?>
-                        <p class="text-red-600"><?php echo t('preview_failed'); ?>: <?php echo htmlspecialchars($previewResult['error']); ?></p>
+                        <p class="text-red-600"><?php echo t('preview_failed'); ?>: <?php echo htmlspecialchars($previewResult['error'] ?? t('unknown_error')); ?></p>
                     <?php endif; ?>
                 </div>
                 <?php endif; ?>

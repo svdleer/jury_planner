@@ -2,6 +2,7 @@
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/PythonConstraintBridge.php';
 require_once __DIR__ . '/includes/ConstraintManager.php';
+require_once __DIR__ . '/includes/SimplePhpOptimizer.php';
 
 /**
  * PHP interface for Python optimization integration
@@ -10,17 +11,47 @@ class OptimizationInterface {
     private $db;
     private $bridge;
     private $pythonScriptPath;
+    private $phpOptimizer;
     
     public function __construct($database) {
         $this->db = $database;
         $this->bridge = new PythonConstraintBridge($database);
         $this->pythonScriptPath = __DIR__ . '/../planning_engine/enhanced_optimizer.py';
+        $this->phpOptimizer = new SimplePhpOptimizer($database);
     }
     
     /**
-     * Run full optimization using Python solver
+     * Run full optimization using Python solver or PHP fallback
      */
     public function runOptimization($options = []) {
+        // Check if Python optimization is available
+        $availability = $this->isPythonOptimizationAvailable();
+        
+        if (!$availability['available']) {
+            // Use PHP fallback if Python is not available
+            if ($options['force_python'] ?? false) {
+                return [
+                    'success' => false,
+                    'error' => $availability['reason'],
+                    'suggestion' => $availability['suggestion'],
+                    'step' => 'availability_check'
+                ];
+            }
+            
+            // Run PHP optimization fallback
+            $result = $this->phpOptimizer->runSimpleOptimization($options);
+            $result['fallback_used'] = true;
+            $result['fallback_reason'] = $availability['reason'];
+            
+            // If successful, import results to database
+            if ($result['success'] && !($options['preview_only'] ?? false)) {
+                $importResult = $this->importPhpOptimizationResult($result);
+                $result = array_merge($result, $importResult);
+            }
+            
+            return $result;
+        }
+        
         try {
             // Export current constraints to temporary file
             $configPath = $this->exportConstraintsForPython();
@@ -109,9 +140,146 @@ class OptimizationInterface {
     }
     
     /**
+     * Import PHP optimization results to database
+     */
+    private function importPhpOptimizationResult($result) {
+        if (!$result['success'] || empty($result['assignments'])) {
+            return ['imported_assignments' => 0];
+        }
+        
+        try {
+            $this->db->beginTransaction();
+            
+            // Clear existing assignments for the period
+            if (isset($result['period']) && !empty($result['period'])) {
+                $this->clearExistingAssignments($result['period']);
+            }
+            
+            // Import new assignments
+            $importedCount = 0;
+            foreach ($result['assignments'] as $assignment) {
+                if ($this->saveAssignment($assignment)) {
+                    $importedCount++;
+                }
+            }
+            
+            // Save optimization metadata
+            $this->saveOptimizationMetadata($result);
+            
+            $this->db->commit();
+            
+            return [
+                'imported_assignments' => $importedCount
+            ];
+            
+        } catch (Exception $e) {
+            $this->db->rollback();
+            return [
+                'imported_assignments' => 0,
+                'import_error' => $e->getMessage()
+            ];
+        }
+    }
+    
+    /**
+     * Clear existing assignments for the optimization period
+     */
+    private function clearExistingAssignments($period) {
+        try {
+            $stmt = $this->db->prepare("
+                DELETE FROM jury_assignments 
+                WHERE match_id IN (
+                    SELECT id FROM matches 
+                    WHERE date_time BETWEEN ? AND ?
+                )
+            ");
+            $stmt->execute([$period['start_date'], $period['end_date']]);
+        } catch (PDOException $e) {
+            error_log("Error clearing existing assignments: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Save individual assignment
+     */
+    private function saveAssignment($assignment) {
+        try {
+            $stmt = $this->db->prepare("
+                INSERT INTO jury_assignments 
+                (match_id, jury_team_name, assignment_type, points_awarded, assigned_by)
+                VALUES (?, ?, ?, ?, ?)
+            ");
+            
+            return $stmt->execute([
+                $assignment['match_id'],
+                $assignment['team_name'],
+                $assignment['duty_type'] ?? 'general',
+                $assignment['points'] ?? 10,
+                'PHP Optimizer'
+            ]);
+        } catch (PDOException $e) {
+            error_log("Error saving assignment: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Save optimization metadata
+     */
+    private function saveOptimizationMetadata($result) {
+        try {
+            $stmt = $this->db->prepare("
+                INSERT INTO optimization_runs 
+                (run_date, optimization_score, constraints_satisfied, total_constraints, 
+                 solver_time, solution_metadata)
+                VALUES (NOW(), ?, ?, ?, ?, ?)
+            ");
+            
+            $stmt->execute([
+                $result['optimization_score'] ?? 0,
+                $result['constraints_satisfied'] ?? 0,
+                $result['total_constraints'] ?? 0,
+                $result['solver_time'] ?? 0,
+                json_encode($result['metadata'] ?? [])
+            ]);
+        } catch (PDOException $e) {
+            // Create table if it doesn't exist
+            $this->createOptimizationTable();
+        }
+    }
+    
+    /**
+     * Create optimization runs table
+     */
+    private function createOptimizationTable() {
+        $sql = "
+        CREATE TABLE IF NOT EXISTS optimization_runs (
+            id INTEGER PRIMARY KEY AUTO_INCREMENT,
+            run_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            optimization_score DECIMAL(10,2),
+            constraints_satisfied INTEGER,
+            total_constraints INTEGER,
+            solver_time DECIMAL(8,3),
+            solution_metadata JSON,
+            INDEX idx_optimization_date (run_date)
+        )";
+        
+        try {
+            $this->db->exec($sql);
+        } catch (PDOException $e) {
+            error_log("Error creating optimization_runs table: " . $e->getMessage());
+        }
+    }
+    
+    /**
      * Get appropriate Python command
      */
     private function getPythonCommand() {
+        // Check if shell functions are available
+        if (!function_exists('shell_exec') || !function_exists('exec')) {
+            throw new Exception('Shell execution functions are disabled on this server. Python optimization is not available.');
+        }
+        
         // Try different Python commands
         $pythonCmds = ['python3', 'python', '/usr/bin/python3', '/usr/local/bin/python3'];
         
@@ -126,9 +294,68 @@ class OptimizationInterface {
     }
     
     /**
+     * Check if Python optimization is available on this server
+     */
+    public function isPythonOptimizationAvailable() {
+        try {
+            // Check if required functions exist
+            if (!function_exists('shell_exec') || !function_exists('exec')) {
+                return [
+                    'available' => false,
+                    'reason' => 'Shell execution functions are disabled for security',
+                    'suggestion' => 'Contact your hosting provider to enable exec() functions or use a different server'
+                ];
+            }
+            
+            // Check if Python is available
+            $pythonCmd = $this->getPythonCommand();
+            if (!$pythonCmd) {
+                return [
+                    'available' => false,
+                    'reason' => 'Python is not installed or not in PATH',
+                    'suggestion' => 'Install Python 3 on your server'
+                ];
+            }
+            
+            // Check if optimization script exists
+            if (!file_exists($this->pythonScriptPath)) {
+                return [
+                    'available' => false,
+                    'reason' => 'Python optimization script not found',
+                    'suggestion' => 'Ensure enhanced_optimizer.py is uploaded to the server'
+                ];
+            }
+            
+            return [
+                'available' => true,
+                'python_command' => $pythonCmd,
+                'script_path' => $this->pythonScriptPath
+            ];
+            
+        } catch (Exception $e) {
+            return [
+                'available' => false,
+                'reason' => $e->getMessage(),
+                'suggestion' => 'Check server configuration and permissions'
+            ];
+        }
+    }
+    
+    /**
      * Preview optimization without saving results
      */
     public function previewOptimization($options = []) {
+        // Check if Python optimization is available
+        $availability = $this->isPythonOptimizationAvailable();
+        if (!$availability['available']) {
+            return [
+                'success' => false,
+                'error' => $availability['reason'],
+                'suggestion' => $availability['suggestion'],
+                'step' => 'availability_check'
+            ];
+        }
+        
         $options['preview_only'] = true;
         return $this->runOptimization($options);
     }

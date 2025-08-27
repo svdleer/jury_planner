@@ -499,6 +499,15 @@ class Translations {
             'all_constraints_imported_success' => 'All constraints imported successfully.',
             'all_constraints_import_failed' => 'Failed to import all constraints',
             
+            // Python availability messages
+            'python_optimization_unavailable' => 'Python Optimization Unavailable',
+            'reason' => 'Reason',
+            'suggestion' => 'Suggestion',
+            'alternative_solution' => 'Alternative Solution',
+            'use_constraint_editor_manually' => 'You can still use the constraint editor to manage rules and assign juries manually via the',
+            'matches_page' => 'matches page',
+            'for_manual_assignment' => 'for manual assignment',
+            
             // Common UI elements
             
             // Constraint type names and descriptions
@@ -535,6 +544,12 @@ class Translations {
             'consecutive_weekends' => '{team} has jury duty on consecutive weekends',
             'recent_assignments' => '{team} has {count} assignments in last 2 weeks',
             'previous_week_assignment' => '{team} had jury duty in the previous week',
+            
+            // Python optimization status
+            'python_unavailable' => 'Python optimization engine is not available',
+            'fallback_optimizer_notice' => 'A basic PHP optimizer will be used instead. It provides simpler assignment logic but may not be as efficient as the Python optimizer.',
+            'using_php_optimizer' => 'Using PHP optimizer',
+            'unknown_error' => 'Unknown error occurred',
         ],
 
         'nl' => [
@@ -972,6 +987,12 @@ class Translations {
             'consecutive_weekends' => '{team} heeft jury dienst op opeenvolgende weekenden',
             'recent_assignments' => '{team} heeft {count} toewijzingen in de laatste 2 weken',
             'previous_week_assignment' => '{team} had jury dienst in de vorige week',
+            
+            // Python optimization status
+            'python_unavailable' => 'Python optimalisatie-engine is niet beschikbaar',
+            'fallback_optimizer_notice' => 'Een eenvoudige PHP optimalisator wordt gebruikt. Deze biedt simpelere toewijzingslogica maar is mogelijk niet zo efficiënt als de Python optimalisator.',
+            'using_php_optimizer' => 'PHP optimalisator gebruikt',
+            'unknown_error' => 'Onbekende fout opgetreden',
             
             // Constraint types
             'hard' => 'Hard',
