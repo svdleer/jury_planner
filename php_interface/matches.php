@@ -791,7 +791,15 @@ function matchesApp() {
         },
         
         removeJuryAssignment(assignmentId) {
-            if (confirm(window.JuryPlanner.translations.confirmRemoveJuryAssignment)) {
+            console.log('removeJuryAssignment called with:', assignmentId);
+            console.log('Translations object:', window.JuryPlanner?.translations);
+            
+            const confirmMessage = window.JuryPlanner?.translations?.confirmRemoveJuryAssignment 
+                || 'Are you sure you want to remove this jury assignment?';
+                
+            console.log('Confirm message:', confirmMessage);
+            
+            if (confirm(confirmMessage)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.innerHTML = `
@@ -848,7 +856,16 @@ function matchesApp() {
         },
         
         resetMatchAssignments(matchId, matchName) {
-            if (confirm(window.JuryPlanner.translations.resetMatchAssignmentsConfirm.replace('{0}', matchName))) {
+            console.log('resetMatchAssignments called with:', matchId, matchName);
+            console.log('Translations object:', window.JuryPlanner?.translations);
+            
+            const confirmMessage = window.JuryPlanner?.translations?.resetMatchAssignmentsConfirm 
+                ? window.JuryPlanner.translations.resetMatchAssignmentsConfirm.replace('{0}', matchName)
+                : `Are you sure you want to reset all jury assignments for match: ${matchName}? This action cannot be undone.`;
+                
+            console.log('Confirm message:', confirmMessage);
+            
+            if (confirm(confirmMessage)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.innerHTML = `
