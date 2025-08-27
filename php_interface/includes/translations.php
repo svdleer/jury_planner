@@ -392,6 +392,20 @@ class Translations {
             'first_and_last_match' => 'First & Last Match',
             'first_last_match_description' => 'Season opener and finale matches are worth 15 points due to higher importance.',
             
+            // Constraint type names and descriptions
+            'wrong_team_dedication' => 'Wrong Team Dedication',
+            'wrong_team_dedication_description' => 'Team is dedicated to a specific team but this match doesn\'t involve them',
+            'own_match' => 'Own Match',
+            'own_match_description' => 'Team cannot jury their own match',
+            'away_match_same_day' => 'Away Match Same Day',
+            'away_match_same_day_description' => 'Team cannot jury when they have away match same day',
+            'consecutive_weekends' => 'Consecutive Weekends',
+            'consecutive_weekends_description' => 'Prefer not to assign jury duty on consecutive weekends',
+            'recent_assignments' => 'Recent Assignments',
+            'recent_assignments_description' => 'Prefer teams with fewer recent assignments (load balancing)',
+            'previous_week_assignment' => 'Previous Week Assignment',
+            'previous_week_assignment_description' => 'Prefer teams that didn\'t have jury duty in the previous week',
+            
             // Analysis page
             'match_constraint_analysis' => 'Match constraint analysis',
             'analyze_why_teams_can_or_cannot_be_assigned' => 'Analyze why teams can or cannot be assigned as jury for specific matches',
@@ -747,6 +761,20 @@ class Translations {
             'point_assignment_rules' => 'Punt Toewijzing Regels',
             'first_and_last_match' => 'Eerste & Laatste Wedstrijd',
             'first_last_match_description' => 'Seizoen opener en finale wedstrijden zijn 15 punten waard vanwege hoger belang.',
+            
+            // Constraint type names and descriptions
+            'wrong_team_dedication' => 'Verkeerde Team Toewijzing',
+            'wrong_team_dedication_description' => 'Team is toegewezen aan een specifiek team maar deze wedstrijd betreft hen niet',
+            'own_match' => 'Eigen Wedstrijd',
+            'own_match_description' => 'Team kan niet hun eigen wedstrijd jureren',
+            'away_match_same_day' => 'Uitwedstrijd Zelfde Dag',
+            'away_match_same_day_description' => 'Team kan niet jureren wanneer ze een uitwedstrijd hebben op dezelfde dag',
+            'consecutive_weekends' => 'Opeenvolgende Weekenden',
+            'consecutive_weekends_description' => 'Voorkeur om geen jury dienst toe te wijzen op opeenvolgende weekenden',
+            'recent_assignments' => 'Recente Toewijzingen',
+            'recent_assignments_description' => 'Voorkeur voor teams met minder recente toewijzingen (load balancing)',
+            'previous_week_assignment' => 'Vorige Week Toewijzing',
+            'previous_week_assignment_description' => 'Voorkeur voor teams die geen jury dienst hadden in de vorige week',
             
             // Analysis page  
             'match_constraint_analysis' => 'Wedstrijd beperkingen analyse',

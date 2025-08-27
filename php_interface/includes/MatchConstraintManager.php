@@ -279,34 +279,34 @@ class MatchConstraintManager {
     public function getConstraintTypes() {
         return [
             'wrong_dedication' => [
-                'name' => 'Wrong Team Dedication',
-                'severity' => 'HARD',
-                'description' => 'Team is dedicated to a specific team but this match doesn\'t involve them'
+                'name' => t('wrong_team_dedication'),
+                'severity' => t('hard'),
+                'description' => t('wrong_team_dedication_description')
             ],
             'own_match' => [
-                'name' => 'Own Match',
-                'severity' => 'HARD',
-                'description' => 'Team cannot jury their own match'
+                'name' => t('own_match'),
+                'severity' => t('hard'),
+                'description' => t('own_match_description')
             ],
             'away_match_same_day' => [
-                'name' => 'Away Match Same Day',
-                'severity' => 'HARD',
-                'description' => 'Team cannot jury when they have away match same day'
+                'name' => t('away_match_same_day'),
+                'severity' => t('hard'),
+                'description' => t('away_match_same_day_description')
             ],
             'consecutive_weekends' => [
-                'name' => 'Consecutive Weekends',
-                'severity' => 'SOFT',
-                'description' => 'Prefer not to assign jury duty on consecutive weekends'
+                'name' => t('consecutive_weekends'),
+                'severity' => t('soft'),
+                'description' => t('consecutive_weekends_description')
             ],
             'recent_assignments' => [
-                'name' => 'Recent Assignments',
-                'severity' => 'SOFT',
-                'description' => 'Prefer teams with fewer recent assignments (load balancing)'
+                'name' => t('recent_assignments'),
+                'severity' => t('soft'),
+                'description' => t('recent_assignments_description')
             ],
             'previous_week_assignment' => [
-                'name' => 'Previous Week Assignment',
-                'severity' => 'SOFT',
-                'description' => 'Prefer teams that didn\'t have jury duty in the previous week'
+                'name' => t('previous_week_assignment'),
+                'severity' => t('soft'),
+                'description' => t('previous_week_assignment_description')
             ]
         ];
     }
