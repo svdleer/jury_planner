@@ -6,22 +6,20 @@ require_once 'config/database.php';
 
 function createTableIfNotExists($db, $tableName, $createSql) {
     try {
-        // Check if table exists
-        $stmt = $db->prepare("SHOW TABLES LIKE ?");
-        $stmt->execute([$tableName]);
-        
-        if ($stmt->rowCount() == 0) {
-            // Table doesn't exist, create it
+        // Check if table exists by trying to select from it
+        $stmt = $db->query("SELECT 1 FROM `$tableName` LIMIT 1");
+        echo "✅ Table already exists: $tableName<br>";
+        return false;
+    } catch (PDOException $e) {
+        // Table doesn't exist, create it
+        try {
             $db->exec($createSql);
             echo "✅ Created table: $tableName<br>";
             return true;
-        } else {
-            echo "✅ Table already exists: $tableName<br>";
+        } catch (PDOException $createError) {
+            echo "❌ Error creating table $tableName: " . $createError->getMessage() . "<br>";
             return false;
         }
-    } catch (PDOException $e) {
-        echo "❌ Error with table $tableName: " . $e->getMessage() . "<br>";
-        return false;
     }
 }
 
