@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# PHP Interface Setup Script for Water Polo Jury Planner
+# PHP Interface Setup Script for Waterpolo Jury Planner
 # This script helps set up the PHP interface for development
 
-echo "🏊 Water Polo Jury Planner - PHP Interface Setup"
+echo "🏊 Waterpolo Jury Planner - PHP Interface Setup"
 echo "=================================================="
 
 # Check PHP version

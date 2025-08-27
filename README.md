@@ -1,4 +1,4 @@
-# Water Polo Jury Team Planning System 🏊‍♂️
+# Waterpolo Jury Team Planning System 🏊‍♂️
 
 An intelligent, automated planning system for scheduling jury teams for water polo matches with advanced constraint-based optimization and configurable rules.
 

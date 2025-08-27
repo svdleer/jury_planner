@@ -1,6 +1,6 @@
 <?php
 /**
- * Database Configuration for Water Polo Jury Planner
+ * Database Configuration for Waterpolo Jury Planner
  * Connects to the same MySQL database used by the Python application
  */
 

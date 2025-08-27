@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Water Polo Jury Planner - Command Line Interface
+Waterpolo Jury Planner - Command Line Interface
 Provides utilities for managing teams, matches, and running planning sessions
 """
 
@@ -292,7 +292,7 @@ def show_schedule(start_date_str=None, end_date_str=None):
 
 def main():
     """Main CLI entry point"""
-    parser = argparse.ArgumentParser(description='Water Polo Jury Planner CLI')
+    parser = argparse.ArgumentParser(description='Waterpolo Jury Planner CLI')
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
     
     # Setup command

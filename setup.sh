@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Water Polo Jury Planner Setup Script
+# Waterpolo Jury Planner Setup Script
 
 set -e
 
-echo "🏊‍♂️ Water Polo Jury Planner Setup"
+echo "🏊‍♂️ Waterpolo Jury Planner Setup"
 echo "=================================="
 
 # Check if Python 3 is installed

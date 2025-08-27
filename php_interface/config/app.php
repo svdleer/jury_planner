@@ -4,7 +4,7 @@
  */
 
 // Application settings
-define('APP_NAME', 'Water Polo Jury Planner');
+define('APP_NAME', 'Waterpolo Jury Planner');
 define('APP_VERSION', '1.0.0');
 define('APP_DESCRIPTION', 'Modern interface for managing water polo matches and jury team assignments');
 
