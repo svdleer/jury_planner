@@ -98,12 +98,13 @@ class AssignmentConstraintManager {
      * Get available jury teams with their capacity and exclusion constraints
      */
     private function getAvailableTeams() {
-        $sql = "SELECT jt.id, jt.name, jt.capacity_factor,
+        $sql = "SELECT jt.id, jt.name, 
+                       COALESCE(jt.capacity_factor, 1.0) as capacity_factor,
                        COUNT(ja.id) as current_assignments
                 FROM jury_teams jt
                 LEFT JOIN jury_assignments ja ON jt.id = ja.team_id
-                GROUP BY jt.id, jt.name, jt.capacity_factor
-                ORDER BY current_assignments ASC, jt.capacity_factor DESC";
+                GROUP BY jt.id, jt.name, COALESCE(jt.capacity_factor, 1.0)
+                ORDER BY current_assignments ASC, COALESCE(jt.capacity_factor, 1.0) DESC";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
@@ -323,10 +324,12 @@ class AssignmentConstraintManager {
         $stats = [];
         
         // Team assignment counts
-        $sql = "SELECT jt.name, jt.capacity_factor, COUNT(ja.id) as assignment_count
+        $sql = "SELECT jt.name, 
+                       COALESCE(jt.capacity_factor, 1.0) as capacity_factor, 
+                       COUNT(ja.id) as assignment_count
                 FROM jury_teams jt
                 LEFT JOIN jury_assignments ja ON jt.id = ja.team_id
-                GROUP BY jt.id, jt.name, jt.capacity_factor
+                GROUP BY jt.id, jt.name, COALESCE(jt.capacity_factor, 1.0)
                 ORDER BY assignment_count DESC";
         
         $stmt = $this->db->prepare($sql);
