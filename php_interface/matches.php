@@ -775,7 +775,7 @@ function matchesApp() {
         assignJuryMatchName: '',
         
         init() {
-            // Initialize component
+            // Initialize component - updated to force cache refresh
         },
         
         deleteMatch(id, name) {
