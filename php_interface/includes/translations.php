@@ -491,6 +491,9 @@ class Translations {
             'avg_time' => 'Average Time',
             'recommendations' => 'Recommendations',
             'missing_constraints' => 'Missing Constraints',
+            'recommendations' => 'Recommendations',
+            'optimization_stats' => 'Optimization Statistics',
+            'python_optimization_engine' => 'Python Optimization Engine',
             'load_balancing' => 'Load Balancing',
             
             // Python template import
@@ -1096,6 +1099,9 @@ class Translations {
             'satisfaction_rate' => 'Tevredenheidspercentage',
             'avg_time' => 'Gemiddelde Tijd',
             'missing_constraints' => 'Ontbrekende Beperkingen',
+            'recommendations' => 'Aanbevelingen',
+            'optimization_stats' => 'Optimalisatie Statistieken',
+            'python_optimization_engine' => 'Python Optimalisatie Model',
         ]
     ];
     
