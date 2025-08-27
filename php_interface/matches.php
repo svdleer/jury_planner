@@ -804,7 +804,16 @@ function matchesApp() {
         },
         
         lockMatch(matchId, matchName) {
-            if (confirm(window.JuryPlanner.translations.lockMatchConfirm.replace('{0}', matchName))) {
+            console.log('lockMatch called with:', matchId, matchName);
+            console.log('Translations object:', window.JuryPlanner?.translations);
+            
+            const confirmMessage = window.JuryPlanner?.translations?.lockMatchConfirm 
+                ? window.JuryPlanner.translations.lockMatchConfirm.replace('{0}', matchName)
+                : `Are you sure you want to lock the match: ${matchName}? This will prevent changes to jury assignments.`;
+                
+            console.log('Confirm message:', confirmMessage);
+            
+            if (confirm(confirmMessage)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.innerHTML = `
@@ -817,7 +826,16 @@ function matchesApp() {
         },
         
         unlockMatch(matchId, matchName) {
-            if (confirm(window.JuryPlanner.translations.unlockMatchConfirm.replace('{0}', matchName))) {
+            console.log('unlockMatch called with:', matchId, matchName);
+            console.log('Translations object:', window.JuryPlanner?.translations);
+            
+            const confirmMessage = window.JuryPlanner?.translations?.unlockMatchConfirm 
+                ? window.JuryPlanner.translations.unlockMatchConfirm.replace('{0}', matchName)
+                : `Are you sure you want to unlock the match: ${matchName}? This will allow changes to jury assignments.`;
+                
+            console.log('Confirm message:', confirmMessage);
+            
+            if (confirm(confirmMessage)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.innerHTML = `

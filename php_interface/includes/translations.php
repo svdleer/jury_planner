@@ -89,9 +89,6 @@ class Translations {
             // Common UI elements
             'open_main_menu' => 'Open main menu',
             'confirm_remove_jury_assignment' => 'Are you sure you want to remove this jury assignment?',
-            'lock_match_confirm' => 'Lock match "{0}"? This will prevent changes to jury assignments.',
-            'unlock_match_confirm' => 'Unlock match "{0}"? This will allow changes to jury assignments.',
-            'reset_match_assignments_confirm' => 'Reset all jury assignments for match "{0}"? This action cannot be undone.',
             
             // Error messages
             'adding_matches_disabled' => 'Adding new matches is disabled in production mode.',
@@ -741,9 +738,6 @@ class Translations {
             // Common UI elements
             'open_main_menu' => 'Hoofdmenu openen',
             'confirm_remove_jury_assignment' => 'Weet je zeker dat je deze jury toewijzing wilt verwijderen?',
-            'lock_match_confirm' => 'Wedstrijd "{0}" vergrendelen? Dit voorkomt wijzigingen in jury toewijzingen.',
-            'unlock_match_confirm' => 'Wedstrijd "{0}" ontgrendelen? Dit staat wijzigingen in jury toewijzingen toe.',
-            'reset_match_assignments_confirm' => 'Alle jury toewijzingen voor wedstrijd "{0}" resetten? Deze actie kan niet ongedaan worden gemaakt.',
             
             // Error messages
             'adding_matches_disabled' => 'Nieuwe wedstrijden toevoegen is uitgeschakeld in productie modus.',
