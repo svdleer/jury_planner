@@ -353,6 +353,25 @@ class Translations {
             // Lock/unlock confirmation messages
             'lockMatchConfirm' => 'Are you sure you want to lock the match: {0}? This will prevent changes to jury assignments.',
             'unlockMatchConfirm' => 'Are you sure you want to unlock the match: {0}? This will allow changes to jury assignments.',
+            'resetMatchAssignmentsConfirm' => 'Are you sure you want to reset all jury assignments for match: {0}? This action cannot be undone.',
+            
+            // New translation keys for modal texts
+            'unlock_match' => 'Unlock match',
+            'lock_match' => 'Lock match',
+            'reset_assignments' => 'Reset assignments',
+            'assign_jury_team' => 'Assign Jury Team',
+            'assigning_jury_for' => 'Assigning jury for',
+            'select_jury_team' => 'Select Jury Team',
+            'choose_team' => 'Choose a team',
+            'assign' => 'Assign',
+            'delete_match' => 'Delete Match',
+            'delete_match_confirmation' => 'Are you sure you want to delete',
+            'action_cannot_be_undone' => 'This action cannot be undone.',
+            'reset_all_assignments_description' => 'This will remove all jury assignments from matches. Locked matches will be preserved unless you force reset.',
+            'force_reset_locked_matches' => 'Also reset locked matches (force reset)',
+            'reset_all' => 'Reset All',
+            'unassign_all_jury_teams_description' => 'This will remove all jury team assignments from all matches. Locked matches will be preserved unless you force unassign.',
+            'force_unassign_locked_matches' => 'Also unassign locked matches (force unassign)',
             
             // Analysis page
             'match_constraint_analysis' => 'Match constraint analysis',
@@ -671,6 +690,25 @@ class Translations {
             // Lock/unlock confirmation messages
             'lockMatchConfirm' => 'Weet je zeker dat je de wedstrijd wilt vergrendelen: {0}? Dit voorkomt wijzigingen in jury toewijzingen.',
             'unlockMatchConfirm' => 'Weet je zeker dat je de wedstrijd wilt ontgrendelen: {0}? Dit staat wijzigingen in jury toewijzingen toe.',
+            'resetMatchAssignmentsConfirm' => 'Weet je zeker dat je alle jury toewijzingen voor wedstrijd wilt resetten: {0}? Deze actie kan niet ongedaan worden gemaakt.',
+            
+            // New translation keys for modal texts
+            'unlock_match' => 'Wedstrijd ontgrendelen',
+            'lock_match' => 'Wedstrijd vergrendelen',
+            'reset_assignments' => 'Toewijzingen resetten',
+            'assign_jury_team' => 'Jury Team Toewijzen',
+            'assigning_jury_for' => 'Jury toewijzen voor',
+            'select_jury_team' => 'Selecteer Jury Team',
+            'choose_team' => 'Kies een team',
+            'assign' => 'Toewijzen',
+            'delete_match' => 'Wedstrijd Verwijderen',
+            'delete_match_confirmation' => 'Weet je zeker dat je de wedstrijd wilt verwijderen',
+            'action_cannot_be_undone' => 'Deze actie kan niet ongedaan worden gemaakt.',
+            'reset_all_assignments_description' => 'Dit zal alle jury toewijzingen van wedstrijden verwijderen. Vergrendelde wedstrijden worden behouden tenzij je geforceerd reset.',
+            'force_reset_locked_matches' => 'Ook vergrendelde wedstrijden resetten (geforceerd reset)',
+            'reset_all' => 'Alles Resetten',
+            'unassign_all_jury_teams_description' => 'Dit zal alle jury team toewijzingen van alle wedstrijden verwijderen. Vergrendelde wedstrijden worden behouden tenzij je geforceerd ontoewijst.',
+            'force_unassign_locked_matches' => 'Ook vergrendelde wedstrijden ontoewijzen (geforceerd ontoewijzen)',
             
             // Analysis page  
             'match_constraint_analysis' => 'Wedstrijd beperkingen analyse',

@@ -521,7 +521,7 @@ ob_start();
                                                     <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
                                                     </svg>
-                                                    Locked
+                                                    <?php echo t('locked'); ?>
                                                 </span>
                                                 <?php if ($match['locked_by']): ?>
                                                     <div class="ml-2 text-xs text-gray-500" title="Locked at <?php echo $match['locked_at']; ?>">
@@ -559,7 +559,7 @@ ob_start();
                                                 <svg class="-ml-0.5 mr-1 h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                                                     <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
                                                 </svg>
-                                                Assign Jury
+                                                <?php echo t('assign_jury'); ?>
                                             </button>
                                         <?php endif; ?>
                                     </td>
@@ -568,14 +568,14 @@ ob_start();
                                             <!-- Lock/Unlock buttons -->
                                             <?php if ($match['locked']): ?>
                                                 <button @click="unlockMatch(<?php echo $match['id']; ?>, '<?php echo htmlspecialchars($match['home_team_name'] . ' vs ' . $match['away_team_name']); ?>')" 
-                                                        class="text-green-600 hover:text-green-900" title="Unlock match">
+                                                        class="text-green-600 hover:text-green-900" title="<?php echo t('unlock_match'); ?>">
                                                     <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z"/>
                                                     </svg>
                                                 </button>
                                             <?php else: ?>
                                                 <button @click="lockMatch(<?php echo $match['id']; ?>, '<?php echo htmlspecialchars($match['home_team_name'] . ' vs ' . $match['away_team_name']); ?>')" 
-                                                        class="text-red-600 hover:text-red-900" title="Lock match">
+                                                        class="text-red-600 hover:text-red-900" title="<?php echo t('lock_match'); ?>">
                                                     <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
                                                     </svg>
@@ -585,7 +585,7 @@ ob_start();
                                             <!-- Reset button (only for unlocked matches with assignments) -->
                                             <?php if (!$match['locked'] && $match['jury_assignments']): ?>
                                                 <button @click="resetMatchAssignments(<?php echo $match['id']; ?>, '<?php echo htmlspecialchars($match['home_team_name'] . ' vs ' . $match['away_team_name']); ?>')" 
-                                                        class="text-orange-600 hover:text-orange-900" title="Reset assignments">
+                                                        class="text-orange-600 hover:text-orange-900" title="<?php echo t('reset_assignments'); ?>">
                                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                                     </svg>
@@ -616,14 +616,14 @@ ob_start();
                         
                         <div>
                             <div class="mt-3 text-center sm:mt-0 sm:text-left">
-                                <h3 class="text-base font-semibold leading-6 text-gray-900">Assign Jury Team</h3>
+                                <h3 class="text-base font-semibold leading-6 text-gray-900"><?php echo t('assign_jury_team'); ?></h3>
                                 <div class="mt-2">
-                                    <p class="text-sm text-gray-500" x-text="'Assigning jury for: ' + assignJuryMatchName"></p>
+                                    <p class="text-sm text-gray-500" x-text="'<?php echo t('assigning_jury_for'); ?>: ' + assignJuryMatchName"></p>
                                 </div>
                                 <div class="mt-4">
-                                    <label for="jury_team_id" class="block text-sm font-medium leading-6 text-gray-900">Select Jury Team</label>
+                                    <label for="jury_team_id" class="block text-sm font-medium leading-6 text-gray-900"><?php echo t('select_jury_team'); ?></label>
                                     <select name="jury_team_id" id="jury_team_id" required class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-water-blue-600 sm:text-sm sm:leading-6">
-                                        <option value="">Choose a team</option>
+                                        <option value=""><?php echo t('choose_team'); ?></option>
                                         <?php foreach ($teams as $team): ?>
                                             <?php if ($team['is_active']): ?>
                                                 <option value="<?php echo $team['id']; ?>"><?php echo htmlspecialchars($team['name']); ?> (Weight: <?php echo $team['weight']; ?>)</option>
@@ -634,8 +634,8 @@ ob_start();
                             </div>
                         </div>
                         <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                            <button type="submit" class="inline-flex w-full justify-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500 sm:ml-3 sm:w-auto">Assign</button>
-                            <button @click="showJuryModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
+                            <button type="submit" class="inline-flex w-full justify-center rounded-md bg-water-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-water-blue-500 sm:ml-3 sm:w-auto"><?php echo t('assign'); ?></button>
+                            <button @click="showJuryModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"><?php echo t('cancel'); ?></button>
                         </div>
                     </form>
                 </div>
@@ -656,10 +656,10 @@ ob_start();
                             </svg>
                         </div>
                         <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                            <h3 class="text-base font-semibold leading-6 text-gray-900">Delete Match</h3>
+                            <h3 class="text-base font-semibold leading-6 text-gray-900"><?php echo t('delete_match'); ?></h3>
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">
-                                    Are you sure you want to delete <strong x-text="deleteMatchName"></strong>? This action cannot be undone.
+                                    <?php echo t('delete_match_confirmation'); ?> <strong x-text="deleteMatchName"></strong>? <?php echo t('action_cannot_be_undone'); ?>
                                 </p>
                             </div>
                         </div>
@@ -668,9 +668,9 @@ ob_start();
                         <form method="POST" class="inline">
                             <input type="hidden" name="action" value="delete">
                             <input type="hidden" name="id" :value="deleteMatchId">
-                            <button type="submit" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Delete</button>
+                            <button type="submit" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"><?php echo t('delete'); ?></button>
                         </form>
-                        <button @click="showDeleteModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
+                        <button @click="showDeleteModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"><?php echo t('cancel'); ?></button>
                     </div>
                 </div>
             </div>
@@ -692,26 +692,26 @@ ob_start();
                             </svg>
                         </div>
                         <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                            <h3 class="text-base font-semibold leading-6 text-gray-900">Reset All Assignments</h3>
+                            <h3 class="text-base font-semibold leading-6 text-gray-900"><?php echo t('reset_all_assignments'); ?></h3>
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">
-                                    This will remove all jury assignments from matches. Locked matches will be preserved unless you force reset.
+                                    <?php echo t('reset_all_assignments_description'); ?>
                                 </p>
                             </div>
                             <div class="mt-4">
                                 <label class="flex items-center">
                                     <input type="checkbox" x-model="forceIncludeLocked" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
-                                    <span class="ml-2 text-sm text-gray-700">Also reset locked matches (force reset)</span>
+                                    <span class="ml-2 text-sm text-gray-700"><?php echo t('force_reset_locked_matches'); ?></span>
                                 </label>
                             </div>
                         </div>
                     </div>
                     <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                         <button @click="confirmResetAll()" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">
-                            Reset All
+                            <?php echo t('reset_all'); ?>
                         </button>
                         <button @click="showResetAllModal = false; forceIncludeLocked = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
-                            Cancel
+                            <?php echo t('cancel'); ?>
                         </button>
                     </div>
                 </div>
@@ -735,13 +735,13 @@ ob_start();
                             <h3 class="text-base font-semibold leading-6 text-gray-900"><?php echo t('unassign_all_jury_teams'); ?></h3>
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">
-                                    This will remove all jury team assignments from all matches. Locked matches will be preserved unless you force unassign.
+                                    <?php echo t('unassign_all_jury_teams_description'); ?>
                                 </p>
                             </div>
                             <div class="mt-4">
                                 <label class="flex items-center">
                                     <input type="checkbox" x-model="forceIncludeLockedUnassign" class="rounded border-gray-300 text-orange-600 focus:ring-orange-500">
-                                    <span class="ml-2 text-sm text-gray-700">Also unassign locked matches (force unassign)</span>
+                                    <span class="ml-2 text-sm text-gray-700"><?php echo t('force_unassign_locked_matches'); ?></span>
                                 </label>
                             </div>
                         </div>
@@ -751,7 +751,7 @@ ob_start();
                             <?php echo t('unassign_all'); ?>
                         </button>
                         <button @click="showUnassignAllModal = false; forceIncludeLockedUnassign = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
-                            Cancel
+                            <?php echo t('cancel'); ?>
                         </button>
                     </div>
                 </div>
