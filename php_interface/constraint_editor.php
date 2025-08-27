@@ -103,21 +103,22 @@ ob_start();
 ?>
 
 <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <!-- Header -->
-    <div class="md:flex md:items-center md:justify-between mb-6">
-        <div class="flex-1 min-w-0">
-            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                <?php echo t('constraint_editor'); ?>
-            </h2>
-            <p class="mt-1 text-sm text-gray-500">
-                <?php echo t('constraint_editor_description'); ?>
-            </p>
+    
+    <!-- Messages -->
+    <?php if (isset($message)): ?>
+    <div class="mb-6">
+        <div class="p-4 rounded-md <?php echo $messageType === 'success' ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-red-50 border border-red-200 text-red-700'; ?>">
+            <?php echo htmlspecialchars($message); ?>
         </div>
-        <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
-            <!-- Import Dropdown -->
-            <div class="relative inline-block text-left">
-                <div>
-                    <button type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" id="import-menu-button" aria-expanded="true" aria-haspopup="true" onclick="toggleImportMenu()">
+    </div>
+    <?php endif; ?>
+    
+    <!-- Import Actions -->
+    <div class="mb-6 flex flex-wrap gap-3">
+        <!-- Import Dropdown -->
+        <div class="relative inline-block text-left">
+            <div>
+                <button type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" id="import-menu-button" aria-expanded="true" aria-haspopup="true" onclick="toggleImportMenu()">
                         📥 Import Constraints
                         <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
