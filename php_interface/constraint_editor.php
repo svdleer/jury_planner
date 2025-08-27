@@ -119,7 +119,7 @@ ob_start();
         <div class="relative inline-block text-left">
             <div>
                 <button type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" id="import-menu-button" aria-expanded="true" aria-haspopup="true" onclick="toggleImportMenu()">
-                        📥 Import Constraints
+                        📥 <?php echo t('import_constraints'); ?>
                         <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                         </svg>
@@ -130,31 +130,31 @@ ob_start();
                     <div class="py-1" role="none">
                         <form method="POST" class="block" role="none">
                             <input type="hidden" name="action" value="import_constraints">
-                            <button type="submit" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left" role="menuitem" onclick="return confirm('Import PHP hardcoded constraints?')">
+                            <button type="submit" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left" role="menuitem" onclick="return confirm('<?php echo t('confirm_import_php_constraints'); ?>')">
                                 <span class="mr-3">🔧</span>
                                 <div>
-                                    <div class="font-medium">PHP Legacy Constraints</div>
-                                    <div class="text-xs text-gray-500">Import hardcoded system constraints</div>
+                                    <div class="font-medium"><?php echo t('php_legacy_constraints'); ?></div>
+                                    <div class="text-xs text-gray-500"><?php echo t('import_hardcoded_system_constraints'); ?></div>
                                 </div>
                             </button>
                         </form>
                         <form method="POST" class="block" role="none">
                             <input type="hidden" name="action" value="import_python_templates">
-                            <button type="submit" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left" role="menuitem" onclick="return confirm('Import Python constraint templates?')">
+                            <button type="submit" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left" role="menuitem" onclick="return confirm('<?php echo t('confirm_import_python_templates'); ?>')">
                                 <span class="mr-3">🐍</span>
                                 <div>
-                                    <div class="font-medium">Python Templates</div>
-                                    <div class="text-xs text-gray-500">Import Python optimization templates</div>
+                                    <div class="font-medium"><?php echo t('python_templates'); ?></div>
+                                    <div class="text-xs text-gray-500"><?php echo t('import_python_optimization_templates'); ?></div>
                                 </div>
                             </button>
                         </form>
                         <form method="POST" class="block" role="none">
                             <input type="hidden" name="action" value="import_all_constraints">
-                            <button type="submit" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left" role="menuitem" onclick="return confirm('Import all available constraints (PHP + Python)?')">
+                            <button type="submit" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left" role="menuitem" onclick="return confirm('<?php echo t('confirm_import_all_constraints'); ?>')">
                                 <span class="mr-3">⚡</span>
                                 <div>
-                                    <div class="font-medium">Import All</div>
-                                    <div class="text-xs text-gray-500">Import both PHP and Python constraints</div>
+                                    <div class="font-medium"><?php echo t('import_all_constraints'); ?></div>
+                                    <div class="text-xs text-gray-500"><?php echo t('import_all_available_constraints'); ?></div>
                                 </div>
                             </button>
                         </form>

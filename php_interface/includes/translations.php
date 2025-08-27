@@ -499,6 +499,20 @@ class Translations {
             'all_constraints_imported_success' => 'All constraints imported successfully.',
             'all_constraints_import_failed' => 'Failed to import all constraints',
             
+            // Import UI translations
+            'import_constraints' => 'Import Constraints',
+            'php_legacy_constraints' => 'PHP Legacy Constraints',
+            'import_hardcoded_system_constraints' => 'Import hardcoded system constraints',
+            'python_templates' => 'Python Templates',
+            'import_python_optimization_templates' => 'Import Python optimization templates',
+            'import_all_constraints' => 'Import All Constraints',
+            'import_all_available_constraints' => 'Import all available constraints',
+            
+            // Confirmation messages
+            'confirm_import_php_constraints' => 'Import PHP hardcoded constraints?',
+            'confirm_import_python_templates' => 'Import Python constraint templates?',
+            'confirm_import_all_constraints' => 'Import all available constraints (PHP + Python)?',
+            
             // Python availability messages
             'python_optimization_unavailable' => 'Python Optimization Unavailable',
             'reason' => 'Reason',
@@ -1049,6 +1063,20 @@ class Translations {
             'deleting_matches_disabled' => 'Wedstrijden verwijderen is uitgeschakeld in productie modus.',
             'deleting_teams_disabled' => 'Teams verwijderen is uitgeschakeld in productie modus.',
             'database_connection_failed' => 'Database verbinding mislukt',
+            
+            // Import UI translations
+            'import_constraints' => 'Beperkingen Importeren',
+            'php_legacy_constraints' => 'PHP Legacy Beperkingen',
+            'import_hardcoded_system_constraints' => 'Importeer hardgecodeerde systeem beperkingen',
+            'python_templates' => 'Python Sjablonen',
+            'import_python_optimization_templates' => 'Importeer Python optimalisatie sjablonen',
+            'import_all_constraints' => 'Alle Beperkingen Importeren',
+            'import_all_available_constraints' => 'Importeer alle beschikbare beperkingen',
+            
+            // Confirmation messages
+            'confirm_import_php_constraints' => 'PHP hardgecodeerde beperkingen importeren?',
+            'confirm_import_python_templates' => 'Python beperkingen sjablonen importeren?',
+            'confirm_import_all_constraints' => 'Alle beschikbare beperkingen importeren (PHP + Python)?',
         ]
     ];
     
