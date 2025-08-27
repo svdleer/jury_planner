@@ -40,6 +40,27 @@ if ($_POST) {
             $message = t('constraints_import_failed');
             $messageType = 'error';
         }
+    } elseif ($action === 'import_python_templates') {
+        $result = $constraintManager->importPythonTemplateConstraints();
+        if ($result['success']) {
+            $message = t('python_templates_imported_success') . " " . $result['imported'] . " " . t('imported') . ", " . $result['skipped'] . " " . t('skipped');
+            $messageType = 'success';
+        } else {
+            $message = t('python_templates_import_failed');
+            $messageType = 'error';
+        }
+    } elseif ($action === 'import_all_constraints') {
+        $result = $constraintManager->importAllConstraints();
+        if ($result['success']) {
+            $message = t('all_constraints_imported_success') . " " . 
+                      $result['total_imported'] . " " . t('imported') . " (" .
+                      $result['php_imported'] . " PHP + " . $result['python_imported'] . " Python), " .
+                      $result['total_skipped'] . " " . t('skipped');
+            $messageType = 'success';
+        } else {
+            $message = t('all_constraints_import_failed');
+            $messageType = 'error';
+        }
     } elseif ($action === 'run_optimization') {
         $result = $optimizationInterface->runOptimization([
             'timeout' => intval($_POST['timeout'] ?? 300),
@@ -92,13 +113,53 @@ ob_start();
             </p>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
-            <form method="POST" class="inline">
-                <input type="hidden" name="action" value="import_constraints">
-                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                        onclick="return confirm('<?php echo t('confirm_import_constraints'); ?>')">
-                    <?php echo t('import_existing_constraints'); ?>
-                </button>
-            </form>
+            <!-- Import Dropdown -->
+            <div class="relative inline-block text-left">
+                <div>
+                    <button type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" id="import-menu-button" aria-expanded="true" aria-haspopup="true" onclick="toggleImportMenu()">
+                        📥 Import Constraints
+                        <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="origin-top-right absolute right-0 mt-2 w-72 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10 hidden" id="import-menu" role="menu" aria-orientation="vertical" aria-labelledby="import-menu-button" tabindex="-1">
+                    <div class="py-1" role="none">
+                        <form method="POST" class="block" role="none">
+                            <input type="hidden" name="action" value="import_constraints">
+                            <button type="submit" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left" role="menuitem" onclick="return confirm('Import PHP hardcoded constraints?')">
+                                <span class="mr-3">🔧</span>
+                                <div>
+                                    <div class="font-medium">PHP Legacy Constraints</div>
+                                    <div class="text-xs text-gray-500">Import hardcoded system constraints</div>
+                                </div>
+                            </button>
+                        </form>
+                        <form method="POST" class="block" role="none">
+                            <input type="hidden" name="action" value="import_python_templates">
+                            <button type="submit" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left" role="menuitem" onclick="return confirm('Import Python constraint templates?')">
+                                <span class="mr-3">🐍</span>
+                                <div>
+                                    <div class="font-medium">Python Templates</div>
+                                    <div class="text-xs text-gray-500">Import Python optimization templates</div>
+                                </div>
+                            </button>
+                        </form>
+                        <form method="POST" class="block" role="none">
+                            <input type="hidden" name="action" value="import_all_constraints">
+                            <button type="submit" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left" role="menuitem" onclick="return confirm('Import all available constraints (PHP + Python)?')">
+                                <span class="mr-3">⚡</span>
+                                <div>
+                                    <div class="font-medium">Import All</div>
+                                    <div class="text-xs text-gray-500">Import both PHP and Python constraints</div>
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
             <button type="button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded" 
                     onclick="showCreateConstraintModal()">
                 <?php echo t('create_new_constraint'); ?>
@@ -716,6 +777,22 @@ document.getElementById('rule_type').addEventListener('change', function() {
             case 'less_preferred': weightField.value = -25; break;
             case 'most_preferred': weightField.value = 20; break;
         }
+    }
+});
+
+// Import dropdown toggle
+function toggleImportMenu() {
+    const menu = document.getElementById('import-menu');
+    menu.classList.toggle('hidden');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const menu = document.getElementById('import-menu');
+    const button = document.getElementById('import-menu-button');
+    
+    if (!menu.contains(event.target) && !button.contains(event.target)) {
+        menu.classList.add('hidden');
     }
 });
 </script>

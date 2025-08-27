@@ -493,6 +493,12 @@ class Translations {
             'missing_constraints' => 'Missing Constraints',
             'load_balancing' => 'Load Balancing',
             
+            // Python template import
+            'python_templates_imported_success' => 'Python templates imported successfully.',
+            'python_templates_import_failed' => 'Failed to import Python templates',
+            'all_constraints_imported_success' => 'All constraints imported successfully.',
+            'all_constraints_import_failed' => 'Failed to import all constraints',
+            
             // Common UI elements
             
             // Constraint type names and descriptions

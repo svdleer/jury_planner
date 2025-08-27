@@ -345,6 +345,206 @@ class ConstraintManager {
     }
     
     /**
+     * Import Python template constraints as predefined options
+     */
+    public function importPythonTemplateConstraints() {
+        $pythonTemplates = [
+            [
+                'name' => 'Team Unavailable (Template)',
+                'description' => 'Template for marking teams unavailable on specific dates',
+                'rule_type' => 'forbidden',
+                'weight' => -1000,
+                'parameters' => json_encode([
+                    'constraint_type' => 'team_unavailable',
+                    'team_id' => null,
+                    'date' => null,
+                    'reason' => 'Template - configure specific values'
+                ]),
+                'is_active' => false // Templates start inactive
+            ],
+            [
+                'name' => 'Max Duties Per Period (Template)',
+                'description' => 'Template for limiting duties within a time period',
+                'rule_type' => 'not_preferred',
+                'weight' => -50,
+                'parameters' => json_encode([
+                    'constraint_type' => 'max_duties_per_period',
+                    'max_duties' => 3,
+                    'period_days' => 14,
+                    'applies_to_all_teams' => true
+                ]),
+                'is_active' => false
+            ],
+            [
+                'name' => 'Rest Between Matches (Template)',
+                'description' => 'Template for ensuring rest periods between assignments',
+                'rule_type' => 'not_preferred',
+                'weight' => -30,
+                'parameters' => json_encode([
+                    'constraint_type' => 'rest_between_matches',
+                    'min_rest_days' => 1,
+                    'applies_to_all_teams' => true
+                ]),
+                'is_active' => false
+            ],
+            [
+                'name' => 'Dedicated Team Assignment (Template)',
+                'description' => 'Template for dedicated team restrictions',
+                'rule_type' => 'forbidden',
+                'weight' => -1000,
+                'parameters' => json_encode([
+                    'constraint_type' => 'dedicated_team_assignment',
+                    'team_id' => null,
+                    'dedicated_to_team_id' => null,
+                    'allow_last_match_exception' => false
+                ]),
+                'is_active' => false
+            ],
+            [
+                'name' => 'Preferred Duty Assignment (Template)',
+                'description' => 'Template for team duty preferences',
+                'rule_type' => 'most_preferred',
+                'weight' => 20,
+                'parameters' => json_encode([
+                    'constraint_type' => 'preferred_duty_assignment',
+                    'team_id' => null,
+                    'duty_type' => 'clock',
+                    'strength' => 1.0
+                ]),
+                'is_active' => false
+            ],
+            [
+                'name' => 'Avoid Duty Assignment (Template)',
+                'description' => 'Template for duty avoidance preferences',
+                'rule_type' => 'less_preferred',
+                'weight' => -15,
+                'parameters' => json_encode([
+                    'constraint_type' => 'avoid_duty_assignment',
+                    'team_id' => null,
+                    'duty_type' => 'score',
+                    'strength' => 1.0
+                ]),
+                'is_active' => false
+            ],
+            [
+                'name' => 'Preferred Match Dates (Template)',
+                'description' => 'Template for date preferences',
+                'rule_type' => 'most_preferred',
+                'weight' => 10,
+                'parameters' => json_encode([
+                    'constraint_type' => 'preferred_match_dates',
+                    'team_id' => null,
+                    'dates' => [],
+                    'reason' => 'Template - configure specific dates'
+                ]),
+                'is_active' => false
+            ],
+            [
+                'name' => 'Avoid Match Dates (Template)',
+                'description' => 'Template for date avoidance',
+                'rule_type' => 'less_preferred',
+                'weight' => -25,
+                'parameters' => json_encode([
+                    'constraint_type' => 'avoid_match_dates',
+                    'team_id' => null,
+                    'dates' => [],
+                    'reason' => 'Template - configure specific dates'
+                ]),
+                'is_active' => false
+            ],
+            [
+                'name' => 'Avoid Opponent Team (Template)',
+                'description' => 'Template for opponent avoidance',
+                'rule_type' => 'less_preferred',
+                'weight' => -20,
+                'parameters' => json_encode([
+                    'constraint_type' => 'avoid_opponent_team',
+                    'team_id' => null,
+                    'opponent_team_id' => null,
+                    'reason' => 'Template - configure specific teams'
+                ]),
+                'is_active' => false
+            ],
+            [
+                'name' => 'Avoid Consecutive Matches (Template)',
+                'description' => 'Template for consecutive match avoidance',
+                'rule_type' => 'not_preferred',
+                'weight' => -40,
+                'parameters' => json_encode([
+                    'constraint_type' => 'avoid_consecutive_matches',
+                    'max_consecutive' => 1,
+                    'applies_to_all_teams' => true
+                ]),
+                'is_active' => false
+            ]
+        ];
+        
+        $imported = 0;
+        $skipped = 0;
+        
+        foreach ($pythonTemplates as $template) {
+            try {
+                // Check if template already exists
+                $stmt = $this->db->prepare("
+                    SELECT id FROM planning_rules 
+                    WHERE name = ?
+                ");
+                $stmt->execute([$template['name']]);
+                
+                if ($stmt->fetch()) {
+                    $skipped++;
+                    continue;
+                }
+                
+                // Insert new template
+                $stmt = $this->db->prepare("
+                    INSERT INTO planning_rules (name, description, rule_type, weight, parameters, is_active)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                ");
+                
+                $stmt->execute([
+                    $template['name'],
+                    $template['description'],
+                    $template['rule_type'],
+                    $template['weight'],
+                    $template['parameters'],
+                    $template['is_active'] ? 1 : 0
+                ]);
+                
+                $imported++;
+                
+            } catch (PDOException $e) {
+                error_log("Error importing Python template '{$template['name']}': " . $e->getMessage());
+            }
+        }
+        
+        return [
+            'success' => true,
+            'imported' => $imported,
+            'skipped' => $skipped,
+            'type' => 'python_templates'
+        ];
+    }
+    
+    /**
+     * Import all constraints (both hardcoded PHP and Python templates)
+     */
+    public function importAllConstraints() {
+        $phpResult = $this->importExistingConstraints();
+        $pythonResult = $this->importPythonTemplateConstraints();
+        
+        return [
+            'success' => true,
+            'php_imported' => $phpResult['imported'],
+            'php_skipped' => $phpResult['skipped'],
+            'python_imported' => $pythonResult['imported'],
+            'python_skipped' => $pythonResult['skipped'],
+            'total_imported' => $phpResult['imported'] + $pythonResult['imported'],
+            'total_skipped' => $phpResult['skipped'] + $pythonResult['skipped']
+        ];
+    }
+    
+    /**
      * Get constraint by ID
      */
     public function getConstraintById($id) {
