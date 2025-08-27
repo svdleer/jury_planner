@@ -1103,6 +1103,7 @@ class Translations {
             'recommendations' => 'Aanbevelingen',
             'optimization_stats' => 'Optimalisatie Statistieken',
             'python_optimization_engine' => 'Python Optimalisatie Model',
+            'errors' => 'Fouten',
         ]
     ];
     
