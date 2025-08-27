@@ -1020,6 +1020,7 @@ class Translations {
             'unknown_error' => 'Onbekende fout opgetreden',
             'note' => 'Opmerking',
             'preview_using_php_fallback' => 'Deze voorvertoning werd gegenereerd met de PHP fallback optimalisator. Resultaten kunnen verschillen van de volledige Python optimalisatie.',
+            'preview_failed' => 'Voorvertoning mislukt',
             
             // Constraint types
             'hard' => 'Hard',
