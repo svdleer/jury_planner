@@ -3,8 +3,10 @@ session_start();
 require_once 'includes/translations.php';
 require_once 'config/database.php';
 require_once 'includes/ConstraintManager.php';
+require_once 'optimization_interface.php';
 
 $constraintManager = new ConstraintManager($db);
+$optimizationInterface = new OptimizationInterface($db);
 
 $pageTitle = t('constraint_editor');
 $pageDescription = t('constraint_editor_description');
@@ -38,12 +40,34 @@ if ($_POST) {
             $message = t('constraints_import_failed');
             $messageType = 'error';
         }
+    } elseif ($action === 'run_optimization') {
+        $result = $optimizationInterface->runOptimization([
+            'timeout' => intval($_POST['timeout'] ?? 300),
+            'solver_type' => $_POST['solver_type'] ?? 'auto'
+        ]);
+        if ($result['success']) {
+            $message = t('optimization_success') . " " . $result['imported_assignments'] . " " . t('assignments_imported');
+            $messageType = 'success';
+        } else {
+            $message = t('optimization_failed') . ": " . $result['error'];
+            $messageType = 'error';
+        }
+    } elseif ($action === 'preview_optimization') {
+        $result = $optimizationInterface->previewOptimization([
+            'timeout' => intval($_POST['timeout'] ?? 120),
+            'solver_type' => $_POST['solver_type'] ?? 'auto'
+        ]);
+        $previewResult = $result; // Store for display
+    } elseif ($action === 'validate_constraints') {
+        $validationResult = $optimizationInterface->validateConstraints();
     }
 }
 
 // Get all constraints
 $constraints = $constraintManager->getAllConstraints();
 $teams = $constraintManager->getAllTeams();
+$optimizationStats = $optimizationInterface->getOptimizationHistory();
+$recommendations = $optimizationInterface->getConstraintRecommendations();
 
 // Check if database tables exist
 $tablesExist = true;
@@ -490,6 +514,198 @@ function fillParameterFields(params) {
     });
 }
 
+// Auto-update weight based on rule type
+document.getElementById('rule_type').addEventListener('change', function() {
+    const weightField = document.getElementById('weight');
+    if (weightField.value === '' || confirm('<?php echo t('update_weight_suggestion'); ?>')) {
+        switch(this.value) {
+            case 'forbidden': weightField.value = -1000; break;
+            case 'not_preferred': weightField.value = -40; break;
+            case 'less_preferred': weightField.value = -25; break;
+            case 'most_preferred': weightField.value = 20; break;
+        }
+    }
+});
+</script>
+
+<!-- Optimization Interface Section -->
+<div class="mt-8 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg shadow-lg">
+    <div class="p-6">
+        <div class="flex items-center space-x-2 mb-4">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+            <h2 class="text-xl font-bold text-gray-800"><?php echo t('python_optimization'); ?></h2>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Optimization Controls -->
+            <div class="lg:col-span-2">
+                <form method="POST" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700"><?php echo t('solver_type'); ?></label>
+                            <select name="solver_type" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                <option value="auto"><?php echo t('auto_select'); ?></option>
+                                <option value="linear"><?php echo t('linear_solver'); ?></option>
+                                <option value="sat"><?php echo t('constraint_sat'); ?></option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700"><?php echo t('timeout_seconds'); ?></label>
+                            <input type="number" name="timeout" value="300" min="30" max="1800" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button type="submit" name="action" value="validate_constraints" 
+                                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                            <?php echo t('validate_constraints'); ?>
+                        </button>
+                        <button type="submit" name="action" value="preview_optimization" 
+                                class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors">
+                            <?php echo t('preview_optimization'); ?>
+                        </button>
+                        <button type="submit" name="action" value="run_optimization" 
+                                class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors font-semibold"
+                                onclick="return confirm('<?php echo t('run_optimization_confirm'); ?>')">
+                            <?php echo t('run_optimization'); ?>
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Validation Results -->
+                <?php if (isset($validationResult)): ?>
+                <div class="mt-4 p-4 rounded-lg <?php echo $validationResult['valid'] ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'; ?>">
+                    <div class="flex items-center space-x-2">
+                        <?php if ($validationResult['valid']): ?>
+                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-green-800 font-medium"><?php echo t('validation_passed'); ?></span>
+                        <?php else: ?>
+                            <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-red-800 font-medium"><?php echo t('validation_failed'); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="mt-2 text-sm">
+                        <p><?php echo t('active_constraints'); ?>: <?php echo $validationResult['active_constraints']; ?>/<?php echo $validationResult['total_constraints']; ?></p>
+                        
+                        <?php if (!empty($validationResult['errors'])): ?>
+                            <div class="mt-2">
+                                <strong><?php echo t('errors'); ?>:</strong>
+                                <ul class="list-disc list-inside mt-1 text-red-700">
+                                    <?php foreach ($validationResult['errors'] as $error): ?>
+                                        <li><?php echo htmlspecialchars($error['constraint']); ?>: <?php echo implode(', ', $error['errors']); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($validationResult['warnings'])): ?>
+                            <div class="mt-2">
+                                <strong><?php echo t('warnings'); ?>:</strong>
+                                <ul class="list-disc list-inside mt-1 text-yellow-700">
+                                    <?php foreach ($validationResult['warnings'] as $warning): ?>
+                                        <li><?php echo htmlspecialchars($warning['constraint']); ?>: <?php echo implode(', ', $warning['conflicts']); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+                
+                <!-- Preview Results -->
+                <?php if (isset($previewResult)): ?>
+                <div class="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <h3 class="font-medium text-gray-800 mb-2"><?php echo t('optimization_preview'); ?></h3>
+                    <?php if ($previewResult['success']): ?>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-600"><?php echo t('optimization_score'); ?>:</span>
+                                <span class="font-medium"><?php echo number_format($previewResult['optimization_score'], 2); ?></span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600"><?php echo t('assignments'); ?>:</span>
+                                <span class="font-medium"><?php echo count($previewResult['assignments']); ?></span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600"><?php echo t('constraints_satisfied'); ?>:</span>
+                                <span class="font-medium"><?php echo $previewResult['constraints_satisfied']; ?>/<?php echo $previewResult['total_constraints']; ?></span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600"><?php echo t('execution_time'); ?>:</span>
+                                <span class="font-medium"><?php echo number_format($previewResult['execution_time'], 2); ?>s</span>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-red-600"><?php echo t('preview_failed'); ?>: <?php echo htmlspecialchars($previewResult['error']); ?></p>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
+            </div>
+            
+            <!-- Statistics & Recommendations -->
+            <div class="space-y-4">
+                <!-- Optimization Stats -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200">
+                    <h3 class="font-medium text-gray-800 mb-3"><?php echo t('optimization_stats'); ?></h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600"><?php echo t('total_runs'); ?>:</span>
+                            <span class="font-medium"><?php echo $optimizationStats['total_runs'] ?? 0; ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600"><?php echo t('avg_score'); ?>:</span>
+                            <span class="font-medium"><?php echo number_format($optimizationStats['avg_score'] ?? 0, 1); ?></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600"><?php echo t('satisfaction_rate'); ?>:</span>
+                            <span class="font-medium"><?php echo number_format($optimizationStats['avg_satisfaction_rate'] ?? 0, 1); ?>%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600"><?php echo t('avg_time'); ?>:</span>
+                            <span class="font-medium"><?php echo number_format($optimizationStats['avg_solver_time'] ?? 0, 1); ?>s</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recommendations -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200">
+                    <h3 class="font-medium text-gray-800 mb-3"><?php echo t('recommendations'); ?></h3>
+                    <?php if (!empty($recommendations['missing_constraints'])): ?>
+                        <div class="space-y-2">
+                            <h4 class="text-sm font-medium text-orange-600"><?php echo t('missing_constraints'); ?></h4>
+                            <?php foreach ($recommendations['missing_constraints'] as $rec): ?>
+                                <div class="text-xs p-2 bg-orange-50 rounded border-l-2 border-orange-300">
+                                    <div class="font-medium text-orange-800"><?php echo ucfirst($rec['type']); ?></div>
+                                    <div class="text-orange-700"><?php echo $rec['description']; ?></div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if (!empty($recommendations['load_balancing'])): ?>
+                        <div class="space-y-2 mt-3">
+                            <h4 class="text-sm font-medium text-blue-600"><?php echo t('load_balancing'); ?></h4>
+                            <?php foreach ($recommendations['load_balancing'] as $rec): ?>
+                                <div class="text-xs p-2 bg-blue-50 rounded border-l-2 border-blue-300">
+                                    <div class="text-blue-700"><?php echo $rec['description']; ?></div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
 // Auto-update weight based on rule type
 document.getElementById('rule_type').addEventListener('change', function() {
     const weightField = document.getElementById('weight');
