@@ -107,8 +107,25 @@ try {
             echo "<p>Matches exported: <strong>" . count($exportData['matches']) . "</strong></p>";
             echo "<p>Constraints exported: <strong>" . count($exportData['constraints']) . "</strong></p>";
             
-            echo "<h3>Export Details:</h3>";
-            echo "<pre>" . json_encode($exportData, JSON_PRETTY_PRINT) . "</pre>";
+            if (count($exportData['matches']) > 0) {
+                echo "<h3>Sample Matches:</h3>";
+                echo "<pre>" . print_r(array_slice($exportData['matches'], 0, 3), true) . "</pre>";
+            }
+            
+            if (count($exportData['teams']) > 0) {
+                echo "<h3>Sample Teams:</h3>";
+                echo "<pre>" . print_r(array_slice($exportData['teams'], 0, 5), true) . "</pre>";
+            }
+            
+            echo "<h3>Full Export Summary:</h3>";
+            echo "<pre>" . json_encode([
+                'version' => $exportData['version'],
+                'exported_at' => $exportData['exported_at'],
+                'teams_count' => count($exportData['teams']),
+                'matches_count' => count($exportData['matches']),
+                'constraints_count' => count($exportData['constraints']),
+                'weight_multipliers' => $exportData['weight_multipliers']
+            ], JSON_PRETTY_PRINT) . "</pre>";
         } else {
             echo "<p>❌ Export failed - invalid JSON</p>";
             echo "<pre>Raw export: $exportJson</pre>";
@@ -116,6 +133,7 @@ try {
         
     } catch (Exception $e) {
         echo "<p>❌ Error during Python export: " . $e->getMessage() . "</p>";
+        echo "<p>This might be due to missing tables. Check that all database tables exist.</p>";
     }
     
 } catch (Exception $e) {

@@ -12,13 +12,28 @@ class ConstraintManager {
      */
     public function getAllConstraints() {
         try {
+            // First try the new constraints table
             $stmt = $this->db->prepare("
-                SELECT id, name, description, rule_type, weight, is_active, parameters, created_at, updated_at
-                FROM planning_rules 
+                SELECT id, rule_type as name, description, rule_type, weight, is_active, target_value as parameters, created_at, updated_at
+                FROM constraints 
+                WHERE is_active = 1
                 ORDER BY created_at DESC
             ");
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $constraints = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // If no constraints found, try the old planning_rules table as fallback
+            if (empty($constraints)) {
+                $stmt = $this->db->prepare("
+                    SELECT id, name, description, rule_type, weight, is_active, parameters, created_at, updated_at
+                    FROM planning_rules 
+                    ORDER BY created_at DESC
+                ");
+                $stmt->execute();
+                $constraints = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+            
+            return $constraints;
         } catch (PDOException $e) {
             error_log("Error getting constraints: " . $e->getMessage());
             // Check if it's a "table doesn't exist" error
