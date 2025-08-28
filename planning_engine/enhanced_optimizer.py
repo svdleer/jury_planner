@@ -262,12 +262,7 @@ class EnhancedJuryOptimizer:
                 solver_time=0,
                 metadata={
                     'solver_status': 'optimal' if status == cp_model.OPTIMAL else 'feasible',
-                    'solver_stats': {
-                        'branches': solver.NumBranches(),
-                        'conflicts': solver.NumConflicts(),
-                        'bool_vars': solver.NumBooleans(),
-                        'integer_vars': solver.NumIntegers()
-                    }
+                    'solver_stats': self._get_solver_stats(solver)
                 },
                 period=self._get_optimization_period()
             )
@@ -480,6 +475,37 @@ class EnhancedJuryOptimizer:
         
         return assignments
     
+    def _get_solver_stats(self, solver):
+        """Safely get solver statistics, handling different OR-Tools versions"""
+        stats = {}
+        
+        try:
+            stats['branches'] = solver.NumBranches()
+        except AttributeError:
+            stats['branches'] = 0
+            
+        try:
+            stats['conflicts'] = solver.NumConflicts()
+        except AttributeError:
+            stats['conflicts'] = 0
+            
+        try:
+            stats['bool_vars'] = solver.NumBooleans()
+        except AttributeError:
+            stats['bool_vars'] = 0
+            
+        try:
+            stats['wall_time'] = solver.WallTime()
+        except AttributeError:
+            stats['wall_time'] = 0.0
+            
+        try:
+            stats['user_time'] = solver.UserTime()
+        except AttributeError:
+            stats['user_time'] = 0.0
+            
+        return stats
+
     def _get_optimization_period(self) -> Dict[str, str]:
         """Get the optimization period from matches"""
         if not self.matches:
