@@ -19,11 +19,11 @@ fi
 echo "📁 Creating fresh httpdocs"
 mkdir -p "$HTTPDOCS"
 
-# Clone repository directly into httpdocs
+# Deploy repository files
 echo "📦 Deploying files to httpdocs"
 git --git-dir="$GIT_DIR" --work-tree="$HTTPDOCS" checkout -f main
 
-# Move PHP interface files to root of httpdocs
+# Move PHP interface files to root of httpdocs and keep Python files accessible
 echo "📂 Moving PHP interface to root"
 if [ -d "$HTTPDOCS/php_interface" ]; then
     # Move all files from php_interface to httpdocs root
@@ -34,22 +34,21 @@ if [ -d "$HTTPDOCS/php_interface" ]; then
     rmdir "$HTTPDOCS/php_interface"
 fi
 
-# Move Python optimization files from root to httpdocs
-echo "🐍 Moving Python optimization files"
-if [ -d "$HTTPDOCS/planning_engine" ]; then
-    echo "✓ planning_engine already in place"
-else
-    echo "⚠️ planning_engine directory not found in httpdocs"
-fi
-
-# Copy essential Python files if they exist at root level but not in httpdocs
-for file in "setup_python_venv.sh" "run_python_optimization.sh" "requirements.txt"; do
+# Ensure Python optimization files are in the right place (they should already be at root level)
+echo "🐍 Verifying Python optimization files"
+for file in "setup_python_venv.sh" "run_python_optimization.sh"; do
     if [ -f "$HTTPDOCS/$file" ]; then
-        echo "✓ $file already in place"
+        echo "✓ $file found"
     else
-        echo "⚠️ $file not found in httpdocs"
+        echo "⚠️ $file not found"
     fi
 done
+
+if [ -d "$HTTPDOCS/planning_engine" ]; then
+    echo "✓ planning_engine directory found"
+else
+    echo "⚠️ planning_engine directory not found"
+fi
 
 # Handle environment file
 if [ ! -f "$HTTPDOCS/.env" ] && [ -f "$HTTPDOCS/.env.example" ]; then
