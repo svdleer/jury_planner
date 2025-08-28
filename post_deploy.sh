@@ -59,55 +59,86 @@ fi
 
 # Step 4: Set up or update Python virtual environment
 if [ -n "$PYTHON_CMD" ]; then
-    echo -e "${YELLOW}🔧 Step 4: Setting up Python virtual environment...${NC}"
+    echo -e "${YELLOW}🔧 Step 4: Checking Python virtual environment...${NC}"
     
-    # Remove old venv if it exists and recreate
-    if [ -d "$VENV_DIR" ]; then
-        echo -e "   Removing old virtual environment..."
-        rm -rf "$VENV_DIR"
+    VENV_NEEDS_UPDATE=false
+    
+    # Check if virtual environment exists and is working
+    if [ -d "$VENV_DIR" ] && [ -f "$VENV_DIR/bin/activate" ]; then
+        echo -e "   Virtual environment exists, checking if it's working..."
+        
+        # Test if the virtual environment works
+        if source "$VENV_DIR/bin/activate" 2>/dev/null && python3 -c "import sys; print('Python:', sys.version)" 2>/dev/null; then
+            echo -e "${GREEN}   ✅ Virtual environment is working${NC}"
+            
+            # Check if essential packages are installed
+            if python3 -c "import numpy, scipy, mysql.connector" 2>/dev/null; then
+                echo -e "${GREEN}   ✅ Essential packages are installed${NC}"
+            else
+                echo -e "${YELLOW}   ⚠️  Some packages missing, will update...${NC}"
+                VENV_NEEDS_UPDATE=true
+            fi
+            
+            deactivate 2>/dev/null || true
+        else
+            echo -e "${YELLOW}   ⚠️  Virtual environment is broken, will recreate...${NC}"
+            rm -rf "$VENV_DIR"
+            VENV_NEEDS_UPDATE=true
+        fi
+    else
+        echo -e "   No virtual environment found, will create..."
+        VENV_NEEDS_UPDATE=true
     fi
     
-    # Create new virtual environment
-    echo -e "   Creating virtual environment..."
-    $PYTHON_CMD -m venv "$VENV_DIR" 2>/dev/null || {
-        echo -e "${YELLOW}   ⚠️  venv module not available, trying alternative...${NC}"
-        # Try alternative method
-        if command -v virtualenv &> /dev/null; then
-            virtualenv -p $PYTHON_CMD "$VENV_DIR"
-        else
-            echo -e "${YELLOW}   ⚠️  virtualenv not available, skipping venv setup${NC}"
-            PYTHON_CMD=""
-        fi
-    }
-    
-    if [ -f "$VENV_DIR/bin/activate" ]; then
-        echo -e "${GREEN}   ✅ Virtual environment created${NC}"
+    # Create or update virtual environment if needed
+    if [ "$VENV_NEEDS_UPDATE" = true ]; then
+        echo -e "   Creating/updating virtual environment..."
         
-        # Activate and install packages
-        source "$VENV_DIR/bin/activate"
-        
-        echo -e "   Upgrading pip..."
-        pip install --upgrade pip --quiet 2>/dev/null || echo "   pip upgrade skipped"
-        
-        echo -e "   Installing required packages..."
-        
-        # Install from requirements.txt if available
-        if [ -f "${DEPLOY_DIR}/requirements.txt" ]; then
-            pip install -r "${DEPLOY_DIR}/requirements.txt" --quiet 2>/dev/null || {
-                echo -e "${YELLOW}   ⚠️  Some packages from requirements.txt failed to install${NC}"
+        # Create virtual environment if it doesn't exist
+        if [ ! -d "$VENV_DIR" ]; then
+            $PYTHON_CMD -m venv "$VENV_DIR" 2>/dev/null || {
+                echo -e "${YELLOW}   ⚠️  venv module not available, trying alternative...${NC}"
+                # Try alternative method
+                if command -v virtualenv &> /dev/null; then
+                    virtualenv -p $PYTHON_CMD "$VENV_DIR"
+                else
+                    echo -e "${YELLOW}   ⚠️  virtualenv not available, skipping venv setup${NC}"
+                    PYTHON_CMD=""
+                fi
             }
         fi
         
-        # Install essential packages for optimization engine
-        echo -e "   Installing optimization packages..."
-        pip install --quiet numpy scipy mysql-connector-python python-dotenv 2>/dev/null || {
-            echo -e "${YELLOW}   ⚠️  Some optimization packages failed to install${NC}"
-        }
-        
-        deactivate
-        echo -e "${GREEN}✅ Python environment ready${NC}"
+        if [ -f "$VENV_DIR/bin/activate" ]; then
+            echo -e "${GREEN}   ✅ Virtual environment ready${NC}"
+            
+            # Activate and install/update packages
+            source "$VENV_DIR/bin/activate"
+            
+            echo -e "   Upgrading pip..."
+            pip install --upgrade pip --quiet 2>/dev/null || echo "   pip upgrade skipped"
+            
+            echo -e "   Installing/updating required packages..."
+            
+            # Install from requirements.txt if available
+            if [ -f "${DEPLOY_DIR}/requirements.txt" ]; then
+                pip install -r "${DEPLOY_DIR}/requirements.txt" --quiet 2>/dev/null || {
+                    echo -e "${YELLOW}   ⚠️  Some packages from requirements.txt failed to install${NC}"
+                }
+            fi
+            
+            # Install essential packages for optimization engine
+            echo -e "   Installing/updating optimization packages..."
+            pip install --quiet numpy scipy mysql-connector-python python-dotenv 2>/dev/null || {
+                echo -e "${YELLOW}   ⚠️  Some optimization packages failed to install${NC}"
+            }
+            
+            deactivate
+            echo -e "${GREEN}✅ Python environment updated${NC}"
+        else
+            echo -e "${YELLOW}⚠️  Virtual environment creation failed${NC}"
+        fi
     else
-        echo -e "${YELLOW}⚠️  Virtual environment creation failed${NC}"
+        echo -e "${GREEN}✅ Python environment is up to date${NC}"
     fi
 else
     echo -e "${YELLOW}⚠️  Step 4: Python 3 not available, skipping venv setup${NC}"
@@ -166,13 +197,24 @@ fi
 
 # Step 7: Create status file
 echo -e "${YELLOW}📄 Step 7: Creating deployment status...${NC}"
+
+# Check virtual environment packages
+VENV_PACKAGES=""
+if [ -f "$VENV_DIR/bin/activate" ]; then
+    VENV_PACKAGES=$(source "$VENV_DIR/bin/activate" && pip list --format=json 2>/dev/null | jq -r '.[].name' 2>/dev/null | tr '\n' ',' || echo "unknown")
+fi
+
 cat > "${DEPLOY_DIR}/deployment_status.json" << EOF
 {
     "deployment_time": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
     "deployment_status": "$([ "$ALL_GOOD" = true ] && echo "success" || echo "partial")",
     "python_available": $([ -n "$PYTHON_CMD" ] && echo "true" || echo "false"),
+    "python_version": "$([ -n "$PYTHON_CMD" ] && $PYTHON_CMD --version 2>&1 || echo "not available")",
     "venv_created": $([ -f "$VENV_DIR/bin/activate" ] && echo "true" || echo "false"),
-    "optimization_engine": $([ -f "${DEPLOY_DIR}/planning_engine/enhanced_optimizer.py" ] && echo "true" || echo "false")
+    "venv_updated": $([ "$VENV_NEEDS_UPDATE" = true ] && echo "true" || echo "false"),
+    "optimization_engine": $([ -f "${DEPLOY_DIR}/planning_engine/enhanced_optimizer.py" ] && echo "true" || echo "false"),
+    "venv_packages": "${VENV_PACKAGES%,}",
+    "post_deploy_script": "executed"
 }
 EOF
 chmod 644 "${DEPLOY_DIR}/deployment_status.json"
