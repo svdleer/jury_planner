@@ -34,6 +34,23 @@ if [ -d "$HTTPDOCS/php_interface" ]; then
     rmdir "$HTTPDOCS/php_interface"
 fi
 
+# Move Python optimization files from root to httpdocs
+echo "🐍 Moving Python optimization files"
+if [ -d "$HTTPDOCS/planning_engine" ]; then
+    echo "✓ planning_engine already in place"
+else
+    echo "⚠️ planning_engine directory not found in httpdocs"
+fi
+
+# Copy essential Python files if they exist at root level but not in httpdocs
+for file in "setup_python_venv.sh" "run_python_optimization.sh" "requirements.txt"; do
+    if [ -f "$HTTPDOCS/$file" ]; then
+        echo "✓ $file already in place"
+    else
+        echo "⚠️ $file not found in httpdocs"
+    fi
+done
+
 # Handle environment file
 if [ ! -f "$HTTPDOCS/.env" ] && [ -f "$HTTPDOCS/.env.example" ]; then
     echo "📝 Creating environment file"
