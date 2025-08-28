@@ -9,7 +9,7 @@ echo "========================================"
 # Configuration
 REMOTE_SERVER="jury2025.useless.nl"
 REMOTE_PATH="/home/httpd/vhosts/jury2025.useless.nl/httpdocs"
-REMOTE_USER="silvester"
+REMOTE_USER="jury2025"
 
 echo "📡 Connecting to: $REMOTE_USER@$REMOTE_SERVER"
 echo "📁 Remote path: $REMOTE_PATH"

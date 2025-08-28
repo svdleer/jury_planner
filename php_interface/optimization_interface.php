@@ -280,23 +280,25 @@ class OptimizationInterface {
             throw new Exception('Shell execution functions are disabled on this server. Python optimization is not available.');
         }
         
-        // Virtual environment is MANDATORY for Python optimization
-        $venvPython = __DIR__ . '/../venv/bin/python3';
-        if (!file_exists($venvPython)) {
-            throw new Exception('Python virtual environment is required but not found. Run setup_python_venv.sh first.');
-        }
-        
         // First, check if wrapper script exists (preferred method)
         $wrapperScript = __DIR__ . '/../run_python_optimization.sh';
         if (file_exists($wrapperScript) && is_executable($wrapperScript)) {
+            // Check if virtual environment exists (mandatory)
+            $venvPython = __DIR__ . '/../venv/bin/python3';
+            if (!file_exists($venvPython)) {
+                throw new Exception('Virtual environment is required but not found. Please run setup_python_venv.sh to create the virtual environment.');
+            }
             return $wrapperScript;
         }
         
-        // Use virtual environment Python directly
-        return $venvPython;
-    }
-    
-    /**
+        // Virtual environment is mandatory - check if it exists
+        $venvPython = __DIR__ . '/../venv/bin/python3';
+        if (file_exists($venvPython)) {
+            return $venvPython;
+        }
+        
+        throw new Exception('Virtual environment is required for Python optimization. Please run setup_python_venv.sh to create the virtual environment.');
+    }    /**
      * Check if Python optimization is available on this server
      */
     public function isPythonOptimizationAvailable() {
