@@ -17,11 +17,11 @@ class OptimizationInterface {
         $this->db = $database;
         $this->bridge = new PythonConstraintBridge($database);
         
-        // Check multiple possible locations for the Python script
+        // Use relative paths to work within open_basedir restrictions
         $possibleScriptPaths = [
-            __DIR__ . '/planning_engine/enhanced_optimizer.py',                    // Current directory
-            dirname(__DIR__) . '/planning_engine/enhanced_optimizer.py',          // Parent directory (httpdocs root)
-            '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/planning_engine/enhanced_optimizer.py'  // Absolute path
+            __DIR__ . '/planning_engine/enhanced_optimizer.py',    // Current directory
+            './planning_engine/enhanced_optimizer.py',            // Relative to current working directory
+            '../planning_engine/enhanced_optimizer.py'            // Parent directory (relative)
         ];
         
         $this->pythonScriptPath = null;
@@ -32,9 +32,9 @@ class OptimizationInterface {
             }
         }
         
-        // If not found, default to the expected location in httpdocs root
+        // If not found, default to the expected relative location
         if (!$this->pythonScriptPath) {
-            $this->pythonScriptPath = dirname(__DIR__) . '/planning_engine/enhanced_optimizer.py';
+            $this->pythonScriptPath = '../planning_engine/enhanced_optimizer.py';
         }
         
         $this->phpOptimizer = new SimplePhpOptimizer($database);
@@ -300,11 +300,11 @@ class OptimizationInterface {
             throw new Exception('Shell execution functions are disabled on this server. Python optimization is not available.');
         }
         
-        // Check for wrapper script in multiple locations (preferred method)
+        // Use relative paths to work within open_basedir restrictions
         $wrapperLocations = [
-            __DIR__ . '/run_python_optimization.sh',                              // Current directory
-            dirname(__DIR__) . '/run_python_optimization.sh',                     // Parent directory (httpdocs root)
-            '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/run_python_optimization.sh'  // Absolute path
+            __DIR__ . '/run_python_optimization.sh',              // Current directory
+            './run_python_optimization.sh',                       // Relative to current working directory
+            '../run_python_optimization.sh'                       // Parent directory (relative)
         ];
         
         foreach ($wrapperLocations as $wrapperScript) {
@@ -318,11 +318,11 @@ class OptimizationInterface {
             }
         }
         
-        // Check for virtual environment directly in multiple locations
+        // Check for virtual environment directly using relative paths
         $venvLocations = [
-            __DIR__ . '/venv/bin/python3',                                        // Current directory
-            dirname(__DIR__) . '/venv/bin/python3',                               // Parent directory (httpdocs root)
-            '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/venv/bin/python3'    // Absolute path
+            __DIR__ . '/venv/bin/python3',                        // Current directory
+            './venv/bin/python3',                                 // Relative to current working directory
+            '../venv/bin/python3'                                 // Parent directory (relative)
         ];
         
         foreach ($venvLocations as $venvPython) {
