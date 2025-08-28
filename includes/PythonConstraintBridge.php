@@ -229,6 +229,69 @@ class PythonConstraintBridge {
                     'preferred_start_time' => $parameters['preferred_start_time'] ?? null,
                     'preferred_end_time' => $parameters['preferred_end_time'] ?? null
                 ]
+            ],
+            'max_duties_per_period' => [
+                'template' => 'max_duties_per_period',
+                'parameters' => [
+                    'max_duties' => $parameters['max_duties'] ?? 3,
+                    'period_days' => $parameters['period_days'] ?? 14,
+                    'applies_to_all_teams' => $parameters['applies_to_all_teams'] ?? true
+                ]
+            ],
+            'avoid_consecutive_matches' => [
+                'template' => 'avoid_consecutive_matches',
+                'parameters' => [
+                    'max_consecutive' => $parameters['max_consecutive'] ?? 1,
+                    'applies_to_all_teams' => $parameters['applies_to_all_teams'] ?? true
+                ]
+            ],
+            'dedicated_team_assignment' => [
+                'template' => 'dedicated_team_restriction',
+                'parameters' => [
+                    'team_id' => $parameters['team_id'] ?? null,
+                    'dedicated_to_team_id' => $parameters['dedicated_to_team_id'] ?? null,
+                    'allow_last_match_exception' => $parameters['allow_last_match_exception'] ?? true
+                ]
+            ],
+            'preferred_duty_assignment' => [
+                'template' => 'preferred_duty',
+                'parameters' => [
+                    'team_id' => $parameters['team_id'] ?? null,
+                    'duty_type' => $parameters['duty_type'] ?? 'clock',
+                    'strength' => $parameters['strength'] ?? 1
+                ]
+            ],
+            'avoid_duty_assignment' => [
+                'template' => 'avoid_duty',
+                'parameters' => [
+                    'team_id' => $parameters['team_id'] ?? null,
+                    'duty_type' => $parameters['duty_type'] ?? 'score',
+                    'strength' => $parameters['strength'] ?? 1
+                ]
+            ],
+            'preferred_match_dates' => [
+                'template' => 'preferred_dates',
+                'parameters' => [
+                    'team_id' => $parameters['team_id'] ?? null,
+                    'dates' => $parameters['dates'] ?? [],
+                    'reason' => $parameters['reason'] ?? ''
+                ]
+            ],
+            'avoid_match_dates' => [
+                'template' => 'avoid_dates',
+                'parameters' => [
+                    'team_id' => $parameters['team_id'] ?? null,
+                    'dates' => $parameters['dates'] ?? [],
+                    'reason' => $parameters['reason'] ?? ''
+                ]
+            ],
+            'avoid_opponent_team' => [
+                'template' => 'avoid_opponent',
+                'parameters' => [
+                    'team_id' => $parameters['team_id'] ?? null,
+                    'opponent_team_id' => $parameters['opponent_team_id'] ?? null,
+                    'reason' => $parameters['reason'] ?? ''
+                ]
             ]
         ];
         
