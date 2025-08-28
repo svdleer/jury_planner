@@ -1,0 +1,22 @@
+# Plesk Post-Deployment Hook Configuration
+# 
+# This file tells Plesk which script to run after deployment
+# Configure this in Plesk Git settings:
+# 
+# 1. Go to Plesk Panel → Git → your repository
+# 2. Set "Actions after Git push" to "Run script"
+# 3. Set script path to: ./post_deploy.sh
+# 
+# Or add this to your .plesk.yml file:
+# 
+# hooks:
+#   post_deploy:
+#     - ./post_deploy.sh
+# 
+# The post_deploy.sh script will:
+# ✅ Set proper file permissions
+# ✅ Clean up old php_interface directory
+# ✅ Set up Python virtual environment
+# ✅ Install required packages
+# ✅ Test optimization engine
+# ✅ Create deployment status report

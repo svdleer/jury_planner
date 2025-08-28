@@ -1,0 +1,19 @@
+# Plesk Onyx Configuration File
+# This file configures automatic post-deployment actions
+
+# Post-deployment hooks
+hooks:
+  post_deploy:
+    - chmod +x ./post_deploy.sh
+    - ./post_deploy.sh
+
+# Environment settings
+environment:
+  # Ensure Python 3 is available
+  PATH: "/usr/local/bin:/usr/bin:/bin"
+  
+# File permissions (optional, handled by script)
+file_permissions:
+  "*.php": 644
+  "*.sh": 755
+  "*.py": 644
