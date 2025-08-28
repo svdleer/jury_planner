@@ -1,4 +1,0 @@
-# Plesk Post-Receive Actions (One-liner version)
-# Copy and paste this into Plesk Git deployment actions:
-
-chmod +x setup_python_venv.sh run_python_optimization.sh 2>/dev/null; if [ ! -d "venv" ] && [ -f "setup_python_venv.sh" ]; then echo "Setting up Python venv..."; ./setup_python_venv.sh && echo "Python venv ready!"; else echo "Python venv exists or setup script missing"; fi

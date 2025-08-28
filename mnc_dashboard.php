@@ -214,47 +214,24 @@ ob_start();
                 </h3>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <!-- Add Team button disabled for production -->
-                    <!-- <a href="teams.php?action=add" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                        <i class="fas fa-plus mr-2"></i>
-                        <?php echo t('add_team'); ?>
-                    </a> -->
-                    
-                    <!-- Add Match button disabled for production -->
-                    <!-- <a href="matches.php?action=add" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
-                        <i class="fas fa-calendar-plus mr-2"></i>
-                        Add Match
-                    </a> -->
+                    <a href="autoplan.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                        <i class="fas fa-brain mr-2"></i>
+                        🎯 Autoplan All Matches
+                    </a>
                     
                     <a href="matches.php?view=planning" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700">
-                        <i class="fas fa-brain mr-2"></i>
-                        <?php echo t('auto_plan'); ?>
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        View Assignments
                     </a>
                     
                     <a href="constraints.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                         <i class="fas fa-ban mr-2"></i>
-                        <?php echo t('constraints'); ?>
+                        Manage Constraints
                     </a>
                     
-                    <a href="advanced_constraints.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
-                        <i class="fas fa-cogs mr-2"></i>
-                        <?php echo t('advanced_rules'); ?>
-                    </a>
-                    
-                    <a href="smart_assignment.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700">
-                        <i class="fas fa-robot mr-2"></i>
-                        <?php echo t('smart_assign'); ?>
-                    </a>
-                    
-                    <a href="fairness.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                        <i class="fas fa-balance-scale mr-2"></i>
-                        <?php echo t('fairness'); ?>
-                    </a>
-                    
-                    <a href="constraint_analysis.php" class="flex items-center justify-center px-4 py-3 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                        <i class="fas fa-search mr-2"></i>
-                        <?php echo t('analysis'); ?>
-                    </a>
+                    <a href="teams.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                        <i class="fas fa-users mr-2"></i>
+                        Manage Teams
                 </div>
             </div>
         </div>
