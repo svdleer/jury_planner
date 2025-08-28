@@ -26,51 +26,62 @@ try {
         exit;
     }
     
-    // Check matches table
-    echo "<h2>Matches Table</h2>";
+    // Check matches tables
+    echo "<h2>Matches Tables</h2>";
     try {
+        // Check matches table
         $stmt = $db->query("SELECT COUNT(*) as total FROM matches");
         $totalMatches = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-        echo "<p>Total matches in database: <strong>$totalMatches</strong></p>";
+        echo "<p>Matches table: <strong>$totalMatches</strong> matches</p>";
         
-        // Check future matches
-        $stmt = $db->query("SELECT COUNT(*) as future FROM matches WHERE date_time >= CURDATE()");
+        // Check all_matches table (the one we're actually using)
+        $stmt = $db->query("SELECT COUNT(*) as total FROM all_matches");
+        $totalAllMatches = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+        echo "<p>All_matches table (used by optimizer): <strong>$totalAllMatches</strong> matches</p>";
+        
+        // Check future matches in all_matches
+        $stmt = $db->query("SELECT COUNT(*) as future FROM all_matches WHERE date_time >= CURDATE()");
         $futureMatches = $stmt->fetch(PDO::FETCH_ASSOC)['future'];
-        echo "<p>Future matches (date_time >= CURDATE()): <strong>$futureMatches</strong></p>";
+        echo "<p>Future matches in all_matches: <strong>$futureMatches</strong></p>";
         
-        // Check today's matches
-        $stmt = $db->query("SELECT COUNT(*) as today FROM matches WHERE DATE(date_time) = CURDATE()");
-        $todayMatches = $stmt->fetch(PDO::FETCH_ASSOC)['today'];
-        echo "<p>Today's matches: <strong>$todayMatches</strong></p>";
-        
-        // Show first few matches
-        echo "<h3>Sample Matches:</h3>";
-        $stmt = $db->query("SELECT id, date_time, home_team, away_team FROM matches ORDER BY date_time LIMIT 5");
+        // Show first few matches from all_matches
+        echo "<h3>Sample Matches from all_matches:</h3>";
+        $stmt = $db->query("SELECT id, date_time, home_team, away_team FROM all_matches ORDER BY date_time LIMIT 5");
         $sampleMatches = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo "<pre>" . print_r($sampleMatches, true) . "</pre>";
         
-        // Show date range
-        $stmt = $db->query("SELECT MIN(date_time) as earliest, MAX(date_time) as latest FROM matches");
+        // Show date range from all_matches
+        $stmt = $db->query("SELECT MIN(date_time) as earliest, MAX(date_time) as latest FROM all_matches");
         $dateRange = $stmt->fetch(PDO::FETCH_ASSOC);
-        echo "<p>Date range: <strong>{$dateRange['earliest']}</strong> to <strong>{$dateRange['latest']}</strong></p>";
+        echo "<p>Date range in all_matches: <strong>{$dateRange['earliest']}</strong> to <strong>{$dateRange['latest']}</strong></p>";
         echo "<p>Current date: <strong>" . date('Y-m-d H:i:s') . "</strong></p>";
         
     } catch (PDOException $e) {
         echo "<p>❌ Error querying matches: " . $e->getMessage() . "</p>";
     }
     
-    // Check teams table
-    echo "<h2>Teams Table</h2>";
+    // Check teams tables
+    echo "<h2>Teams Tables</h2>";
     try {
-        $stmt = $db->query("SELECT COUNT(*) as total FROM teams");
-        $totalTeams = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-        echo "<p>Total teams in database: <strong>$totalTeams</strong></p>";
+        // Check jury_teams table (the one we're using)
+        $stmt = $db->query("SELECT COUNT(*) as total FROM jury_teams");
+        $totalJuryTeams = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+        echo "<p>Jury_teams table (used by optimizer): <strong>$totalJuryTeams</strong> teams</p>";
         
-        // Show first few teams
-        echo "<h3>Sample Teams:</h3>";
-        $stmt = $db->query("SELECT id, team_name, is_active FROM teams LIMIT 5");
+        // Show first few teams from jury_teams
+        echo "<h3>Sample Teams from jury_teams:</h3>";
+        $stmt = $db->query("SELECT id, name FROM jury_teams LIMIT 5");
         $sampleTeams = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo "<pre>" . print_r($sampleTeams, true) . "</pre>";
+        
+        // Also check if teams table exists
+        try {
+            $stmt = $db->query("SELECT COUNT(*) as total FROM teams");
+            $totalTeams = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+            echo "<p>Teams table (fallback): <strong>$totalTeams</strong> teams</p>";
+        } catch (PDOException $e) {
+            echo "<p>Teams table does not exist (expected)</p>";
+        }
         
     } catch (PDOException $e) {
         echo "<p>❌ Error querying teams: " . $e->getMessage() . "</p>";
