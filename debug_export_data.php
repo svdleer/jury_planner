@@ -118,6 +118,11 @@ try {
             echo "<p>Matches exported: <strong>" . count($exportData['matches']) . "</strong></p>";
             echo "<p>Constraints exported: <strong>" . count($exportData['constraints']) . "</strong></p>";
             
+            if (count($exportData['constraints']) > 0) {
+                echo "<h3>Exported Constraints:</h3>";
+                echo "<pre>" . print_r($exportData['constraints'], true) . "</pre>";
+            }
+            
             if (count($exportData['matches']) > 0) {
                 echo "<h3>Sample Matches:</h3>";
                 echo "<pre>" . print_r(array_slice($exportData['matches'], 0, 3), true) . "</pre>";

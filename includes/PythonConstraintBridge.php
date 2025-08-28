@@ -10,8 +10,13 @@ class PythonConstraintBridge {
     private $matchesColumns = []; // Cache for table structure
     
     public function __construct($database) {
-        $this->db = $database;
-        $this->constraintManager = new ConstraintManager($database);
+        // Handle both Database object and PDO connection
+        if ($database instanceof Database) {
+            $this->db = $database->getConnection();
+        } else {
+            $this->db = $database;
+        }
+        $this->constraintManager = new ConstraintManager($this->db);
         $this->cacheTableStructure();
     }
     
@@ -107,7 +112,18 @@ class PythonConstraintBridge {
         foreach ($constraints as $constraint) {
             if (!$constraint['is_active']) continue;
             
-            $parameters = json_decode($constraint['parameters'], true);
+            // Handle parameters - they might already be decoded by ConstraintManager
+            $parameters = $constraint['parameters'];
+            if (is_string($parameters)) {
+                $parameters = json_decode($parameters, true);
+            }
+            
+            // If no parameters or no constraint_type, skip this constraint
+            if (!$parameters || !isset($parameters['constraint_type'])) {
+                error_log("Skipping constraint {$constraint['id']}: Missing constraint_type");
+                continue;
+            }
+            
             $pythonTemplate = $this->mapToPythonTemplate($parameters['constraint_type'], $parameters);
             
             if ($pythonTemplate) {

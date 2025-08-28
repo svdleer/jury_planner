@@ -12,9 +12,9 @@ class ConstraintManager {
      */
     public function getAllConstraints() {
         try {
-            // First try the new constraints table
+            // Use the constraints table with proper parameters column
             $stmt = $this->db->prepare("
-                SELECT id, rule_type as name, description, rule_type, weight, is_active, target_value as parameters, created_at, updated_at
+                SELECT id, rule_type as name, description, rule_type, weight, is_active, parameters, created_at, updated_at
                 FROM constraints 
                 WHERE is_active = 1
                 ORDER BY created_at DESC
@@ -31,6 +31,13 @@ class ConstraintManager {
                 ");
                 $stmt->execute();
                 $constraints = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+            
+            // Parse JSON parameters if they exist
+            foreach ($constraints as &$constraint) {
+                if (isset($constraint['parameters']) && is_string($constraint['parameters'])) {
+                    $constraint['parameters'] = json_decode($constraint['parameters'], true);
+                }
             }
             
             return $constraints;
