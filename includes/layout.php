@@ -79,6 +79,9 @@ function formatTime($time, $format = 'H:i') {
                             <a href="index.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'index.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
                                 <i class="fas fa-home mr-1"></i> <?php echo t('dashboard'); ?>
                             </a>
+                            <a href="autoplan.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'autoplan.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
+                                <i class="fas fa-brain mr-1"></i> <?php echo t('auto_plan'); ?>
+                            </a>
                             <a href="teams.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'teams.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
                                 <i class="fas fa-users mr-1"></i> <?php echo t('teams'); ?>
                             </a>
@@ -87,15 +90,6 @@ function formatTime($time, $format = 'H:i') {
                             </a>
                             <a href="constraints.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraints.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
                                 <i class="fas fa-cog mr-1"></i> <?php echo t('constraints'); ?>
-                            </a>
-                            <a href="constraint_editor.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraint_editor.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
-                                <i class="fas fa-edit mr-1"></i> <?php echo t('constraint_editor'); ?>
-                            </a>
-                            <a href="constraint_analysis.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraint_analysis.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
-                                <i class="fas fa-search mr-1"></i> <?php echo t('analysis'); ?>
-                            </a>
-                            <a href="fairness.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'fairness.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
-                                <i class="fas fa-balance-scale mr-1"></i> <?php echo t('fairness'); ?>
                             </a>
                         </div>
                     </div>
@@ -119,12 +113,10 @@ function formatTime($time, $format = 'H:i') {
             <div x-data="{ open: false }" @toggle-mobile-menu.window="open = !open" x-show="open" x-cloak class="sm:hidden">
                 <div class="space-y-1 pb-3 pt-2">
                     <a href="index.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'index.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><i class="fas fa-home mr-2"></i><?php echo t('dashboard'); ?></a>
+                    <a href="autoplan.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'autoplan.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><i class="fas fa-brain mr-2"></i><?php echo t('auto_plan'); ?></a>
                     <a href="teams.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'teams.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><i class="fas fa-users mr-2"></i><?php echo t('teams'); ?></a>
                     <a href="matches.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'matches.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><i class="fas fa-calendar mr-2"></i><?php echo t('matches'); ?></a>
                     <a href="constraints.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraints.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><i class="fas fa-cog mr-2"></i><?php echo t('constraints'); ?></a>
-                    <a href="constraint_editor.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraint_editor.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><i class="fas fa-edit mr-2"></i><?php echo t('constraint_editor'); ?></a>
-                    <a href="constraint_analysis.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraint_analysis.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><i class="fas fa-search mr-2"></i><?php echo t('analysis'); ?></a>
-                    <a href="fairness.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'fairness.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><i class="fas fa-balance-scale mr-2"></i><?php echo t('fairness'); ?></a>
                 </div>
             </div>
         </nav>
