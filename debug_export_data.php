@@ -5,12 +5,13 @@
  */
 
 // Include necessary files
-require_once 'includes/Database.php';
+require_once 'config/database.php';
 require_once 'includes/ConstraintManager.php';
 require_once 'includes/PythonConstraintBridge.php';
 
 try {
-    $database = new Database();
+    // Use the global database instance from config/database.php
+    global $database;
     $db = $database->getConnection();
     
     echo "<h1>🔍 Python Export Data Debug</h1>";
