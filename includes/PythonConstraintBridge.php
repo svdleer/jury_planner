@@ -317,7 +317,7 @@ class PythonConstraintBridge {
             
             $stmt = $this->db->prepare("
                 SELECT {$baseColumns}{$isLockedColumn}
-                FROM matches 
+                FROM all_matches 
                 ORDER BY date_time
             ");
             $stmt->execute();

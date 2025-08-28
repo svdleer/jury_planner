@@ -90,7 +90,8 @@ try {
         echo "<pre>" . print_r($sampleConstraints, true) . "</pre>";
         
     } catch (PDOException $e) {
-        echo "<p>❌ Error querying constraints: " . $e->getMessage() . "</p>";
+        echo "<p>❌ Error querying constraints table: " . $e->getMessage() . "</p>";
+        echo "<p>🔧 The constraints table might not exist. <a href='create_constraints_table_complete.php'>Click here to create it</a></p>";
     }
     
     // Test Python export

@@ -35,16 +35,27 @@ class ConstraintManager {
      */
     public function getAllTeams() {
         try {
-            // First try the teams table
+            // First try the jury_teams table (actual table name)
             $stmt = $this->db->prepare("
-                SELECT id, team_name 
-                FROM teams 
-                ORDER BY team_name
+                SELECT id, name as team_name 
+                FROM jury_teams 
+                ORDER BY name
             ");
             $stmt->execute();
             $teams = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            // If no teams found, return hardcoded list for now
+            // If no teams found, try teams table as fallback
+            if (empty($teams)) {
+                $stmt = $this->db->prepare("
+                    SELECT id, team_name 
+                    FROM teams 
+                    ORDER BY team_name
+                ");
+                $stmt->execute();
+                $teams = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+            
+            // If still no teams found, return hardcoded list for now
             if (empty($teams)) {
                 return [
                     ['id' => 1, 'team_name' => 'MNC Dordrecht H1'],
