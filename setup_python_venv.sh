@@ -50,10 +50,17 @@ pip install --upgrade pip
 # Install required packages
 echo "📦 Installing required packages..."
 
-# Core optimization packages
-pip install ortools>=9.5.0
-pip install numpy>=1.21.0
-pip install pandas>=1.3.0
+# First, install numpy to ensure consistent version
+echo "📦 Installing numpy first to ensure compatibility..."
+pip install numpy==1.24.3
+
+# Then install pandas with compatible version
+echo "📦 Installing pandas with numpy compatibility..."
+pip install pandas==2.0.3
+
+# Install OR-Tools (which will use the existing numpy)
+echo "📦 Installing OR-Tools optimization library..."
+pip install ortools==9.7.2996
 
 # Database connectivity
 pip install mysql-connector-python>=8.0.0
@@ -132,9 +139,10 @@ chmod +x "$ACTIVATE_SCRIPT"
 # Create requirements.txt for future reference
 cat > "$(pwd)/requirements.txt" << 'EOF'
 # Python requirements for Jury Planner Optimization Engine
-ortools>=9.5.0
-numpy>=1.21.0
-pandas>=1.3.0
+# Fixed versions to ensure compatibility
+numpy==1.24.3
+pandas==2.0.3
+ortools==9.7.2996
 mysql-connector-python>=8.0.0
 PyMySQL>=1.0.0
 python-dateutil>=2.8.0
