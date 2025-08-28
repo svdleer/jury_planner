@@ -242,6 +242,12 @@ class OptimizationInterface {
      */
     private function clearExistingAssignments($period) {
         try {
+            // Check if period has required date fields
+            if (empty($period) || !isset($period['start_date']) || !isset($period['end_date'])) {
+                error_log("Warning: Period data missing or incomplete, skipping assignment cleanup");
+                return;
+            }
+            
             $stmt = $this->db->prepare("
                 DELETE FROM jury_assignments 
                 WHERE match_id IN (
