@@ -318,7 +318,6 @@ class PythonConstraintBridge {
             $stmt = $this->db->prepare("
                 SELECT {$baseColumns}{$isLockedColumn}
                 FROM matches 
-                WHERE date_time >= CURDATE()
                 ORDER BY date_time
             ");
             $stmt->execute();
