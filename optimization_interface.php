@@ -115,40 +115,76 @@ class OptimizationInterface {
      * Execute Python optimizer
      */
     private function executePythonOptimizer($configPath, $solutionPath, $options) {
-        $timeout = $options['timeout'] ?? 300; // 5 minutes default
-        $solver_type = $options['solver_type'] ?? 'auto';
-        
-        // Build command
-        $pythonCmd = $this->getPythonCommand();
-        $command = sprintf(
-            '%s %s %s %s 2>&1',
-            escapeshellcmd($pythonCmd),
-            escapeshellarg($this->pythonScriptPath),
-            escapeshellarg($configPath),
-            escapeshellarg($solutionPath)
-        );
-        
-        // Set environment for Python
-        $env = [
-            'PYTHONPATH' => dirname($this->pythonScriptPath),
-            'SOLVER_TYPE' => $solver_type
-        ];
-        
-        // Execute with timeout
-        $output = [];
-        $returnCode = 0;
-        
-        $start_time = microtime(true);
-        exec($command, $output, $returnCode);
-        $execution_time = microtime(true) - $start_time;
-        
-        return [
-            'success' => $returnCode === 0,
-            'output' => implode("\n", $output),
-            'return_code' => $returnCode,
-            'execution_time' => $execution_time,
-            'command' => $command
-        ];
+        try {
+            $timeout = $options['timeout'] ?? 300; // 5 minutes default
+            $solver_type = $options['solver_type'] ?? 'auto';
+            
+            // Get Python command (this might throw an exception)
+            $pythonCmd = $this->getPythonCommand();
+            
+            // Build command
+            $command = sprintf(
+                '%s %s %s %s 2>&1',
+                escapeshellcmd($pythonCmd),
+                escapeshellarg($this->pythonScriptPath),
+                escapeshellarg($configPath),
+                escapeshellarg($solutionPath)
+            );
+            
+            // Set environment for Python
+            $env = [
+                'PYTHONPATH' => dirname($this->pythonScriptPath),
+                'SOLVER_TYPE' => $solver_type
+            ];
+            
+            // Execute with timeout
+            $output = [];
+            $returnCode = 0;
+            
+            $start_time = microtime(true);
+            exec($command, $output, $returnCode);
+            $execution_time = microtime(true) - $start_time;
+            
+            $outputStr = implode("\n", $output);
+            
+            // Check for specific error conditions
+            if ($returnCode !== 0) {
+                $errorMsg = "Python optimization failed (exit code: $returnCode)";
+                if (!empty($outputStr)) {
+                    $errorMsg .= "\nOutput: " . $outputStr;
+                }
+                
+                return [
+                    'success' => false,
+                    'error' => $errorMsg,
+                    'output' => $outputStr,
+                    'return_code' => $returnCode,
+                    'execution_time' => $execution_time,
+                    'command' => $command,
+                    'step' => 'python_execution'
+                ];
+            }
+            
+            return [
+                'success' => true,
+                'output' => $outputStr,
+                'return_code' => $returnCode,
+                'execution_time' => $execution_time,
+                'command' => $command
+            ];
+            
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'Failed to execute Python optimizer: ' . $e->getMessage(),
+                'step' => 'python_setup',
+                'debug_info' => [
+                    'exception_type' => get_class($e),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]
+            ];
+        }
     }
     
     /**
@@ -384,20 +420,34 @@ class OptimizationInterface {
      * Preview optimization without saving results
      */
     public function previewOptimization($options = []) {
-        $options['preview_only'] = true;
-        
-        // Check if Python optimization is available
-        $availability = $this->isPythonOptimizationAvailable();
-        
-        if ($availability['available']) {
-            // Use Python optimization
-            return $this->runOptimization($options);
-        } else {
-            // Use PHP fallback optimizer for preview
-            $result = $this->phpOptimizer->runSimpleOptimization($options);
-            $result['fallback_used'] = true;
-            $result['fallback_reason'] = $availability['reason'];
-            return $result;
+        try {
+            $options['preview_only'] = true;
+            
+            // Check if Python optimization is available
+            $availability = $this->isPythonOptimizationAvailable();
+            
+            if ($availability['available']) {
+                // Use Python optimization
+                return $this->runOptimization($options);
+            } else {
+                // Use PHP fallback optimizer for preview
+                $result = $this->phpOptimizer->runSimpleOptimization($options);
+                $result['fallback_used'] = true;
+                $result['fallback_reason'] = $availability['reason'];
+                return $result;
+            }
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'Preview optimization failed: ' . $e->getMessage(),
+                'step' => 'preview_optimization',
+                'debug_info' => [
+                    'exception_type' => get_class($e),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ]
+            ];
         }
     }
     
