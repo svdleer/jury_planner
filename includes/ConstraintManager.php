@@ -12,21 +12,22 @@ class ConstraintManager {
      */
     public function getAllConstraints() {
         try {
-            // Use the constraints table with proper parameters column
+            // First try planning_rules table (main constraint system)
             $stmt = $this->db->prepare("
-                SELECT id, rule_type as name, description, rule_type, weight, is_active, parameters, created_at, updated_at
-                FROM constraints 
+                SELECT id, name, description, rule_type, weight, is_active, parameters, created_at, updated_at
+                FROM planning_rules 
                 WHERE is_active = 1
                 ORDER BY created_at DESC
             ");
             $stmt->execute();
             $constraints = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            // If no constraints found, try the old planning_rules table as fallback
+            // If no active constraints found in planning_rules, try the constraints table as fallback
             if (empty($constraints)) {
                 $stmt = $this->db->prepare("
-                    SELECT id, name, description, rule_type, weight, is_active, parameters, created_at, updated_at
-                    FROM planning_rules 
+                    SELECT id, rule_type as name, description, rule_type, weight, is_active, parameters, created_at, updated_at
+                    FROM constraints 
+                    WHERE is_active = 1
                     ORDER BY created_at DESC
                 ");
                 $stmt->execute();
