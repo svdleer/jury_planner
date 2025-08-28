@@ -16,7 +16,27 @@ class OptimizationInterface {
     public function __construct($database) {
         $this->db = $database;
         $this->bridge = new PythonConstraintBridge($database);
-        $this->pythonScriptPath = __DIR__ . '/planning_engine/enhanced_optimizer.py';
+        
+        // Check multiple possible locations for the Python script
+        $possibleScriptPaths = [
+            __DIR__ . '/planning_engine/enhanced_optimizer.py',                    // Current directory
+            dirname(__DIR__) . '/planning_engine/enhanced_optimizer.py',          // Parent directory (httpdocs root)
+            '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/planning_engine/enhanced_optimizer.py'  // Absolute path
+        ];
+        
+        $this->pythonScriptPath = null;
+        foreach ($possibleScriptPaths as $path) {
+            if (file_exists($path)) {
+                $this->pythonScriptPath = $path;
+                break;
+            }
+        }
+        
+        // If not found, default to the expected location in httpdocs root
+        if (!$this->pythonScriptPath) {
+            $this->pythonScriptPath = dirname(__DIR__) . '/planning_engine/enhanced_optimizer.py';
+        }
+        
         $this->phpOptimizer = new SimplePhpOptimizer($database);
     }
     
@@ -280,21 +300,35 @@ class OptimizationInterface {
             throw new Exception('Shell execution functions are disabled on this server. Python optimization is not available.');
         }
         
-        // First, check if wrapper script exists (preferred method)
-        $wrapperScript = __DIR__ . '/run_python_optimization.sh';
-        if (file_exists($wrapperScript) && is_executable($wrapperScript)) {
-            // Check if virtual environment exists (mandatory)
-            $venvPython = __DIR__ . '/venv/bin/python3';
-            if (!file_exists($venvPython)) {
-                throw new Exception('Virtual environment is required but not found. Please run setup_python_venv.sh to create the virtual environment.');
+        // Check for wrapper script in multiple locations (preferred method)
+        $wrapperLocations = [
+            __DIR__ . '/run_python_optimization.sh',                              // Current directory
+            dirname(__DIR__) . '/run_python_optimization.sh',                     // Parent directory (httpdocs root)
+            '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/run_python_optimization.sh'  // Absolute path
+        ];
+        
+        foreach ($wrapperLocations as $wrapperScript) {
+            if (file_exists($wrapperScript) && is_executable($wrapperScript)) {
+                // Check if virtual environment exists in corresponding location
+                $scriptDir = dirname($wrapperScript);
+                $venvPython = $scriptDir . '/venv/bin/python3';
+                if (file_exists($venvPython)) {
+                    return $wrapperScript;
+                }
             }
-            return $wrapperScript;
         }
         
-        // Virtual environment is mandatory - check if it exists
-        $venvPython = __DIR__ . '/venv/bin/python3';
-        if (file_exists($venvPython)) {
-            return $venvPython;
+        // Check for virtual environment directly in multiple locations
+        $venvLocations = [
+            __DIR__ . '/venv/bin/python3',                                        // Current directory
+            dirname(__DIR__) . '/venv/bin/python3',                               // Parent directory (httpdocs root)
+            '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/venv/bin/python3'    // Absolute path
+        ];
+        
+        foreach ($venvLocations as $venvPython) {
+            if (file_exists($venvPython)) {
+                return $venvPython;
+            }
         }
         
         throw new Exception('Virtual environment is required for Python optimization. Please run setup_python_venv.sh to create the virtual environment.');
