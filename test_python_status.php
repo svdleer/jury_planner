@@ -28,8 +28,9 @@ $output .= "Current working directory: " . getcwd() . "\n";
 
 // Check for deployment status
 $statusFiles = [
-    __DIR__ . '/deployment_status.json',
-    dirname(__DIR__) . '/deployment_status.json'
+    __DIR__ . '/deployment_status.json',                // Current directory
+    dirname(__DIR__) . '/deployment_status.json',       // Parent directory (httpdocs root)
+    '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/deployment_status.json'  // Absolute path
 ];
 
 foreach ($statusFiles as $statusFile) {
@@ -42,6 +43,9 @@ foreach ($statusFiles as $statusFile) {
             $output .= "Python available: " . ($status['python_available'] ?? 'unknown') . "\n";
             $output .= "Venv created: " . ($status['venv_created'] ?? 'unknown') . "\n";
             $output .= "Post-deploy executed: " . ($status['post_deploy_script'] ?? 'unknown') . "\n";
+            if (isset($status['python_version'])) {
+                $output .= "Python version: " . $status['python_version'] . "\n";
+            }
         }
         break;
     }
@@ -53,8 +57,9 @@ $output .= "exec available: " . (function_exists('exec') ? 'YES' : 'NO') . "\n";
 
 // Check if wrapper script exists (check multiple locations)
 $wrapperLocations = [
-    __DIR__ . '/run_python_optimization.sh',
-    dirname(__DIR__) . '/run_python_optimization.sh'
+    __DIR__ . '/run_python_optimization.sh',            // Current directory
+    dirname(__DIR__) . '/run_python_optimization.sh',   // Parent directory (httpdocs root)
+    '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/run_python_optimization.sh'  // Absolute path
 ];
 
 $wrapperFound = false;
@@ -73,10 +78,12 @@ if (!$wrapperFound) {
 
 // Check if venv exists (check multiple possible locations)
 $venvLocations = [
-    __DIR__ . '/venv/bin/python3',
-    __DIR__ . '/venv/bin/python',
-    dirname(__DIR__) . '/venv/bin/python3',  // In case we're in php_interface
-    dirname(__DIR__) . '/venv/bin/python'
+    __DIR__ . '/venv/bin/python3',                      // Current directory (php_interface)
+    __DIR__ . '/venv/bin/python',                       // Current directory (php_interface)
+    dirname(__DIR__) . '/venv/bin/python3',             // Parent directory (httpdocs root)
+    dirname(__DIR__) . '/venv/bin/python',              // Parent directory (httpdocs root)
+    '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/venv/bin/python3',  // Absolute path
+    '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/venv/bin/python'    // Absolute path
 ];
 
 $venvFound = false;
@@ -102,22 +109,31 @@ if ($venvFound) {
 
 // Check if venv directory exists
 $venvDirs = [
-    __DIR__ . '/venv',
-    dirname(__DIR__) . '/venv'
+    __DIR__ . '/venv',                                  // Current directory
+    dirname(__DIR__) . '/venv',                         // Parent directory (httpdocs root)
+    '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/venv'  // Absolute path
 ];
 foreach ($venvDirs as $dir) {
     if (is_dir($dir)) {
         $output .= "Virtual environment directory: " . $dir . "\n";
         $files = scandir($dir);
         $output .= "Venv contents: " . implode(', ', array_diff($files, ['.', '..'])) . "\n";
+        
+        // Check if it has the standard venv structure
+        if (file_exists($dir . '/bin/activate')) {
+            $output .= "Venv structure: ✅ Valid (has bin/activate)\n";
+        } else {
+            $output .= "Venv structure: ❌ Invalid (missing bin/activate)\n";
+        }
         break;
     }
 }
 
 // Check if Python script exists (check multiple locations)
 $scriptLocations = [
-    __DIR__ . '/planning_engine/enhanced_optimizer.py',
-    dirname(__DIR__) . '/planning_engine/enhanced_optimizer.py'
+    __DIR__ . '/planning_engine/enhanced_optimizer.py',     // Current directory
+    dirname(__DIR__) . '/planning_engine/enhanced_optimizer.py',  // Parent directory
+    '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/planning_engine/enhanced_optimizer.py'  // Absolute path
 ];
 
 $scriptFound = false;
