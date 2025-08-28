@@ -406,16 +406,19 @@ class PythonConstraintBridge {
         try {
             $stmt = $this->db->prepare("
                 INSERT INTO jury_assignments 
-                (match_id, jury_team_name, assignment_type, points_awarded, assigned_by)
-                VALUES (?, ?, ?, ?, ?)
+                (match_id, team_id)
+                VALUES (?, ?)
             ");
+            
+            // Get team_id from team name
+            $teamId = $this->getTeamIdByName($assignment['team_name']);
+            if (!$teamId) {
+                return false;
+            }
             
             return $stmt->execute([
                 $assignment['match_id'],
-                $assignment['team_name'],
-                $assignment['duty_type'] ?? 'general',
-                $assignment['points'] ?? 10,
-                'Python Optimizer'
+                $teamId
             ]);
         } catch (PDOException $e) {
             error_log("Error saving assignment: " . $e->getMessage());
@@ -423,6 +426,21 @@ class PythonConstraintBridge {
         }
     }
     
+    /**
+     * Get team ID by team name
+     */
+    private function getTeamIdByName($teamName) {
+        try {
+            $stmt = $this->db->prepare("SELECT id FROM jury_teams WHERE name = ?");
+            $stmt->execute([$teamName]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? $result['id'] : null;
+        } catch (PDOException $e) {
+            error_log("Error getting team ID: " . $e->getMessage());
+            return null;
+        }
+    }
+
     /**
      * Save optimization metadata and statistics
      */
