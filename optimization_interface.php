@@ -503,8 +503,11 @@ class OptimizationInterface {
             
             $validation['active_constraints']++;
             
-            // Validate parameters
-            $parameters = json_decode($constraint['parameters'], true);
+            // Validate parameters - they're already decoded by ConstraintManager
+            $parameters = $constraint['parameters'];
+            if (is_string($parameters)) {
+                $parameters = json_decode($parameters, true);
+            }
             $paramValidation = $this->validateConstraintParameters($constraint['name'], $parameters);
             
             if (!$paramValidation['valid']) {
@@ -578,14 +581,20 @@ class OptimizationInterface {
      */
     private function checkConstraintConflicts($constraint, $allConstraints) {
         $conflicts = [];
-        $parameters = json_decode($constraint['parameters'], true);
+        $parameters = $constraint['parameters'];
+        if (is_string($parameters)) {
+            $parameters = json_decode($parameters, true);
+        }
         
         foreach ($allConstraints as $otherConstraint) {
             if ($constraint['id'] == $otherConstraint['id'] || !$otherConstraint['is_active']) {
                 continue;
             }
             
-            $otherParameters = json_decode($otherConstraint['parameters'], true);
+            $otherParameters = $otherConstraint['parameters'];
+            if (is_string($otherParameters)) {
+                $otherParameters = json_decode($otherParameters, true);
+            }
             
             // Check for conflicting team unavailability
             if ($parameters['constraint_type'] == 'team_unavailable' && 
@@ -701,7 +710,10 @@ class OptimizationInterface {
     
     private function hasConstraintType($constraints, $type) {
         foreach ($constraints as $constraint) {
-            $parameters = json_decode($constraint['parameters'], true);
+            $parameters = $constraint['parameters'];
+            if (is_string($parameters)) {
+                $parameters = json_decode($parameters, true);
+            }
             if (($parameters['constraint_type'] ?? '') === $type) {
                 return true;
             }
