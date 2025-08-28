@@ -248,9 +248,33 @@ ob_start();
                             <?php if ($constraint['parameters']): ?>
                             <div class="mt-2">
                                 <span class="text-xs text-gray-500"><?php echo t('parameters'); ?>:</span>
-                                <code class="text-xs bg-gray-100 px-2 py-1 rounded">
-                                    <?php echo htmlspecialchars(json_encode(json_decode($constraint['parameters']), JSON_PRETTY_PRINT)); ?>
-                                </code>
+                                <div class="text-xs bg-gray-50 px-2 py-1 rounded border">
+                                    <?php 
+                                    $parameters = $constraint['parameters'];
+                                    if (is_string($parameters)) {
+                                        $parameters = json_decode($parameters, true);
+                                    }
+                                    
+                                    // Display parameters in a more user-friendly way
+                                    if (is_array($parameters)) {
+                                        $displayParams = [];
+                                        foreach ($parameters as $key => $value) {
+                                            if ($key === 'constraint_type') continue; // Skip internal field
+                                            
+                                            if (is_bool($value)) {
+                                                $value = $value ? 'Yes' : 'No';
+                                            } elseif (is_null($value)) {
+                                                $value = 'Not set';
+                                            }
+                                            
+                                            $displayParams[] = ucfirst(str_replace('_', ' ', $key)) . ': ' . $value;
+                                        }
+                                        echo htmlspecialchars(implode(' • ', $displayParams));
+                                    } else {
+                                        echo htmlspecialchars($parameters);
+                                    }
+                                    ?>
+                                </div>
                             </div>
                             <?php endif; ?>
                         </div>
