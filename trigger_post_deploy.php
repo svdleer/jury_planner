@@ -14,14 +14,38 @@ if (isset($_GET['run'])) {
     echo "<h2>📋 Execution Log:</h2>";
     echo "<pre style='background: #f0f0f0; padding: 10px; border-radius: 5px;'>";
     
-    $script_path = __DIR__ . '/post_deploy.sh';
+    // Check multiple possible locations for the post-deploy script
+    $possible_locations = [
+        __DIR__ . '/post_deploy.sh',                    // Same directory as this script
+        dirname(__DIR__) . '/post_deploy.sh',           // Parent directory (httpdocs root)
+        '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/post_deploy.sh'  // Absolute path
+    ];
     
-    if (!file_exists($script_path)) {
-        echo "❌ Post-deploy script not found: $script_path\n";
+    $script_path = null;
+    $script_dir = null;
+    
+    foreach ($possible_locations as $location) {
+        if (file_exists($location)) {
+            $script_path = $location;
+            $script_dir = dirname($location);
+            break;
+        }
+    }
+    
+    if (!$script_path) {
+        echo "❌ Post-deploy script not found in any of these locations:\n";
+        foreach ($possible_locations as $location) {
+            echo "   - $location\n";
+        }
         echo "Current directory: " . __DIR__ . "\n";
-        echo "Files in directory: " . implode(', ', scandir(__DIR__)) . "\n";
+        echo "Parent directory: " . dirname(__DIR__) . "\n";
+        echo "Files in current directory: " . implode(', ', scandir(__DIR__)) . "\n";
+        if (is_dir(dirname(__DIR__))) {
+            echo "Files in parent directory: " . implode(', ', scandir(dirname(__DIR__))) . "\n";
+        }
     } else {
         echo "✅ Found post-deploy script: $script_path\n";
+        echo "Script directory: $script_dir\n";
         echo "Making script executable...\n";
         chmod($script_path, 0755);
         
@@ -30,7 +54,7 @@ if (isset($_GET['run'])) {
         
         // Change to the script directory and run it
         $old_dir = getcwd();
-        chdir(__DIR__);
+        chdir($script_dir);
         
         $output = shell_exec("bash ./post_deploy.sh 2>&1");
         echo $output;
@@ -46,8 +70,10 @@ if (isset($_GET['run'])) {
     echo "<h2>🔄 Next Steps:</h2>";
     echo "<ul>";
     echo "<li><a href='test_python_status.php'>🐍 Check Python Status</a></li>";
-    echo "<li><a href='deployment_status.json'>📊 View Deployment Status</a></li>";
+    echo "<li><a href='deployment_status.json'>📊 View Deployment Status (current dir)</a></li>";
+    echo "<li><a href='../deployment_status.json'>📊 View Deployment Status (parent dir)</a></li>";
     echo "<li><a href='debug_file_structure.php'>🔍 Check File Structure</a></li>";
+    echo "<li><a href='../index.php'>🏠 Main Application (parent dir)</a></li>";
     echo "</ul>";
     
 } else {
@@ -63,10 +89,66 @@ if (isset($_GET['run'])) {
     
     echo "<h2>📋 Current Status:</h2>";
     echo "<ul>";
-    echo "<li>Script directory: " . __DIR__ . "</li>";
-    echo "<li>Post-deploy script exists: " . (file_exists(__DIR__ . '/post_deploy.sh') ? '✅ YES' : '❌ NO') . "</li>";
-    echo "<li>Virtual environment exists: " . (is_dir(__DIR__ . '/venv') ? '✅ YES' : '❌ NO') . "</li>";
-    echo "<li>Deployment status exists: " . (file_exists(__DIR__ . '/deployment_status.json') ? '✅ YES' : '❌ NO') . "</li>";
+    echo "<li>Current script directory: " . __DIR__ . "</li>";
+    echo "<li>Parent directory (httpdocs root): " . dirname(__DIR__) . "</li>";
+    
+    // Check for post-deploy script in multiple locations
+    $script_locations = [
+        __DIR__ . '/post_deploy.sh',
+        dirname(__DIR__) . '/post_deploy.sh',
+        '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/post_deploy.sh'
+    ];
+    
+    $script_found = false;
+    foreach ($script_locations as $location) {
+        if (file_exists($location)) {
+            echo "<li>Post-deploy script found: ✅ $location</li>";
+            $script_found = true;
+            break;
+        }
+    }
+    if (!$script_found) {
+        echo "<li>Post-deploy script: ❌ NOT FOUND in any location</li>";
+    }
+    
+    // Check for virtual environment in multiple locations
+    $venv_locations = [
+        __DIR__ . '/venv',
+        dirname(__DIR__) . '/venv',
+        '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/venv'
+    ];
+    
+    $venv_found = false;
+    foreach ($venv_locations as $location) {
+        if (is_dir($location)) {
+            echo "<li>Virtual environment found: ✅ $location</li>";
+            $venv_found = true;
+            break;
+        }
+    }
+    if (!$venv_found) {
+        echo "<li>Virtual environment: ❌ NOT FOUND in any location</li>";
+    }
+    
+    // Check for deployment status in multiple locations
+    $status_locations = [
+        __DIR__ . '/deployment_status.json',
+        dirname(__DIR__) . '/deployment_status.json',
+        '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/deployment_status.json'
+    ];
+    
+    $status_found = false;
+    foreach ($status_locations as $location) {
+        if (file_exists($location)) {
+            echo "<li>Deployment status found: ✅ $location</li>";
+            $status_found = true;
+            break;
+        }
+    }
+    if (!$status_found) {
+        echo "<li>Deployment status: ❌ NOT FOUND in any location</li>";
+    }
+    
     echo "</ul>";
 }
 ?>
