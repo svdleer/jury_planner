@@ -16,7 +16,7 @@ class OptimizationInterface {
     public function __construct($database) {
         $this->db = $database;
         $this->bridge = new PythonConstraintBridge($database);
-        $this->pythonScriptPath = __DIR__ . '/../planning_engine/enhanced_optimizer.py';
+        $this->pythonScriptPath = __DIR__ . '/planning_engine/enhanced_optimizer.py';
         $this->phpOptimizer = new SimplePhpOptimizer($database);
     }
     
@@ -281,10 +281,10 @@ class OptimizationInterface {
         }
         
         // First, check if wrapper script exists (preferred method)
-        $wrapperScript = __DIR__ . '/../run_python_optimization.sh';
+        $wrapperScript = __DIR__ . '/run_python_optimization.sh';
         if (file_exists($wrapperScript) && is_executable($wrapperScript)) {
             // Check if virtual environment exists (mandatory)
-            $venvPython = __DIR__ . '/../venv/bin/python3';
+            $venvPython = __DIR__ . '/venv/bin/python3';
             if (!file_exists($venvPython)) {
                 throw new Exception('Virtual environment is required but not found. Please run setup_python_venv.sh to create the virtual environment.');
             }
@@ -292,7 +292,7 @@ class OptimizationInterface {
         }
         
         // Virtual environment is mandatory - check if it exists
-        $venvPython = __DIR__ . '/../venv/bin/python3';
+        $venvPython = __DIR__ . '/venv/bin/python3';
         if (file_exists($venvPython)) {
             return $venvPython;
         }

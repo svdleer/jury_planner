@@ -27,18 +27,18 @@ $output .= "shell_exec available: " . (function_exists('shell_exec') ? 'YES' : '
 $output .= "exec available: " . (function_exists('exec') ? 'YES' : 'NO') . "\n";
 
 // Check if wrapper script exists
-$wrapperScript = __DIR__ . '/../run_python_optimization.sh';
+$wrapperScript = __DIR__ . '/run_python_optimization.sh';
 $output .= "Wrapper script exists: " . (file_exists($wrapperScript) ? 'YES' : 'NO') . "\n";
 if (file_exists($wrapperScript)) {
     $output .= "Wrapper script executable: " . (is_executable($wrapperScript) ? 'YES' : 'NO') . "\n";
 }
 
 // Check if venv exists
-$venvPython = __DIR__ . '/../venv/bin/python3';
+$venvPython = __DIR__ . '/venv/bin/python3';
 $output .= "Virtual environment exists: " . (file_exists($venvPython) ? 'YES' : 'NO') . "\n";
 
 // Check if Python script exists
-$pythonScript = __DIR__ . '/../planning_engine/enhanced_optimizer.py';
+$pythonScript = __DIR__ . '/planning_engine/enhanced_optimizer.py';
 $output .= "Python script exists: " . (file_exists($pythonScript) ? 'YES' : 'NO') . "\n";
 
 // Test simple Python command
