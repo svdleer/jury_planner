@@ -1,308 +1,138 @@
-# Waterpolo Jury Team Planning System 🏊‍♂️
+# PHP Interface for Jury Planner
 
-An intelligent, automated planning system for scheduling jury teams for water polo matches with advanced constraint-based optimization and configurable rules.
+A modern, responsive web interface for managing water polo matches and jury team assignments, built with PHP, Tailwind CSS, and Alpine.js.
 
-## ✨ Key Features
+## Features
 
-- **🧠 Advanced Planning Engine**: Constraint-based scheduling using Google OR-Tools CP-SAT solver
-- **⚙️ Configurable Rules**: Modular rule system with weighted constraints (forbidden, preferred, etc.)
-- **🌐 Modern Web Portal**: Responsive interface for viewing, managing, and exporting schedules
-- **🗄️ Database Integration**: Full MySQL integration for teams, matches, and assignments
-- **📊 Multiple Export Formats**: PDF, Excel, CSV, and TXT export capabilities
-- **🔍 Advanced Filtering**: Filter by team, date, duty type, and more
-- **⚡ Real-time Planning**: Fast optimization with detailed result analysis
-- **📱 Responsive Design**: Works on desktop, tablet, and mobile devices
+- **Dashboard**: Overview of teams, matches, and statistics
+- **Team Management**: Create, edit, and manage jury teams with weights and contact information
+- **Match Management**: Schedule matches, assign jury teams, and track assignments
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+- **Real-time Feedback**: Toast notifications for user actions
+- **Modern UI**: Clean, professional interface with Tailwind CSS
 
-## 🏗️ System Architecture
+## Technology Stack
 
-```
-jury_planner/
-├── app.py                          # Main Flask application
-├── backend/
-│   ├── models.py                   # Database models (SQLAlchemy)
-│   └── exporters.py               # Export utilities (PDF, Excel, CSV)
-├── planning_engine/
-│   ├── scheduler.py               # OR-Tools constraint solver
-│   └── rule_manager.py            # Rule configuration system
-├── frontend/
-│   ├── templates/index.html       # Main web interface
-│   └── static/
-│       ├── css/styles.css         # Custom styling
-│       └── js/app.js              # Frontend JavaScript
-├── database/
-│   └── schema.sql                 # Database schema and sample data
-├── php_interface/                 # Modern PHP web interface
-│   ├── config/                    # Database and app configuration
-│   ├── includes/                  # Data access classes and layout
-│   ├── assets/css/                # Custom Tailwind CSS styles
-│   ├── index.php                  # Dashboard page
-│   ├── teams.php                  # Team management page
-│   └── matches.php                # Match management page
-├── manage.py                      # CLI management tool
-├── setup.sh                       # Automated setup script
-└── requirements.txt               # Python dependencies
-```
-
-## 🚀 Quick Start
-
-### Option 1: Automated Setup
-```bash
-git clone https://github.com/svdleer/jury_planner.git
-cd jury_planner
-./setup.sh
-```
-
-### Option 2: Manual Setup
-```bash
-# 1. Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# 2. Install dependencies
-pip install -r requirements.txt
-
-# 3. Configure database (edit .env file)
-cp .env.example .env
-
-# 4. Setup database
-mysql -u root -p < database/schema.sql
-
-# 5. Start application
-python app.py
-```
-
-Visit: **http://localhost:5000**
-
-## � PHP Web Interface
-
-This project includes a modern PHP web interface as an alternative to the Python Flask application, providing direct database management with a sleek, responsive design.
-
-### Key Features
-- **⚡ High Performance**: Direct MySQL access without API overhead
-- **📱 Responsive Design**: Built with Tailwind CSS and Alpine.js
-- **🎛️ Full CRUD Operations**: Complete team and match management
-- **📊 Real-time Dashboard**: Live statistics and upcoming matches
-- **🔍 Advanced Filtering**: Filter matches by status, team, and date
-
-### Database Configuration
-The PHP interface is pre-configured for the production database:
-```env
-DB_HOST=vps.serial.nl
-DB_NAME=mnc_jury
-DB_USER=mnc_jury
-DB_PASSWORD=5j51_hE9r
-```
-
-### Quick Setup
-```bash
-cd php_interface
-cp .env.example .env
-# Configure your web server to serve from php_interface/
-# Visit test_connection.php to verify database connectivity
-```
-
-### Technology Stack
-- **Backend**: PHP 8+, PDO for MySQL
+- **Backend**: PHP 8+, PDO for MySQL connectivity
 - **Frontend**: Tailwind CSS 3.x, Alpine.js 3.x
-- **Design**: Mobile-first, water polo themed
-- **Security**: Prepared statements, input sanitization
+- **Database**: MySQL 8.0+
+- **Architecture**: MVC pattern with modular data access classes
 
-For detailed setup and usage instructions, see `php_interface/README.md`
+## Installation
 
-## �🎯 Core Components
+1. **Database Setup**: Ensure the MySQL database is set up using the schema from `../database/schema.sql`
 
-### 1. Planning Engine
-- **Solver**: Google OR-Tools CP-SAT for optimal scheduling
-- **Objective**: Maximize satisfaction while balancing workload
-- **Constraints**: Hard (forbidden) and soft (weighted preferences)
-- **Performance**: Handles 100+ matches with complex rules in seconds
+2. **Environment Configuration**: Create a `.env` file in the project root:
+   ```
+   DB_HOST=vps.serial.nl
+   DB_PORT=3306
+   DB_NAME=mnc_jury
+   DB_USER=mnc_jury
+   DB_PASS=5j51_hE9r
+   APP_ENV=production
+   ```
 
-### 2. Rule System
-| Rule Type | Weight Range | Purpose | Example |
-|-----------|--------------|---------|---------|
-| **Forbidden** | -1000 to -500 | Hard constraints | Team unavailable |
-| **Not Preferred** | -100 to -20 | Strong avoidance | Consecutive matches |
-| **Less Preferred** | -50 to -5 | Mild avoidance | Specific opponents |
-| **Most Preferred** | +5 to +50 | Positive bonus | Preferred duties |
+3. **Web Server**: Configure your web server to serve files from the `php_interface` directory
 
-### 3. Team Management
-- **Weight System**: Proportional workload distribution (0.5x to 2.0x)
-- **Dedicated Teams**: Teams assigned to specific clubs/matches
-- **Availability**: Date-based availability restrictions
-- **Contact Management**: Full contact information storage
+4. **Permissions**: Ensure the web server has read access to all files
 
-### 4. Match Duties
-Each match requires four jury roles:
-- **🔧 Setup**: Pre-match preparation
-- **⏰ Clock**: Timekeeping during match
-- **🍹 Bar**: Refreshment service
-- **🧹 Teardown**: Post-match cleanup
+## File Structure
 
-## 📋 Usage Examples
-
-### CLI Operations
-```bash
-# Add teams
-python manage.py teams add "Aqua Warriors" --weight 1.0 --contact "John Smith"
-
-# Add matches
-python manage.py matches add "2025-08-20" "19:00" 1 2 --location "Pool 1"
-
-# Run planning
-python manage.py plan "2025-08-20" "2025-08-27" --name "Weekly Schedule"
-
-# View schedule
-python manage.py schedule --start-date "2025-08-20"
+```
+php_interface/
+├── config/
+│   ├── app.php          # Application configuration
+│   └── database.php     # Database connection
+├── includes/
+│   ├── layout.php       # Main layout template
+│   ├── TeamManager.php  # Team data access class
+│   └── MatchManager.php # Match data access class
+├── assets/
+│   └── css/
+│       └── custom.css   # Custom styles
+├── index.php            # Dashboard page
+├── teams.php            # Team management page
+└── matches.php          # Match management page
 ```
 
-### Web Interface
-1. **Dashboard**: Overview of teams, matches, and planning status
-2. **Teams**: Add/edit teams with weights and contact info
-3. **Schedule**: View assignments with filtering and export options
-4. **Rules**: Configure planning constraints and preferences
-5. **Planning**: Execute algorithm and view detailed results
+## Usage
 
-## 🔧 Configuration
+### Dashboard
+Access the main dashboard at `index.php` to view:
+- Team and match statistics
+- Upcoming matches
+- Quick action buttons
 
-### Environment Variables (.env)
-```env
-# Database
-DB_HOST=localhost
-DB_USER=your-username
-DB_PASSWORD=your-password
-DB_NAME=jury_planner
+### Team Management
+Navigate to `teams.php` to:
+- Create new jury teams
+- Edit team details (name, weight, contact info)
+- Set team availability
+- Manage team status (active/inactive)
 
-# Planning Engine
-MAX_PLANNING_TIME=300
-STRICT_MODE=False
-```
+### Match Management
+Use `matches.php` to:
+- Schedule new matches
+- Filter matches by status, team, or date
+- Assign jury teams to matches
+- Update match details and status
 
-### Team Weight Examples
-- **2.0**: High-capacity team (double normal workload)
-- **1.0**: Standard team (normal workload)
-- **0.5**: Limited team (half normal workload)
-- **0.0**: Inactive team (no assignments)
+## Configuration
 
-## 🛠️ Technology Stack
+### App Settings
+Edit `config/app.php` to customize:
+- Application name and version
+- Database connection parameters
+- Feature flags
+- UI settings
 
-- **Backend**: Python 3.8+, Flask 2.3, SQLAlchemy 2.0
-- **Database**: MySQL 5.7+ / MariaDB 10.3+
-- **Frontend**: Bootstrap 5, Vanilla JavaScript, Font Awesome
-- **Planning**: Google OR-Tools CP-SAT Solver
-- **Export**: ReportLab (PDF), OpenPyXL (Excel), Pandas
-- **Dependencies**: See `requirements.txt` for complete list
+### Database Connection
+The application automatically loads database settings from the `.env` file. Alternatively, you can edit `config/database.php` directly.
 
-## 📊 Performance Metrics
+## API Integration
 
-| Scale | Matches | Teams | Rules | Planning Time |
-|-------|---------|-------|-------|---------------|
-| Small | 1-20 | 4-8 | 1-5 | < 1 second |
-| Medium | 21-100 | 8-15 | 5-15 | 1-30 seconds |
-| Large | 100+ | 15+ | 15+ | 30-300 seconds |
+This PHP interface works alongside the Python backend. While the PHP interface provides direct MySQL access for CRUD operations, you can integrate with the Python planning engine for automated jury assignments.
 
-## 🔒 Security & Production
+## Development
 
-### Development
-- Built-in Flask development server
-- SQLite option for testing
-- Debug mode with detailed error reporting
+### Adding New Features
+1. Create new PHP pages following the existing pattern
+2. Use the layout template for consistent UI
+3. Implement data access through manager classes
+4. Follow the Alpine.js pattern for client-side interactivity
 
-### Production Recommendations
-- WSGI server (Gunicorn/uWSGI)
-- Reverse proxy (Nginx/Apache)
-- HTTPS encryption
-- Authentication middleware
-- Regular security updates
+### Styling
+- Use Tailwind CSS utility classes
+- Custom styles go in `assets/css/custom.css`
+- Water polo theme colors are predefined in the configuration
 
-## 🚀 Deployment & Automation
+### JavaScript
+- Minimal JavaScript using Alpine.js for interactivity
+- Global utilities available through `window.JuryPlanner`
+- Toast notifications for user feedback
 
-### Automated Deployment to Production
+## Security Considerations
 
-The project includes automated deployment scripts for seamless production deployment:
+- Input sanitization through the `h()` function
+- Prepared statements for database queries
+- CSRF protection should be added for production use
+- Session security settings are configured in `config/app.php`
 
-#### Local Deployment Commands
-```bash
-# Full deployment (commits all changes and deploys)
-./deploy.sh "Your commit message"
+## Browser Support
 
-# Quick PHP interface deployment
-./deploy-php.sh "PHP updates"
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- Mobile browsers (iOS Safari, Chrome Mobile)
 
-# Deploy without committing (if already committed)
-git push origin main && git push production main
-```
+## Contributing
 
-#### Production Server Setup
-1. **On your production server** (`jury2025@jury2025.useless.nl`):
-```bash
-# Download and run the setup script
-wget https://github.com/svdleer/jury_planner/raw/main/production-setup.sh
-chmod +x production-setup.sh
-./production-setup.sh
-```
+1. Follow the existing code style and patterns
+2. Test on multiple browsers and devices
+3. Ensure responsive design principles
+4. Add appropriate error handling
+5. Update documentation as needed
 
-2. **Configure your web server** to serve from `/var/www/html/jury2025/php_interface/`
+## License
 
-#### Automatic Deployment Workflow
-- **GitHub Actions**: Automatically deploys on push to main branch
-- **Git Hooks**: Production server automatically updates on git push
-- **Environment Management**: Secure credential handling via `.env` files
-
-#### Repository Configuration
-- **Origin**: `https://github.com/svdleer/jury_planner.git` (Development)
-- **Production**: `jury2025@jury2025.useless.nl:/home/httpd/vhosts/jury2025.useless.nl/git/jury2025.git` (Plesk Deployment)
-
-### Deployment Features
-- ✅ **Automatic commits** with timestamps
-- ✅ **Dual-push** to GitHub and Plesk production server
-- ✅ **Server-side hooks** for instant deployment
-- ✅ **Plesk-compatible** directory structure
-- ✅ **Symlink strategy** for web-accessible files only
-- ✅ **Permission management** for Plesk hosting
-- ✅ **Environment configuration** handling
-- ✅ **Rollback capabilities** via git
-- ✅ **Deployment status** notifications
-
-### Quick Production Access
-After deployment, access your application at:
-- **PHP Interface**: `https://jury2025.useless.nl/`
-- **Database Test**: `https://jury2025.useless.nl/test_connection.php`
-- **Team Management**: `https://jury2025.useless.nl/teams.php`
-- **Match Management**: `https://jury2025.useless.nl/matches.php`
-
-### Plesk-Specific Setup
-For detailed Plesk hosting setup instructions, see: **[PLESK_DEPLOYMENT.md](PLESK_DEPLOYMENT.md)**
-
-## 📖 Documentation
-
-- **[QUICKSTART.md](QUICKSTART.md)**: 5-minute setup guide
-- **[CONFIGURATION.md](CONFIGURATION.md)**: Detailed configuration options
-- **API Documentation**: Available at `/api/docs` (when running)
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Google OR-Tools team for the excellent optimization library
-- Water polo community for requirements and testing feedback
-- Open source contributors for various dependencies
-
-## 📞 Support
-
-- **Issues**: GitHub Issues for bug reports and feature requests
-- **Documentation**: Comprehensive guides and API documentation
-- **Community**: Water polo planning community discussions
-
----
-
-**Ready to revolutionize your water polo jury planning? Get started in 5 minutes!** 🚀
+Part of the Water Polo Jury Planner project.

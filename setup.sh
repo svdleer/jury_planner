@@ -1,98 +1,117 @@
 #!/bin/bash
 
-# Waterpolo Jury Planner Setup Script
+# PHP Interface Setup Script for Waterpolo Jury Planner
+# This script helps set up the PHP interface for development
 
-set -e
+echo "🏊 Waterpolo Jury Planner - PHP Interface Setup"
+echo "=================================================="
 
-echo "🏊‍♂️ Waterpolo Jury Planner Setup"
-echo "=================================="
-
-# Check if Python 3 is installed
-if ! command -v python3 &> /dev/null; then
-    echo "❌ Python 3 is required but not installed."
-    exit 1
-fi
-
-echo "✅ Python 3 found: $(python3 --version)"
-
-# Check if pip is installed
-if ! command -v pip3 &> /dev/null; then
-    echo "❌ pip3 is required but not installed."
-    exit 1
-fi
-
-echo "✅ pip3 found"
-
-# Create virtual environment if it doesn't exist
-if [ ! -d "venv" ]; then
-    echo "🔧 Creating virtual environment..."
-    python3 -m venv venv
-fi
-
-# Activate virtual environment
-echo "🔧 Activating virtual environment..."
-source venv/bin/activate
-
-# Upgrade pip
-echo "🔧 Upgrading pip..."
-pip install --upgrade pip
-
-# Install requirements
-echo "📦 Installing Python dependencies..."
-pip install -r requirements.txt
-
-# Create .env file if it doesn't exist
-if [ ! -f ".env" ]; then
-    echo "🔧 Creating .env file..."
-    cp .env.example .env
-    echo "⚠️  Please edit .env file with your database credentials"
-fi
-
-# Check if MySQL is available
-if command -v mysql &> /dev/null; then
-    echo "✅ MySQL found"
-    read -p "Do you want to create the database schema? (y/n): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        echo "🔧 Setting up database..."
-        echo "Please enter your MySQL credentials:"
-        read -p "MySQL host (localhost): " DB_HOST
-        DB_HOST=${DB_HOST:-localhost}
-        read -p "MySQL user (root): " DB_USER
-        DB_USER=${DB_USER:-root}
-        read -s -p "MySQL password: " DB_PASSWORD
-        echo
-        
-        # Test connection
-        if mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" -e "SELECT 1;" &> /dev/null; then
-            echo "✅ Database connection successful"
-            echo "🔧 Creating database schema..."
-            mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" < database/schema.sql
-            echo "✅ Database schema created with sample data"
-            
-            # Update .env file
-            sed -i.bak "s/DB_HOST=localhost/DB_HOST=$DB_HOST/" .env
-            sed -i.bak "s/DB_USER=your-username/DB_USER=$DB_USER/" .env
-            sed -i.bak "s/DB_PASSWORD=your-password/DB_PASSWORD=$DB_PASSWORD/" .env
-            rm .env.bak
-            echo "✅ .env file updated with database credentials"
-        else
-            echo "❌ Database connection failed. Please check your credentials."
-        fi
-    fi
+# Check PHP version
+echo "Checking PHP version..."
+PHP_VERSION=$(php -v | head -n 1 | cut -d " " -f 2 | cut -d "." -f 1,2)
+if (( $(echo "$PHP_VERSION >= 8.0" | bc -l) )); then
+    echo "✓ PHP $PHP_VERSION detected"
 else
-    echo "⚠️  MySQL not found. Please install MySQL and run the schema manually:"
-    echo "   mysql -u root -p < database/schema.sql"
+    echo "❌ PHP 8.0+ required, found $PHP_VERSION"
+    exit 1
+fi
+
+# Check if .env exists
+if [ ! -f "../.env" ]; then
+    echo "Creating .env file from template..."
+    cat > ../.env << EOL
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=jury_planner
+DB_USER=root
+DB_PASS=
+
+# Application Environment
+APP_ENV=development
+EOL
+    echo "✓ Created .env file. Please update database credentials."
+else
+    echo "✓ .env file exists"
+fi
+
+# Check database connection
+echo "Testing database connection..."
+php -r "
+    \$env = parse_ini_file('../.env');
+    try {
+        \$pdo = new PDO(
+            \"mysql:host={\$env['DB_HOST']};port={\$env['DB_PORT']};dbname={\$env['DB_NAME']}\",
+            \$env['DB_USER'],
+            \$env['DB_PASS']
+        );
+        echo \"✓ Database connection successful\n\";
+    } catch (PDOException \$e) {
+        echo \"❌ Database connection failed: \" . \$e->getMessage() . \"\n\";
+        echo \"Please check your database settings in .env\n\";
+        exit(1);
+    }
+"
+
+# Check if tables exist
+echo "Checking database schema..."
+php -r "
+    \$env = parse_ini_file('../.env');
+    try {
+        \$pdo = new PDO(
+            \"mysql:host={\$env['DB_HOST']};port={\$env['DB_PORT']};dbname={\$env['DB_NAME']}\",
+            \$env['DB_USER'],
+            \$env['DB_PASS']
+        );
+        
+        \$tables = ['teams', 'matches', 'jury_assignments'];
+        \$missing = [];
+        
+        foreach (\$tables as \$table) {
+            \$stmt = \$pdo->query(\"SHOW TABLES LIKE '\$table'\");
+            if (\$stmt->rowCount() == 0) {
+                \$missing[] = \$table;
+            }
+        }
+        
+        if (empty(\$missing)) {
+            echo \"✓ All required tables exist\n\";
+        } else {
+            echo \"❌ Missing tables: \" . implode(', ', \$missing) . \"\n\";
+            echo \"Please run the database setup script first.\n\";
+        }
+    } catch (PDOException \$e) {
+        echo \"❌ Failed to check schema: \" . \$e->getMessage() . \"\n\";
+    }
+"
+
+# Set permissions
+echo "Setting file permissions..."
+find . -type f -name "*.php" -exec chmod 644 {} \;
+find . -type d -exec chmod 755 {} \;
+echo "✓ File permissions set"
+
+# Check if we're in a web server directory
+if [ -d "/var/www" ] && [[ $PWD == /var/www* ]]; then
+    echo "✓ Running in web server directory"
+elif [ -d "/Applications/XAMPP" ]; then
+    echo "💡 XAMPP detected. Consider linking this directory to htdocs"
+elif [ -d "/Applications/MAMP" ]; then
+    echo "💡 MAMP detected. Consider linking this directory to htdocs"
+else
+    echo "💡 Make sure to serve this directory through a web server"
 fi
 
 echo ""
-echo "🎉 Setup completed!"
+echo "🚀 Setup completed!"
 echo ""
-echo "To start the application:"
-echo "1. Activate the virtual environment: source venv/bin/activate"
-echo "2. Configure database settings in .env file"
-echo "3. Run the application: python app.py"
+echo "Next steps:"
+echo "1. Update database credentials in ../.env if needed"
+echo "2. Ensure your web server is running"
+echo "3. Access the interface through your web browser"
+echo "4. Visit index.php to start using the application"
 echo ""
-echo "The application will be available at: http://localhost:5000"
+echo "For development, you can use PHP's built-in server:"
+echo "  php -S localhost:8080"
 echo ""
-echo "📖 For more information, see README.md"
+echo "Then visit: http://localhost:8080"
