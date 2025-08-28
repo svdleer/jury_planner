@@ -119,6 +119,20 @@ if [ -n "$PYTHON_CMD" ]; then
             
             echo -e "   Installing/updating required packages..."
             
+            # Force clean install to avoid numpy/pandas compatibility issues
+            echo -e "   Ensuring clean package installation (numpy/pandas compatibility)..."
+            pip uninstall -y numpy pandas ortools 2>/dev/null || true
+            
+            # Install packages in specific order to avoid compatibility issues
+            echo -e "   Installing numpy first..."
+            pip install --no-cache-dir "numpy>=1.21.0,<2.0.0" --quiet
+            
+            echo -e "   Installing pandas..."
+            pip install --no-cache-dir "pandas>=1.3.0,<2.0.0" --quiet
+            
+            echo -e "   Installing optimization packages..."
+            pip install --no-cache-dir ortools --quiet
+            
             # Install from requirements.txt if available
             if [ -f "${DEPLOY_DIR}/requirements.txt" ]; then
                 pip install -r "${DEPLOY_DIR}/requirements.txt" --quiet 2>/dev/null || {
@@ -126,10 +140,10 @@ if [ -n "$PYTHON_CMD" ]; then
                 }
             fi
             
-            # Install essential packages for optimization engine
-            echo -e "   Installing/updating optimization packages..."
-            pip install --quiet numpy scipy mysql-connector-python python-dotenv 2>/dev/null || {
-                echo -e "${YELLOW}   ⚠️  Some optimization packages failed to install${NC}"
+            # Install remaining essential packages
+            echo -e "   Installing remaining packages..."
+            pip install --quiet scipy mysql-connector-python python-dotenv 2>/dev/null || {
+                echo -e "${YELLOW}   ⚠️  Some packages failed to install${NC}"
             }
             
             deactivate

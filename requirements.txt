@@ -1,19 +1,31 @@
+# Base packages with compatible versions
+numpy>=1.21.0,<2.0.0
+scipy>=1.7.0,<2.0.0
+pandas>=1.3.0,<2.0.0
+
+# Optimization packages
+ortools>=9.5.0
+pulp==2.7.0
+
+# Database and connectivity
+pymysql==1.1.0
+mysql-connector-python>=8.0.0
+python-dotenv==1.0.0
+
+# Web framework (if needed)
 flask==2.3.3
 sqlalchemy==2.0.21
 flask-sqlalchemy==3.0.5
 flask-migrate==4.0.5
-pymysql==1.1.0
 cryptography==41.0.4
 marshmallow==3.20.1
 flask-marshmallow==0.15.0
 marshmallow-sqlalchemy==0.29.0
 flask-cors==4.0.0
-python-dotenv==1.0.0
-reportlab==4.0.4
-openpyxl==3.1.2
-pandas==2.1.1
-pulp==2.7.0
-ortools==9.7.2996
 wtforms==3.0.1
 flask-wtf==1.1.1
 gunicorn==21.2.0
+
+# Document generation
+reportlab==4.0.4
+openpyxl==3.1.2
