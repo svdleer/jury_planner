@@ -12,7 +12,13 @@ $pageTitle = t('advanced_constraint_editor');
 $pageDescription = t('advanced_constraint_editor_description');
 
 // Handle AJAX requests
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    // Clean output buffer and suppress errors for clean JSON response
+    while (ob_get_level()) {
+        ob_end_clean();
+    }
+    ob_start();
+    
     header('Content-Type: application/json');
     
     try {
@@ -53,8 +59,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 throw new Exception('Invalid action');
         }
     } catch (Exception $e) {
+        // Clean any buffered output before sending error
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    }
+    
+    // Clean any remaining output and exit
+    while (ob_get_level()) {
+        ob_end_clean();
     }
     exit;
 }

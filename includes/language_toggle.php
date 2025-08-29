@@ -23,7 +23,7 @@ require_once 'includes/translations.php';
              class="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
             <div class="py-1">
                 <?php foreach (Translations::getAvailableLanguages() as $code => $name): ?>
-                    <a href="?lang=<?php echo $code; ?>&<?php echo $_SERVER['QUERY_STRING'] ? preg_replace('/lang=[^&]*&?/', '', $_SERVER['QUERY_STRING']) : ''; ?>" 
+                    <a href="?lang=<?php echo $code; ?>&<?php echo isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] ? preg_replace('/lang=[^&]*&?/', '', $_SERVER['QUERY_STRING']) : ''; ?>" 
                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 <?php echo Translations::getCurrentLanguage() === $code ? 'bg-blue-50 text-blue-700' : ''; ?>">
                         <span class="mr-2">
                             <?php if ($code === 'nl'): ?>
