@@ -91,6 +91,9 @@ function formatTime($time, $format = 'H:i') {
                             <a href="constraints.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraints.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
                                 <i class="fas fa-cog mr-1"></i> <?php echo t('constraints'); ?>
                             </a>
+                            <a href="advanced_constraint_editor.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'advanced_constraint_editor.php' ? 'border-water-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'; ?> inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium">
+                                <i class="fas fa-magic mr-1"></i> <?php echo t('advanced_constraints'); ?>
+                            </a>
                         </div>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:items-center">
@@ -117,6 +120,7 @@ function formatTime($time, $format = 'H:i') {
                     <a href="teams.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'teams.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><i class="fas fa-users mr-2"></i><?php echo t('teams'); ?></a>
                     <a href="matches.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'matches.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><i class="fas fa-calendar mr-2"></i><?php echo t('matches'); ?></a>
                     <a href="constraints.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'constraints.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><i class="fas fa-cog mr-2"></i><?php echo t('constraints'); ?></a>
+                    <a href="advanced_constraint_editor.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'advanced_constraint_editor.php' ? 'border-water-blue-500 bg-water-blue-50 text-water-blue-700' : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'; ?> block border-l-4 py-2 pl-3 pr-4 text-base font-medium"><i class="fas fa-magic mr-2"></i><?php echo t('advanced_constraints'); ?></a>
                 </div>
             </div>
         </nav>
