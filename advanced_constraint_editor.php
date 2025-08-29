@@ -638,11 +638,6 @@ ob_start();
                 <?php echo t('create_new_constraint'); ?>
             </button>
             
-            <button onclick="importPythonConstraints()" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">
-                <i class="fas fa-download mr-2"></i>
-                <?php echo t('import_python_constraints'); ?>
-            </button>
-            
             <button onclick="refreshData()" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600">
                 <i class="fas fa-sync mr-2"></i>
                 <?php echo t('refresh'); ?>
@@ -1136,31 +1131,6 @@ async function toggleConstraint(id) {
         
         if (result.success) {
             showSuccess('<?php echo t('constraint_toggled_success'); ?>');
-            refreshData();
-        } else {
-            showError(result.error);
-        }
-    } catch (error) {
-        showError('<?php echo t('error_occurred'); ?>: ' + error.message);
-    }
-}
-
-async function importPythonConstraints() {
-    if (!confirm('This will import all Python-based constraints from wp-juryv1.0.py. Continue?')) {
-        return;
-    }
-    
-    try {
-        const response = await fetch('ajax_constraint_handler.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'action=import_python_constraints'
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showSuccess(result.message);
             refreshData();
         } else {
             showError(result.error);

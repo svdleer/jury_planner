@@ -64,13 +64,6 @@ function toggleAdvancedConstraint($constraintManager, $data) {
     ];
 }
 
-function importPythonConstraints($constraintManager) {
-    return [
-        'success' => true,
-        'message' => 'This feature will be implemented soon'
-    ];
-}
-
 function validateAdvancedConstraint($data) {
     return [
         'success' => true,
@@ -204,10 +197,6 @@ try {
             
         case 'toggle_constraint':
             echo json_encode(toggleAdvancedConstraint($constraintManager, $_POST));
-            break;
-            
-        case 'import_python_constraints':
-            echo json_encode(importPythonConstraints($constraintManager));
             break;
             
         case 'validate_constraint':
