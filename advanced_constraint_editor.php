@@ -4,75 +4,13 @@
  * Based on wp-juryv1.0.py constraint analysis
  */
 
+// Load page-specific includes
 require_once 'includes/translations.php';
 require_once 'config/database.php';
 require_once 'includes/ConstraintManager.php';
 
 $pageTitle = t('advanced_constraint_editor');
 $pageDescription = t('advanced_constraint_editor_description');
-
-// Handle AJAX requests
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    // Clean output buffer and suppress errors for clean JSON response
-    while (ob_get_level()) {
-        ob_end_clean();
-    }
-    ob_start();
-    
-    header('Content-Type: application/json');
-    
-    try {
-        $database = new Database();
-        $pdo = $database->getConnection();
-        $constraintManager = new ConstraintManager($pdo);
-        
-        switch ($_POST['action']) {
-            case 'get_data':
-                echo json_encode(getConstraintEditorData($constraintManager));
-                break;
-                
-            case 'create_constraint':
-                echo json_encode(createAdvancedConstraint($constraintManager, $_POST));
-                break;
-                
-            case 'update_constraint':
-                echo json_encode(updateAdvancedConstraint($constraintManager, $_POST));
-                break;
-                
-            case 'delete_constraint':
-                echo json_encode(deleteAdvancedConstraint($constraintManager, $_POST));
-                break;
-                
-            case 'toggle_constraint':
-                echo json_encode(toggleAdvancedConstraint($constraintManager, $_POST));
-                break;
-                
-            case 'import_python_constraints':
-                echo json_encode(importPythonConstraints($constraintManager));
-                break;
-                
-            case 'validate_constraint':
-                echo json_encode(validateAdvancedConstraint($_POST));
-                break;
-                
-            default:
-                throw new Exception('Invalid action');
-        }
-    } catch (Exception $e) {
-        // Clean any buffered output before sending error
-        while (ob_get_level()) {
-            ob_end_clean();
-        }
-        http_response_code(500);
-        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-    }
-    
-    // Clean any remaining output and exit
-    while (ob_get_level()) {
-        ob_end_clean();
-    }
-    exit;
-}
 
 function getConstraintEditorData($constraintManager) {
     // Get all constraints including inactive ones for the editor
@@ -810,7 +748,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function refreshData() {
     try {
-        const response = await fetch('advanced_constraint_editor.php', {
+        const response = await fetch('ajax_constraint_handler.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: 'action=get_data'
@@ -1141,7 +1079,7 @@ async function saveConstraint(event) {
     data.action = action;
     
     try {
-        const response = await fetch('advanced_constraint_editor.php', {
+        const response = await fetch('ajax_constraint_handler.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams(data)
@@ -1167,7 +1105,7 @@ async function deleteConstraint(id) {
     }
     
     try {
-        const response = await fetch('advanced_constraint_editor.php', {
+        const response = await fetch('ajax_constraint_handler.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `action=delete_constraint&id=${id}`
@@ -1188,7 +1126,7 @@ async function deleteConstraint(id) {
 
 async function toggleConstraint(id) {
     try {
-        const response = await fetch('advanced_constraint_editor.php', {
+        const response = await fetch('ajax_constraint_handler.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `action=toggle_constraint&id=${id}`
@@ -1213,7 +1151,7 @@ async function importPythonConstraints() {
     }
     
     try {
-        const response = await fetch('advanced_constraint_editor.php', {
+        const response = await fetch('ajax_constraint_handler.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: 'action=import_python_constraints'
