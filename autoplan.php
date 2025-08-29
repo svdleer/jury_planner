@@ -9,8 +9,8 @@ require_once 'config/database.php';
 require_once 'includes/ConstraintManager.php';
 require_once 'includes/PurePythonAutoplannerService.php';
 
-$pageTitle = "🎯 " . t('auto_plan');
-$pageDescription = "Generate optimal jury assignments for all matches using constraints";
+$pageTitle = t('auto_plan');
+$pageDescription = t('auto_assignment_description');
 
 // Handle AJAX requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -53,9 +53,9 @@ try {
 }
 
 function getAutoplanData($pdo) {
-    // Get teams (handle missing capacity_weight column gracefully)
+    // Get teams with proper weight column
     $teamsStmt = $pdo->prepare("
-        SELECT id, team_name as name, is_active
+        SELECT id, team_name as name, is_active, weight
         FROM teams 
         WHERE is_active = 1
         ORDER BY team_name
@@ -63,12 +63,15 @@ function getAutoplanData($pdo) {
     $teamsStmt->execute();
     $teams = $teamsStmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Add default capacity_weight since column doesn't exist
+    // Ensure weight column exists, fallback to 1.0
     foreach ($teams as &$team) {
-        $team['capacity_weight'] = 1.0;
+        if (!isset($team['weight']) || $team['weight'] === null) {
+            $team['weight'] = 1.0;
+        }
+        $team['capacity_weight'] = $team['weight']; // For backward compatibility
     }
     
-    // Get upcoming matches
+    // Get upcoming matches (next 30 days instead of just current date)
     $matchesStmt = $pdo->prepare("
         SELECT 
             m.id,
@@ -80,7 +83,7 @@ function getAutoplanData($pdo) {
             COUNT(a.id) as assigned_count
         FROM matches m
         LEFT JOIN jury_assignments a ON m.id = a.match_id
-        WHERE m.date_time >= CURDATE()
+        WHERE m.date_time >= CURDATE() AND m.date_time <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
         GROUP BY m.id
         ORDER BY m.date_time
     ");
@@ -92,7 +95,7 @@ function getAutoplanData($pdo) {
     $constraints = $constraintManager->getAllConstraints();
     $activeConstraints = array_filter($constraints, function($c) { return $c['is_active']; });
     
-    // Get existing assignments
+    // Get existing assignments for upcoming matches
     $assignmentsStmt = $pdo->prepare("
         SELECT 
             a.match_id,
@@ -104,6 +107,7 @@ function getAutoplanData($pdo) {
         FROM jury_assignments a
         JOIN teams t ON a.team_id = t.id
         JOIN matches m ON a.match_id = m.id
+        WHERE m.date_time >= CURDATE() AND m.date_time <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
         ORDER BY m.date_time
     ");
     $assignmentsStmt->execute();
@@ -177,7 +181,7 @@ function generateAutoplan($pdo) {
     
     return [
         'success' => true,
-        'message' => "Successfully generated autoplan with {$assignmentCount} assignments",
+        'message' => sprintf(t('optimization_success'), $assignmentCount),
         'assignments_created' => $assignmentCount,
         'solver_info' => $result['solver_info'] ?? [],
         'stats' => $data['stats']
@@ -191,7 +195,7 @@ function clearAutoAssignments($pdo) {
     
     return [
         'success' => true,
-        'message' => "Cleared {$count} assignments",
+        'message' => sprintf(t('assignments_cleared'), $count),
         'deleted_count' => $count
     ];
 }
@@ -208,24 +212,13 @@ ob_start();
         </div>
     <?php endif; ?>
 
-    <!-- Header -->
-    <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-lg mb-6">
-        <h1 class="text-3xl font-bold mb-2">
-            <i class="fas fa-brain mr-3"></i>
-            Unified Autoplanning
-        </h1>
-        <p class="text-blue-100">
-            Generate optimal jury assignments for all matches using your constraints
-        </p>
-    </div>
-
     <!-- Status Cards -->
     <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
         <div class="bg-white p-4 rounded-lg shadow border-l-4 border-blue-500">
             <div class="flex items-center">
                 <i class="fas fa-users text-blue-500 text-xl mr-3"></i>
                 <div>
-                    <p class="text-sm text-gray-600">Teams</p>
+                    <p class="text-sm text-gray-600"><?php echo t('teams'); ?></p>
                     <p class="text-2xl font-bold" id="teamsCount">-</p>
                 </div>
             </div>
@@ -235,7 +228,7 @@ ob_start();
             <div class="flex items-center">
                 <i class="fas fa-calendar text-green-500 text-xl mr-3"></i>
                 <div>
-                    <p class="text-sm text-gray-600">Matches</p>
+                    <p class="text-sm text-gray-600"><?php echo t('matches'); ?></p>
                     <p class="text-2xl font-bold" id="matchesCount">-</p>
                 </div>
             </div>
@@ -245,7 +238,7 @@ ob_start();
             <div class="flex items-center">
                 <i class="fas fa-ban text-purple-500 text-xl mr-3"></i>
                 <div>
-                    <p class="text-sm text-gray-600">Constraints</p>
+                    <p class="text-sm text-gray-600"><?php echo t('constraints'); ?></p>
                     <p class="text-2xl font-bold" id="constraintsCount">-</p>
                 </div>
             </div>
@@ -255,7 +248,7 @@ ob_start();
             <div class="flex items-center">
                 <i class="fas fa-exclamation-triangle text-yellow-500 text-xl mr-3"></i>
                 <div>
-                    <p class="text-sm text-gray-600">No Jury</p>
+                    <p class="text-sm text-gray-600"><?php echo t('unassigned'); ?></p>
                     <p class="text-2xl font-bold" id="unassignedCount">-</p>
                 </div>
             </div>
@@ -265,7 +258,7 @@ ob_start();
             <div class="flex items-center">
                 <i class="fas fa-check text-teal-500 text-xl mr-3"></i>
                 <div>
-                    <p class="text-sm text-gray-600">Assigned</p>
+                    <p class="text-sm text-gray-600"><?php echo t('assigned'); ?></p>
                     <p class="text-2xl font-bold" id="assignedCount">-</p>
                 </div>
             </div>
@@ -276,40 +269,40 @@ ob_start();
     <div class="bg-white rounded-lg shadow p-6 mb-6">
         <h2 class="text-xl font-bold mb-4">
             <i class="fas fa-cogs mr-2"></i>
-            Autoplanning Controls
+            <?php echo t('auto_assignment_controls'); ?>
         </h2>
         
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Solver Type</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"><?php echo t('solver_type'); ?></label>
                 <select id="solverType" class="w-full border border-gray-300 rounded-md px-3 py-2">
-                    <option value="auto">Auto (Recommended)</option>
-                    <option value="sat">CP-SAT (Complex)</option>
-                    <option value="linear">Linear (Fast)</option>
+                    <option value="auto"><?php echo t('auto_select'); ?></option>
+                    <option value="sat"><?php echo t('constraint_sat'); ?></option>
+                    <option value="linear"><?php echo t('linear_solver'); ?></option>
                 </select>
             </div>
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Time Limit</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"><?php echo t('timeout_seconds'); ?></label>
                 <select id="timeLimit" class="w-full border border-gray-300 rounded-md px-3 py-2">
-                    <option value="60">1 minute</option>
-                    <option value="300" selected>5 minutes</option>
-                    <option value="600">10 minutes</option>
-                    <option value="1800">30 minutes</option>
+                    <option value="60">1 <?php echo strtolower(t('minute')); ?></option>
+                    <option value="300" selected>5 <?php echo strtolower(t('minutes')); ?></option>
+                    <option value="600">10 <?php echo strtolower(t('minutes')); ?></option>
+                    <option value="1800">30 <?php echo strtolower(t('minutes')); ?></option>
                 </select>
             </div>
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Options</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"><?php echo t('options'); ?></label>
                 <label class="flex items-center">
                     <input type="checkbox" id="verbose" class="mr-2">
-                    <span class="text-sm">Verbose output</span>
+                    <span class="text-sm"><?php echo t('verbose_output'); ?></span>
                 </label>
             </div>
             
             <div class="flex items-end">
                 <button onclick="refreshData()" class="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-600">
-                    <i class="fas fa-sync mr-1"></i> Refresh
+                    <i class="fas fa-sync mr-1"></i> <?php echo t('refresh'); ?>
                 </button>
             </div>
         </div>
@@ -317,22 +310,22 @@ ob_start();
         <div class="flex flex-wrap gap-3">
             <button onclick="generateAutoplan()" id="generateBtn" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400">
                 <i class="fas fa-brain mr-2"></i>
-                Generate Autoplan
+                <?php echo t('run_auto_assignment'); ?>
             </button>
             
             <button onclick="clearAssignments()" id="clearBtn" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700">
                 <i class="fas fa-trash mr-2"></i>
-                Clear Auto Assignments
+                <?php echo t('reset_all_assignments'); ?>
             </button>
             
             <a href="matches.php" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
                 <i class="fas fa-eye mr-2"></i>
-                View Assignments
+                <?php echo t('view_all_upcoming'); ?>
             </a>
             
             <a href="constraints.php" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">
                 <i class="fas fa-ban mr-2"></i>
-                Manage Constraints
+                <?php echo t('constraints'); ?>
             </a>
         </div>
     </div>
@@ -342,8 +335,8 @@ ob_start();
         <div class="flex items-center justify-center">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-4"></div>
             <div>
-                <h3 class="text-lg font-medium">Running Optimization...</h3>
-                <p class="text-gray-600">Please wait while we generate the optimal assignments</p>
+                <h3 class="text-lg font-medium"><?php echo t('generating_autoplan'); ?></h3>
+                <p class="text-gray-600"><?php echo t('please_wait_optimization'); ?></p>
             </div>
         </div>
     </div>
@@ -355,11 +348,11 @@ ob_start();
     <div class="bg-white rounded-lg shadow p-6">
         <h2 class="text-xl font-bold mb-4">
             <i class="fas fa-list mr-2"></i>
-            Current Auto Assignments
+            <?php echo t('current_auto_assignments'); ?>
         </h2>
         
         <div id="assignmentsList">
-            <p class="text-gray-500 italic">Loading assignments...</p>
+            <p class="text-gray-500 italic"><?php echo t('loading_assignments'); ?></p>
         </div>
     </div>
 </div>
@@ -386,10 +379,10 @@ async function refreshData() {
             currentData = data;
             updateDisplay(data);
         } else {
-            showError('Failed to load data: ' + data.error);
+            showError('<?php echo t('error_loading_data'); ?>: ' + data.error);
         }
     } catch (error) {
-        showError('Error loading data: ' + error.message);
+        showError('<?php echo t('error_occurred'); ?>: ' + error.message);
     }
 }
 
@@ -409,20 +402,20 @@ function updateAssignmentsList(assignments) {
     const container = document.getElementById('assignmentsList');
     
     if (assignments.length === 0) {
-        container.innerHTML = '<p class="text-gray-500 italic">No auto-generated assignments yet. Click "Generate Autoplan" to create optimal assignments.</p>';
+        container.innerHTML = `<p class="text-gray-500 italic"><?php echo t('no_auto_assignments_yet'); ?></p>`;
         return;
     }
     
     let html = '<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200">';
     html += '<thead class="bg-gray-50"><tr>';
-    html += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Match</th>';
-    html += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>';
-    html += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Team</th>';
+    html += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"><?php echo t('match'); ?></th>';
+    html += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"><?php echo t('date'); ?></th>';
+    html += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"><?php echo t('team'); ?></th>';
     html += '</tr></thead><tbody class="bg-white divide-y divide-gray-200">';
     
     assignments.forEach(assignment => {
         html += '<tr>';
-        html += `<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${assignment.home_team} vs ${assignment.away_team}</td>`;
+        html += `<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${assignment.home_team} <?php echo t('vs'); ?> ${assignment.away_team}</td>`;
         html += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(assignment.date_time).toLocaleDateString()}</td>`;
         html += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${assignment.team_name}</td>`;
         html += '</tr>';
@@ -459,11 +452,11 @@ async function generateAutoplan() {
             showSuccess(result.message, result);
             refreshData(); // Reload data
         } else {
-            showError('Autoplanning failed: ' + result.error);
+            showError('<?php echo t('optimization_failed'); ?>'.replace('{error}', result.error));
         }
         
     } catch (error) {
-        showError('Error: ' + error.message);
+        showError('<?php echo t('error_occurred'); ?>: ' + error.message);
     } finally {
         generateBtn.disabled = false;
         progress.style.display = 'none';
@@ -471,7 +464,7 @@ async function generateAutoplan() {
 }
 
 async function clearAssignments() {
-    if (!confirm('Are you sure you want to clear all auto-generated assignments?')) {
+    if (!confirm('<?php echo t('clear_assignments_confirm'); ?>')) {
         return;
     }
     
@@ -488,11 +481,11 @@ async function clearAssignments() {
             showSuccess(result.message);
             refreshData();
         } else {
-            showError('Failed to clear assignments: ' + result.error);
+            showError('<?php echo t('error_occurred'); ?>: ' + result.error);
         }
         
     } catch (error) {
-        showError('Error: ' + error.message);
+        showError('<?php echo t('error_occurred'); ?>: ' + error.message);
     }
 }
 
