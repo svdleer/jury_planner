@@ -134,6 +134,16 @@ function getAvailableConstraintTypes() {
                 'applies_to_all_teams' => ['type' => 'boolean', 'label' => 'Apply to all teams', 'default' => true]
             ]
         ],
+        'team_restrictions' => [
+            'name' => 'Team Assignment Restrictions',
+            'description' => 'Prevent teams from jury duties in specific scenarios',
+            'category' => 'Conflict Prevention',
+            'parameters' => [
+                'restrict_own_matches' => ['type' => 'boolean', 'label' => 'Cannot jury own matches', 'default' => true],
+                'restrict_away_day' => ['type' => 'boolean', 'label' => 'Cannot jury when playing away', 'default' => true],
+                'applies_to_all_teams' => ['type' => 'boolean', 'label' => 'Apply to all teams', 'default' => true]
+            ]
+        ],
         'home_team_restriction' => [
             'name' => 'Home Team Cannot Jury Own Match',
             'description' => 'Teams cannot jury their own matches (home or away)',
