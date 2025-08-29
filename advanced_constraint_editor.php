@@ -60,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 function getConstraintEditorData($constraintManager) {
-    $constraints = $constraintManager->getAllConstraints();
+    // Get all constraints including inactive ones for the editor
+    $constraints = $constraintManager->getAllConstraintsForEditor();
     $teams = $constraintManager->getAllTeams();
     
     return [

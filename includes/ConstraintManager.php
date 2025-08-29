@@ -8,6 +8,24 @@ class ConstraintManager {
     }
     
     /**
+     * Get all planning rules/constraints for editor (including inactive)
+     */
+    public function getAllConstraintsForEditor() {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT id, name, description, rule_type, weight, is_active, parameters, created_at, updated_at
+                FROM planning_rules 
+                ORDER BY is_active DESC, rule_type, created_at DESC
+            ");
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error getting constraints for editor: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
      * Get all planning rules/constraints
      */
     public function getAllConstraints() {
@@ -16,8 +34,7 @@ class ConstraintManager {
             $stmt = $this->db->prepare("
                 SELECT id, name, description, rule_type, weight, is_active, parameters, created_at, updated_at
                 FROM planning_rules 
-                WHERE is_active = 1
-                ORDER BY created_at DESC
+                ORDER BY is_active DESC, rule_type, created_at DESC
             ");
             $stmt->execute();
             $constraints = $stmt->fetchAll(PDO::FETCH_ASSOC);
