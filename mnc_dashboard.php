@@ -232,6 +232,7 @@ ob_start();
                     <a href="teams.php" class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
                         <i class="fas fa-users mr-2"></i>
                         Manage Teams
+                    </a>
                 </div>
             </div>
         </div>
