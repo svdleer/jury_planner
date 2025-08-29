@@ -53,15 +53,20 @@ try {
 }
 
 function getAutoplanData($pdo) {
-    // Get teams
+    // Get teams (handle missing capacity_weight column gracefully)
     $teamsStmt = $pdo->prepare("
-        SELECT id, team_name as name, is_active, COALESCE(capacity_weight, 1.0) as capacity_weight
+        SELECT id, team_name as name, is_active
         FROM teams 
         WHERE is_active = 1
         ORDER BY team_name
     ");
     $teamsStmt->execute();
     $teams = $teamsStmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Add default capacity_weight since column doesn't exist
+    foreach ($teams as &$team) {
+        $team['capacity_weight'] = 1.0;
+    }
     
     // Get upcoming matches
     $matchesStmt = $pdo->prepare("
@@ -74,7 +79,7 @@ function getAutoplanData($pdo) {
             m.competition,
             COUNT(a.id) as assigned_count
         FROM matches m
-        LEFT JOIN assignments a ON m.id = a.match_id AND a.source = 'auto_planner'
+        LEFT JOIN jury_assignments a ON m.id = a.match_id
         WHERE m.date_time >= CURDATE()
         GROUP BY m.id
         ORDER BY m.date_time
@@ -92,16 +97,14 @@ function getAutoplanData($pdo) {
         SELECT 
             a.match_id,
             a.team_id,
-            a.duty_type,
             t.team_name,
             m.home_team,
             m.away_team,
             m.date_time
-        FROM assignments a
+        FROM jury_assignments a
         JOIN teams t ON a.team_id = t.id
         JOIN matches m ON a.match_id = m.id
-        WHERE a.source = 'auto_planner'
-        ORDER BY m.date_time, a.duty_type
+        ORDER BY m.date_time
     ");
     $assignmentsStmt->execute();
     $assignments = $assignmentsStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -155,22 +158,19 @@ function generateAutoplan($pdo) {
     }
     
     // Clear existing auto assignments
-    $pdo->exec("DELETE FROM assignments WHERE source = 'auto_planner'");
+    $pdo->exec("DELETE FROM jury_assignments");
     
-    // Store new assignments
+    // Store new assignments (simplified for current database structure)
     $stmt = $pdo->prepare("
-        INSERT INTO assignments (match_id, team_id, duty_type, assignment_time, confidence_score, source, created_at)
-        VALUES (?, ?, ?, ?, ?, 'auto_planner', NOW())
+        INSERT INTO jury_assignments (match_id, team_id)
+        VALUES (?, ?)
     ");
     
     $assignmentCount = 0;
     foreach ($result['assignments'] as $assignment) {
         $stmt->execute([
             $assignment['match_id'],
-            $assignment['team_id'],
-            $assignment['duty_type'],
-            $assignment['assignment_time'],
-            $assignment['confidence_score'] ?? 0.95
+            $assignment['team_id']
         ]);
         $assignmentCount++;
     }
@@ -185,13 +185,13 @@ function generateAutoplan($pdo) {
 }
 
 function clearAutoAssignments($pdo) {
-    $stmt = $pdo->prepare("DELETE FROM assignments WHERE source = 'auto_planner'");
+    $stmt = $pdo->prepare("DELETE FROM jury_assignments");
     $deleted = $stmt->execute();
     $count = $stmt->rowCount();
     
     return [
         'success' => true,
-        'message' => "Cleared {$count} auto-generated assignments",
+        'message' => "Cleared {$count} assignments",
         'deleted_count' => $count
     ];
 }
@@ -417,7 +417,6 @@ function updateAssignmentsList(assignments) {
     html += '<thead class="bg-gray-50"><tr>';
     html += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Match</th>';
     html += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>';
-    html += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Duty</th>';
     html += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Team</th>';
     html += '</tr></thead><tbody class="bg-white divide-y divide-gray-200">';
     
@@ -425,7 +424,6 @@ function updateAssignmentsList(assignments) {
         html += '<tr>';
         html += `<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${assignment.home_team} vs ${assignment.away_team}</td>`;
         html += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(assignment.date_time).toLocaleDateString()}</td>`;
-        html += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${assignment.duty_type}</td>`;
         html += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${assignment.team_name}</td>`;
         html += '</tr>';
     });
