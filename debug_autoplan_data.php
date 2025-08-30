@@ -7,6 +7,14 @@ require_once 'config/database.php';
 
 echo "<h2>🔍 Autoplan Data Debug</h2>\n";
 
+// Check if PDO connection exists
+if (!isset($pdo)) {
+    echo "<p>❌ No database connection available</p>\n";
+    exit;
+}
+
+echo "<p>✅ Database connection established</p>\n";
+
 try {
     // Check teams
     $teamsStmt = $pdo->prepare("SELECT COUNT(*) as total_teams, COUNT(CASE WHEN is_active = 1 THEN 1 END) as active_teams FROM teams");
@@ -100,5 +108,25 @@ try {
     
 } catch (Exception $e) {
     echo "<p>❌ Error checking data: " . htmlspecialchars($e->getMessage()) . "</p>\n";
+    echo "<p>Stack trace: " . htmlspecialchars($e->getTraceAsString()) . "</p>\n";
+}
+
+// Also check if the tables exist
+try {
+    echo "<h3>🗄️ Database Tables</h3>\n";
+    $tablesStmt = $pdo->query("SHOW TABLES");
+    $tables = $tablesStmt->fetchAll(PDO::FETCH_COLUMN);
+    echo "<p>Available tables: " . implode(', ', $tables) . "</p>\n";
+    
+    $requiredTables = ['teams', 'matches', 'constraints'];
+    foreach ($requiredTables as $table) {
+        if (in_array($table, $tables)) {
+            echo "<p>✅ Table '$table' exists</p>\n";
+        } else {
+            echo "<p>❌ Table '$table' missing</p>\n";
+        }
+    }
+} catch (Exception $e) {
+    echo "<p>❌ Error checking tables: " . htmlspecialchars($e->getMessage()) . "</p>\n";
 }
 ?>
