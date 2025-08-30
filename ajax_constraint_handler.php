@@ -14,6 +14,7 @@ if (!isset($_POST['action'])) {
 // Load required files
 require_once 'config/database.php';
 require_once 'includes/ConstraintManager.php';
+require_once 'includes/translations.php';
 
 // Include all constraint editor functions FIRST
 function getConstraintEditorData($constraintManager) {
@@ -139,9 +140,9 @@ function validateAdvancedConstraint($data) {
 function getConstraintTypes() {
     return [
         'assignment_balance' => [
-            'name' => 'Toewijzing Balancering',
-            'description' => 'Balanceer toewijzingen tussen teams voor eerlijkheid',
-            'category' => 'Verdeling',
+            'name' => t('assignment_balance'),
+            'description' => t('assignment_balance_description'),
+            'category' => t('load_balancing'),
             'parameters' => [
                 'max_assignments_per_day' => ['type' => 'number', 'label' => 'Max toewijzingen per dag', 'default' => 3],
                 'max_assignments_per_week' => ['type' => 'number', 'label' => 'Max toewijzingen per week', 'default' => 6],
@@ -149,9 +150,9 @@ function getConstraintTypes() {
             ]
         ],
         'consecutive_assignments' => [
-            'name' => 'Opeenvolgende Toewijzingen Controle',
-            'description' => 'Controleer hoeveel opeenvolgende wedstrijden een team kan worden toegewezen',
-            'category' => 'Planning',
+            'name' => t('consecutive_assignments'),
+            'description' => t('consecutive_assignments_description'),
+            'category' => t('scheduling'),
             'parameters' => [
                 'max_consecutive' => ['type' => 'number', 'label' => 'Max opeenvolgende wedstrijden', 'default' => 2],
                 'allow_groups' => ['type' => 'boolean', 'label' => 'Gegroepeerde toewijzingen toestaan', 'default' => true],
@@ -160,9 +161,9 @@ function getConstraintTypes() {
             ]
         ],
         'weekend_restrictions' => [
-            'name' => 'Weekend Toewijzing Beperkingen',
-            'description' => 'Controleer weekend toewijzingspatronen en voorkom overbelasting',
-            'category' => 'Weekend Regels',
+            'name' => t('weekend_restrictions'),
+            'description' => t('weekend_restrictions_description'),
+            'category' => t('weekend_rules'),
             'parameters' => [
                 'no_double_weekends' => ['type' => 'boolean', 'label' => 'Voorkom opeenvolgende weekenden', 'default' => true],
                 'max_per_weekend_day' => ['type' => 'number', 'label' => 'Max toewijzingen per weekenddag', 'default' => 1],
@@ -171,9 +172,9 @@ function getConstraintTypes() {
             ]
         ],
         'team_unavailability' => [
-            'name' => 'Team Onbeschikbaarheid',
-            'description' => 'Markeer specifieke teams als onbeschikbaar voor bepaalde data of periodes',
-            'category' => 'Beschikbaarheid',
+            'name' => t('team_unavailability'),
+            'description' => t('team_unavailability_description'),
+            'category' => t('availability'),
             'parameters' => [
                 'team_id' => ['type' => 'team_select', 'label' => 'Team', 'required' => true],
                 'start_date' => ['type' => 'date', 'label' => 'Startdatum', 'required' => true],
@@ -182,9 +183,9 @@ function getConstraintTypes() {
             ]
         ],
         'go_match_grouping' => [
-            'name' => 'GO Competitie Groepering',
-            'description' => 'Zorg ervoor dat GO competitiewedstrijden consistent worden toegewezen',
-            'category' => 'Competitie Regels',
+            'name' => t('go_match_grouping'),
+            'description' => t('go_match_grouping_description'),
+            'category' => t('competition_rules'),
             'parameters' => [
                 'force_same_team' => ['type' => 'boolean', 'label' => 'Forceer hetzelfde team voor GO wedstrijden', 'default' => true],
                 'allow_different_for_odd' => ['type' => 'boolean', 'label' => 'Sta andere toewijzing toe voor oneven GO wedstrijd', 'default' => true],
@@ -192,9 +193,9 @@ function getConstraintTypes() {
             ]
         ],
         'team_restrictions' => [
-            'name' => 'Team Toewijzing Beperkingen',
-            'description' => 'Voorkom teams van jury taken in specifieke scenario\'s',
-            'category' => 'Conflict Preventie',
+            'name' => t('team_restrictions'),
+            'description' => t('team_restrictions_description'),
+            'category' => t('conflict_prevention'),
             'parameters' => [
                 'restrict_own_matches' => ['type' => 'boolean', 'label' => 'Kan eigen wedstrijden niet jureren', 'default' => true],
                 'restrict_away_day' => ['type' => 'boolean', 'label' => 'Kan niet jureren bij uitwedstrijd', 'default' => true],
@@ -202,27 +203,27 @@ function getConstraintTypes() {
             ]
         ],
         'home_team_restriction' => [
-            'name' => 'Thuisteam Kan Eigen Wedstrijd Niet Jureren',
-            'description' => 'Teams kunnen hun eigen wedstrijden niet jureren (thuis of uit)',
-            'category' => 'Conflict Preventie',
+            'name' => t('home_team_restriction'),
+            'description' => t('home_team_restriction_description'),
+            'category' => t('conflict_prevention'),
             'parameters' => [
                 'include_away_matches' => ['type' => 'boolean', 'label' => 'Inclusief uitwedstrijden', 'default' => true],
                 'applies_to_all_teams' => ['type' => 'boolean', 'label' => 'Van toepassing op alle teams', 'default' => true]
             ]
         ],
         'away_match_conflict' => [
-            'name' => 'Uitwedstrijd Dag Beperking',
-            'description' => 'Teams kunnen niet jureren wanneer ze uitwedstrijden hebben op dezelfde dag',
-            'category' => 'Conflict Preventie',
+            'name' => t('away_match_conflict'),
+            'description' => t('away_match_conflict_description'),
+            'category' => t('conflict_prevention'),
             'parameters' => [
                 'strict_mode' => ['type' => 'boolean', 'label' => 'Strikte modus (geen uitzonderingen)', 'default' => true],
                 'applies_to_all_teams' => ['type' => 'boolean', 'label' => 'Van toepassing op alle teams', 'default' => true]
             ]
         ],
         'dedicated_team_assignment' => [
-            'name' => 'Toegewijde Team Toewijzing',
-            'description' => 'Teams toegewezen aan specifieke teams kunnen alleen hun wedstrijden jureren',
-            'category' => 'Team Toewijzing',
+            'name' => t('dedicated_team_assignment'),
+            'description' => t('dedicated_team_assignment_description'),
+            'category' => t('team_dedication'),
             'parameters' => [
                 'team_id' => ['type' => 'team_select', 'label' => 'Jury team', 'required' => true],
                 'dedicated_to_teams' => ['type' => 'multi_team_select', 'label' => 'Toegewezen aan teams', 'required' => true],
@@ -230,9 +231,9 @@ function getConstraintTypes() {
             ]
         ],
         'cross_day_restrictions' => [
-            'name' => 'Dagoverschrijdende Toewijzing Beperkingen',
-            'description' => 'Voorkom toewijzingen op opeenvolgende dagen of specifieke patronen',
-            'category' => 'Planning',
+            'name' => t('cross_day_restrictions'),
+            'description' => t('cross_day_restrictions_description'),
+            'category' => t('scheduling'),
             'parameters' => [
                 'no_consecutive_days' => ['type' => 'boolean', 'label' => 'Geen opeenvolgende dagen', 'default' => true],
                 'min_rest_days' => ['type' => 'number', 'label' => 'Minimum rustdagen tussen toewijzingen', 'default' => 0],
@@ -240,9 +241,9 @@ function getConstraintTypes() {
             ]
         ],
         'proximity_preference' => [
-            'name' => 'Nabijheid en Efficiëntie',
-            'description' => 'Verkies toewijzingen die wedstrijden efficiënt groeperen',
-            'category' => 'Optimalisatie',
+            'name' => t('proximity_preference'),
+            'description' => t('proximity_preference_description'),
+            'category' => t('optimization'),
             'parameters' => [
                 'prefer_consecutive' => ['type' => 'boolean', 'label' => 'Verkies opeenvolgende wedstrijden', 'default' => true],
                 'min_group_size' => ['type' => 'number', 'label' => 'Minimum groepsgrootte', 'default' => 2],
@@ -251,9 +252,9 @@ function getConstraintTypes() {
             ]
         ],
         'point_balancing' => [
-            'name' => 'Puntensysteem Balancering',
-            'description' => 'Balanceer behaalde punten tussen teams voor eerlijkheid',
-            'category' => 'Eerlijkheid',
+            'name' => t('point_balancing'),
+            'description' => t('point_balancing_description'),
+            'category' => t('fairness_category'),
             'parameters' => [
                 'max_point_difference' => ['type' => 'number', 'label' => 'Maximum puntenverschil tussen teams', 'default' => 20],
                 'prefer_lower_point_teams' => ['type' => 'boolean', 'label' => 'Verkies teams met minder punten', 'default' => true],
@@ -264,9 +265,9 @@ function getConstraintTypes() {
             ]
         ],
         'quiet_day_optimization' => [
-            'name' => 'Rustige Dag Optimalisatie',
-            'description' => 'Optimaliseer toewijzingen voor dagen met weinig wedstrijden',
-            'category' => 'Optimalisatie',
+            'name' => t('quiet_day_optimization'),
+            'description' => t('quiet_day_optimization_description'),
+            'category' => t('optimization'),
             'parameters' => [
                 'prefer_playing_teams' => ['type' => 'boolean', 'label' => 'Verkies teams die spelen op de dag', 'default' => true],
                 'two_match_strategy' => ['type' => 'select', 'label' => 'Twee wedstrijden dag strategie', 'options' => ['beide_naar_spelend', 'gelijk_verdelen'], 'default' => 'beide_naar_spelend'],
@@ -274,26 +275,26 @@ function getConstraintTypes() {
             ]
         ],
         'da1_da2_restriction' => [
-            'name' => 'Da1/Da2 Wederzijdse Uitsluiting',
-            'description' => 'Da1 en Da2 teams kunnen niet elkaars wedstrijden jureren',
-            'category' => 'Conflict Preventie',
+            'name' => t('da1_da2_restriction'),
+            'description' => t('da1_da2_restriction_description'),
+            'category' => t('competition_rules'),
             'parameters' => [
                 'strict_enforcement' => ['type' => 'boolean', 'label' => 'Strikte handhaving', 'default' => true]
             ]
         ],
         'h1_h2_special_rules' => [
-            'name' => 'H1/H2 Speciale Toewijzing Regels',
-            'description' => 'Speciale regels voor H1 en H2 team toewijzingen',
-            'category' => 'Speciale Regels',
+            'name' => t('h1_h2_special_rules'),
+            'description' => t('h1_h2_special_rules_description'),
+            'category' => t('special_rules'),
             'parameters' => [
                 'exclude_from_general_pool' => ['type' => 'boolean', 'label' => 'Uitsluiten van algemene pool', 'default' => false],
                 'priority_for_important_matches' => ['type' => 'boolean', 'label' => 'Prioriteit voor belangrijke wedstrijden', 'default' => true]
             ]
         ],
         'workload_distribution' => [
-            'name' => 'Historische Werklast Verdeling',
-            'description' => 'Overweeg historische toewijzingen bij het verdelen van nieuwe',
-            'category' => 'Eerlijkheid',
+            'name' => t('workload_distribution'),
+            'description' => t('workload_distribution_description'),
+            'category' => t('fairness_category'),
             'parameters' => [
                 'lookback_weeks' => ['type' => 'number', 'label' => 'Weken terug kijken', 'default' => 4],
                 'weight_recent_assignments' => ['type' => 'number', 'label' => 'Gewicht voor recente toewijzingen', 'default' => 2.0],
@@ -301,9 +302,9 @@ function getConstraintTypes() {
             ]
         ],
         'custom_constraint' => [
-            'name' => 'Aangepaste Python Beperking',
-            'description' => 'Definieer een aangepaste beperking met Python-achtige logica',
-            'category' => 'Geavanceerd',
+            'name' => t('custom_constraint'),
+            'description' => t('custom_constraint_description'),
+            'category' => t('advanced_category'),
             'parameters' => [
                 'constraint_name' => ['type' => 'text', 'label' => 'Beperking naam', 'required' => true],
                 'python_logic' => ['type' => 'textarea', 'label' => 'Python beperking logica', 'required' => true],
@@ -316,21 +317,21 @@ function getConstraintTypes() {
 function getRuleTypes() {
     return [
         'forbidden' => [
-            'label' => 'Verboden (Harde Beperking)',
+            'label' => t('forbidden_hard_constraint'),
             'description' => 'Hard constraint that must not be violated',
             'weight_range' => [-10000, -100],
             'default_weight' => -1000,
             'color' => 'red'
         ],
         'not_preferred' => [
-            'label' => 'Niet Gewenst',
+            'label' => t('not_preferred'),
             'description' => 'Strongly discouraged with high penalty',
             'weight_range' => [-100, -10],
             'default_weight' => -50,
             'color' => 'orange'
         ],
         'most_preferred' => [
-            'label' => 'Meest Gewenst',
+            'label' => t('most_preferred'),
             'description' => 'Highly encouraged with strong positive weight',
             'weight_range' => [1, 100],
             'default_weight' => 50,
