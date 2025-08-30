@@ -1439,4 +1439,3 @@ function translateDayName($englishDayName) {
 
 // Initialize translations
 Translations::init();
-?>

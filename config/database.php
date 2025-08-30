@@ -82,4 +82,3 @@ loadEnv(__DIR__ . '/../.env');
 // Global database instance
 $database = new Database();
 $db = $database->getConnection();
-?>
