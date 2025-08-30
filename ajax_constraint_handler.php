@@ -4,14 +4,19 @@
  */
 
 // Clean any output buffering and ensure clean JSON response
-ob_clean();
+while (ob_get_level()) {
+    ob_end_clean();
+}
+ob_start();
+
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-cache, must-revalidate');
 
 // Handle AJAX requests only
 if (!isset($_POST['action'])) {
+    ob_clean();
     echo json_encode(['success' => false, 'error' => 'Invalid request']);
-    exit;
+    exit(0);
 }
 
 // Load required files
@@ -350,37 +355,55 @@ try {
     
     switch ($_POST['action']) {
         case 'get_data':
-            echo json_encode(getConstraintEditorData($constraintManager));
-            break;
+            $result = json_encode(getConstraintEditorData($constraintManager));
+            ob_clean();
+            echo $result;
+            exit(0);
             
         case 'create_constraint':
-            echo json_encode(createAdvancedConstraint($constraintManager, $_POST));
-            break;
+            $result = json_encode(createAdvancedConstraint($constraintManager, $_POST));
+            ob_clean();
+            echo $result;
+            exit(0);
             
         case 'update_constraint':
-            echo json_encode(updateAdvancedConstraint($constraintManager, $_POST));
-            break;
+            $result = json_encode(updateAdvancedConstraint($constraintManager, $_POST));
+            ob_clean();
+            echo $result;
+            exit(0);
             
         case 'delete_constraint':
-            echo json_encode(deleteAdvancedConstraint($constraintManager, $_POST));
-            break;
+            $result = json_encode(deleteAdvancedConstraint($constraintManager, $_POST));
+            ob_clean();
+            echo $result;
+            exit(0);
             
         case 'toggle_constraint':
-            echo json_encode(toggleAdvancedConstraint($constraintManager, $_POST));
-            break;
+            $result = json_encode(toggleAdvancedConstraint($constraintManager, $_POST));
+            ob_clean();
+            echo $result;
+            exit(0);
             
         case 'validate_constraint':
-            echo json_encode(validateAdvancedConstraint($_POST));
-            break;
+            $result = json_encode(validateAdvancedConstraint($_POST));
+            ob_clean();
+            echo $result;
+            exit(0);
             
         case 'render_parameter_form':
             $constraintType = $_POST['constraint_type'] ?? '';
             $parameters = json_decode($_POST['parameters'] ?? '{}', true);
-            echo json_encode(['success' => true, 'html' => renderParameterForm($constraintType, $parameters)]);
+            $result = json_encode(['success' => true, 'html' => renderParameterForm($constraintType, $parameters)]);
+            ob_clean();
+            echo $result;
+            exit(0);
             break;
             
         default:
-            throw new Exception('Invalid action: ' . $_POST['action']);
+            ob_clean();
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Invalid action: ' . $_POST['action']]);
+            exit(0);
     }
 } catch (Exception $e) {
     // Ensure clean output
@@ -399,6 +422,7 @@ try {
             'action' => $_POST['action'] ?? 'unknown'
         ]
     ]);
+    exit(0);
 } catch (Error $e) {
     // Handle fatal errors
     ob_clean();
@@ -409,6 +433,7 @@ try {
         'success' => false, 
         'error' => 'A fatal error occurred: ' . $e->getMessage()
     ]);
+    exit(0);
 }
 
 function renderParameterForm($constraintType, $parameters = []) {
