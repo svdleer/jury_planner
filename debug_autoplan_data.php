@@ -94,6 +94,23 @@ try {
         }
     }
     
+    // Check home_matches specifically for upcoming matches (what autoplanner should use)
+    try {
+        $homeMatchesStmt = $pdo->prepare("
+            SELECT 
+                COUNT(*) as total_home_matches,
+                COUNT(CASE WHEN date_time >= CURDATE() THEN 1 END) as future_home_matches,
+                COUNT(CASE WHEN date_time >= CURDATE() AND date_time <= DATE_ADD(CURDATE(), INTERVAL 30 DAY) THEN 1 END) as next_30_days_home,
+                MIN(date_time) as earliest_home_match,
+                MAX(date_time) as latest_home_match
+            FROM home_matches
+        ");
+        $homeMatchesStmt->execute();
+        $homeMatchStats = $homeMatchesStmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        $homeMatchStats = null;
+    }
+    
     echo "<h3>⚽ Matches</h3>\n";
     echo "<p><strong>Main 'matches' table:</strong></p>\n";
     echo "<p>Total matches: {$matchStats['total_matches']}</p>\n";
@@ -110,6 +127,38 @@ try {
     echo "<p><strong>Other match tables:</strong></p>\n";
     foreach ($otherMatchData as $table => $count) {
         echo "<p>{$table}: {$count} records</p>\n";
+    }
+    
+    // Show home_matches analysis (what autoplanner should use)
+    if ($homeMatchStats) {
+        echo "<p><strong>HOME MATCHES Analysis (for jury assignments):</strong></p>\n";
+        echo "<p>Total home matches: {$homeMatchStats['total_home_matches']}</p>\n";
+        echo "<p>Future home matches: {$homeMatchStats['future_home_matches']}</p>\n";
+        echo "<p>Home matches in next 30 days: {$homeMatchStats['next_30_days_home']}</p>\n";
+        echo "<p>Earliest home match: {$homeMatchStats['earliest_home_match']}</p>\n";
+        echo "<p>Latest home match: {$homeMatchStats['latest_home_match']}</p>\n";
+        
+        if ($homeMatchStats['next_30_days_home'] > 0) {
+            echo "<p>✅ <strong>FOUND {$homeMatchStats['next_30_days_home']} upcoming home matches!</strong></p>\n";
+            
+            // Show sample upcoming home matches
+            $sampleHomeStmt = $pdo->prepare("
+                SELECT id, date_time, home_team, away_team, location
+                FROM home_matches 
+                WHERE date_time >= CURDATE() AND date_time <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+                ORDER BY date_time 
+                LIMIT 5
+            ");
+            $sampleHomeStmt->execute();
+            $sampleHomeMatches = $sampleHomeStmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            echo "<h4>Sample upcoming home matches (next 30 days):</h4>\n";
+            echo "<ul>\n";
+            foreach ($sampleHomeMatches as $match) {
+                echo "<li style='color: green;'>ID: {$match['id']}, {$match['date_time']}: {$match['home_team']} vs {$match['away_team']} @ {$match['location']}</li>\n";
+            }
+            echo "</ul>\n";
+        }
     }
     
     if ($matchStats['total_matches'] > 0 && $matchStats['next_30_days'] == 0) {
@@ -177,15 +226,23 @@ try {
     
     if ($matchStats['next_30_days'] == 0) {
         if ($matchStats['total_matches'] == 0) {
-            echo "<p>❌ <strong>No matches in database</strong> - Add matches</p>\n";
+            echo "<p>❌ <strong>No matches in 'matches' table</strong> - But this is OK, autoplanner should use 'home_matches'</p>\n";
         } else {
-            echo "<p>⚠️ <strong>No upcoming matches in next 30 days</strong> - Matches exist but are outside the autoplanner's 30-day window</p>\n";
-            echo "<p>💡 <strong>Solution:</strong> Either add matches within the next 30 days, or modify the autoplanner to look further ahead</p>\n";
+            echo "<p>⚠️ <strong>No upcoming matches in 'matches' table in next 30 days</strong> - But autoplanner should use 'home_matches'</p>\n";
         }
     }
     
-    if ($teamStats['active_teams'] > 0 && $matchStats['next_30_days'] > 0) {
-        echo "<p>✅ <strong>Data looks good</strong> - Should be able to generate assignments</p>\n";
+    if ($homeMatchStats && $homeMatchStats['next_30_days_home'] > 0) {
+        echo "<p>✅ <strong>PERFECT!</strong> Found {$homeMatchStats['next_30_days_home']} upcoming home matches that need jury assignments</p>\n";
+        echo "<p>� <strong>ACTION:</strong> Autoplanner should now work correctly after fixing to use 'home_matches' table</p>\n";
+    } elseif ($homeMatchStats && $homeMatchStats['total_home_matches'] > 0) {
+        echo "<p>⚠️ <strong>Home matches exist but none in next 30 days</strong> - Check if matches are scheduled further out</p>\n";
+    } else {
+        echo "<p>❌ <strong>No home matches found</strong> - These are needed for jury assignments</p>\n";
+    }
+    
+    if ($teamStats['active_teams'] > 0 && $homeMatchStats && $homeMatchStats['next_30_days_home'] > 0) {
+        echo "<p>🎉 <strong>Ready for autoplanning!</strong> Teams: {$teamStats['active_teams']}, Home matches: {$homeMatchStats['next_30_days_home']}</p>\n";
     }
     
 } catch (Exception $e) {

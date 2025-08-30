@@ -71,7 +71,7 @@ function getAutoplanData($pdo) {
         $team['capacity_weight'] = $team['weight']; // For backward compatibility
     }
     
-    // Get upcoming matches (next 30 days instead of just current date)
+    // Get upcoming matches from home_matches table (matches that need jury assignments)
     $matchesStmt = $pdo->prepare("
         SELECT 
             m.id,
@@ -81,7 +81,7 @@ function getAutoplanData($pdo) {
             m.location,
             m.competition,
             COUNT(a.id) as assigned_count
-        FROM matches m
+        FROM home_matches m
         LEFT JOIN jury_assignments a ON m.id = a.match_id
         WHERE m.date_time >= CURDATE() AND m.date_time <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
         GROUP BY m.id
@@ -95,7 +95,7 @@ function getAutoplanData($pdo) {
     $constraints = $constraintManager->getAllConstraints();
     $activeConstraints = array_filter($constraints, function($c) { return $c['is_active']; });
     
-    // Get existing assignments for upcoming matches
+    // Get existing assignments for upcoming home matches
     $assignmentsStmt = $pdo->prepare("
         SELECT 
             a.match_id,
@@ -106,7 +106,7 @@ function getAutoplanData($pdo) {
             m.date_time
         FROM jury_assignments a
         JOIN teams t ON a.team_id = t.id
-        JOIN matches m ON a.match_id = m.id
+        JOIN home_matches m ON a.match_id = m.id
         WHERE m.date_time >= CURDATE() AND m.date_time <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
         ORDER BY m.date_time
     ");
