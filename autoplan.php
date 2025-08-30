@@ -161,12 +161,22 @@ function generateAutoplan($pdo) {
         throw new Exception('Optimization failed: ' . ($result['error'] ?? 'Unknown error'));
     }
     
-    // Clear existing auto assignments
-    $pdo->exec("DELETE FROM jury_assignments");
+    // Clear existing assignments for the matches we're planning (only upcoming home matches)
+    // First get the match IDs we're planning for
+    $upcomingMatchIds = [];
+    foreach ($matches as $match) {
+        $upcomingMatchIds[] = $match['id'];
+    }
     
-    // Store new assignments (simplified for current database structure)
+    if (!empty($upcomingMatchIds)) {
+        $placeholders = str_repeat('?,', count($upcomingMatchIds) - 1) . '?';
+        $deleteStmt = $pdo->prepare("DELETE FROM jury_assignments WHERE match_id IN ({$placeholders})");
+        $deleteStmt->execute($upcomingMatchIds);
+    }
+    
+    // Store new assignments (using REPLACE to handle any duplicates)
     $stmt = $pdo->prepare("
-        INSERT INTO jury_assignments (match_id, team_id)
+        REPLACE INTO jury_assignments (match_id, team_id)
         VALUES (?, ?)
     ");
     
