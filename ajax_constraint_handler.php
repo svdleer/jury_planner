@@ -3,7 +3,10 @@
  * AJAX Handler for Advanced Constraint Editor
  */
 
-header('Content-Type: application/json');
+// Clean any output buffering and ensure clean JSON response
+ob_clean();
+header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-cache, must-revalidate');
 
 // Handle AJAX requests only
 if (!isset($_POST['action'])) {
@@ -377,11 +380,35 @@ try {
             break;
             
         default:
-            throw new Exception('Invalid action');
+            throw new Exception('Invalid action: ' . $_POST['action']);
     }
 } catch (Exception $e) {
+    // Ensure clean output
+    ob_clean();
+    
+    // Log the error for debugging
+    error_log("AJAX Constraint Handler Error: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
+    
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    echo json_encode([
+        'success' => false, 
+        'error' => $e->getMessage(),
+        'debug' => [
+            'file' => basename($e->getFile()),
+            'line' => $e->getLine(),
+            'action' => $_POST['action'] ?? 'unknown'
+        ]
+    ]);
+} catch (Error $e) {
+    // Handle fatal errors
+    ob_clean();
+    error_log("AJAX Constraint Handler Fatal Error: " . $e->getMessage());
+    
+    http_response_code(500);
+    echo json_encode([
+        'success' => false, 
+        'error' => 'A fatal error occurred: ' . $e->getMessage()
+    ]);
 }
 
 function renderParameterForm($constraintType, $parameters = []) {

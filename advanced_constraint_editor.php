@@ -743,13 +743,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function refreshData() {
     try {
+        console.log('Starting refreshData...');
         const response = await fetch('ajax_constraint_handler.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: 'action=get_data'
         });
         
-        const data = await response.json();
+        console.log('Response status:', response.status, response.statusText);
+        console.log('Response headers:', response.headers.get('content-type'));
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const responseText = await response.text();
+        console.log('Response length:', responseText.length);
+        console.log('Response start:', responseText.substring(0, 100));
+        console.log('Response end:', responseText.substring(responseText.length - 100));
+        
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('JSON Parse Error:', parseError);
+            console.error('Response text that failed to parse:', responseText);
+            throw new Error(`JSON Parse Error: ${parseError.message}. Response: ${responseText.substring(0, 200)}...`);
+        }
         
         if (data.success) {
             currentData = data;
@@ -766,6 +786,7 @@ async function refreshData() {
             showError('<?php echo t('error_loading_data'); ?>: ' + data.error);
         }
     } catch (error) {
+        console.error('RefreshData error:', error);
         showError('<?php echo t('error_occurred'); ?>: ' + error.message);
     }
 }
@@ -1084,13 +1105,30 @@ async function saveConstraint(event) {
     data.action = action;
     
     try {
+        console.log('Saving constraint with action:', action);
         const response = await fetch('ajax_constraint_handler.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams(data)
         });
         
-        const result = await response.json();
+        console.log('Save response status:', response.status, response.statusText);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const responseText = await response.text();
+        console.log('Save response length:', responseText.length);
+        
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('JSON Parse Error in saveConstraint:', parseError);
+            console.error('Response text:', responseText);
+            throw new Error(`JSON Parse Error: ${parseError.message}`);
+        }
         
         if (result.success) {
             showSuccess(action === 'create_constraint' ? '<?php echo t('constraint_created_success'); ?>' : '<?php echo t('constraint_updated_success'); ?>');
@@ -1100,6 +1138,7 @@ async function saveConstraint(event) {
             showError(result.error);
         }
     } catch (error) {
+        console.error('SaveConstraint error:', error);
         showError('<?php echo t('error_occurred'); ?>: ' + error.message);
     }
 }
