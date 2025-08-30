@@ -65,14 +65,16 @@ try {
         echo "</ul>\n";
     }
     
-    // Check matches
+    // Check matches - look at ALL matches first
     $matchesStmt = $pdo->prepare("
         SELECT 
             COUNT(*) as total_matches,
             COUNT(CASE WHEN date_time >= CURDATE() THEN 1 END) as future_matches,
             COUNT(CASE WHEN date_time >= CURDATE() AND date_time <= DATE_ADD(CURDATE(), INTERVAL 30 DAY) THEN 1 END) as next_30_days,
+            COUNT(CASE WHEN date_time >= CURDATE() AND date_time <= DATE_ADD(CURDATE(), INTERVAL 365 DAY) THEN 1 END) as next_year,
             MIN(date_time) as earliest_match,
-            MAX(date_time) as latest_match
+            MAX(date_time) as latest_match,
+            COUNT(CASE WHEN date_time < CURDATE() THEN 1 END) as past_matches
         FROM matches
     ");
     $matchesStmt->execute();
@@ -80,11 +82,38 @@ try {
     
     echo "<h3>⚽ Matches</h3>\n";
     echo "<p>Total matches: {$matchStats['total_matches']}</p>\n";
+    echo "<p>Past matches: {$matchStats['past_matches']}</p>\n";
     echo "<p>Future matches: {$matchStats['future_matches']}</p>\n";
     echo "<p>Matches in next 30 days: {$matchStats['next_30_days']}</p>\n";
+    echo "<p>Matches in next year: {$matchStats['next_year']}</p>\n";
     echo "<p>Earliest match: {$matchStats['earliest_match']}</p>\n";
     echo "<p>Latest match: {$matchStats['latest_match']}</p>\n";
     echo "<p>Current date: " . date('Y-m-d H:i:s') . "</p>\n";
+    echo "<p>Search range: " . date('Y-m-d') . " to " . date('Y-m-d', strtotime('+30 days')) . "</p>\n";
+    
+    if ($matchStats['total_matches'] > 0 && $matchStats['next_30_days'] == 0) {
+        echo "<p>⚠️ <strong>Matches exist but none in next 30 days!</strong> The autoplanner only looks 30 days ahead.</p>\n";
+        
+        // Show some sample matches to understand the dates
+        $sampleStmt = $pdo->prepare("
+            SELECT id, date_time, home_team, away_team, location
+            FROM matches 
+            ORDER BY date_time 
+            LIMIT 10
+        ");
+        $sampleStmt->execute();
+        $sampleMatches = $sampleStmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        echo "<h4>Sample matches (showing actual dates):</h4>\n";
+        echo "<ul>\n";
+        foreach ($sampleMatches as $match) {
+            $dateClass = strtotime($match['date_time']) < time() ? 'style="color: red;"' : 
+                        (strtotime($match['date_time']) <= strtotime('+30 days') ? 'style="color: green;"' : 'style="color: orange;"');
+            echo "<li $dateClass>ID: {$match['id']}, {$match['date_time']}: {$match['home_team']} vs {$match['away_team']} @ {$match['location']}</li>\n";
+        }
+        echo "</ul>\n";
+        echo "<p><span style='color: red;'>Red = Past</span>, <span style='color: green;'>Green = Next 30 days</span>, <span style='color: orange;'>Orange = Future (>30 days)</span></p>\n";
+    }
     
     if ($matchStats['next_30_days'] > 0) {
         $upcomingStmt = $pdo->prepare("
@@ -126,7 +155,12 @@ try {
     }
     
     if ($matchStats['next_30_days'] == 0) {
-        echo "<p>❌ <strong>No upcoming matches</strong> - Add matches for the next 30 days</p>\n";
+        if ($matchStats['total_matches'] == 0) {
+            echo "<p>❌ <strong>No matches in database</strong> - Add matches</p>\n";
+        } else {
+            echo "<p>⚠️ <strong>No upcoming matches in next 30 days</strong> - Matches exist but are outside the autoplanner's 30-day window</p>\n";
+            echo "<p>💡 <strong>Solution:</strong> Either add matches within the next 30 days, or modify the autoplanner to look further ahead</p>\n";
+        }
     }
     
     if ($teamStats['active_teams'] > 0 && $matchStats['next_30_days'] > 0) {
