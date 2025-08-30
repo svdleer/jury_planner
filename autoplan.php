@@ -72,6 +72,7 @@ function getAutoplanData($pdo) {
     }
     
     // Get upcoming matches from home_matches table (matches that need jury assignments)
+    // Plan for ALL future matches in the entire dataset
     $matchesStmt = $pdo->prepare("
         SELECT 
             m.id,
@@ -83,7 +84,7 @@ function getAutoplanData($pdo) {
             COUNT(a.id) as assigned_count
         FROM home_matches m
         LEFT JOIN jury_assignments a ON m.id = a.match_id
-        WHERE m.date_time >= CURDATE() AND m.date_time <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+        WHERE m.date_time >= CURDATE()
         GROUP BY m.id
         ORDER BY m.date_time
     ");
@@ -95,7 +96,7 @@ function getAutoplanData($pdo) {
     $constraints = $constraintManager->getAllConstraints();
     $activeConstraints = array_filter($constraints, function($c) { return $c['is_active']; });
     
-    // Get existing assignments for upcoming home matches
+    // Get existing assignments for all future home matches
     $assignmentsStmt = $pdo->prepare("
         SELECT 
             a.match_id,
@@ -107,7 +108,7 @@ function getAutoplanData($pdo) {
         FROM jury_assignments a
         JOIN teams t ON a.team_id = t.id
         JOIN home_matches m ON a.match_id = m.id
-        WHERE m.date_time >= CURDATE() AND m.date_time <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+        WHERE m.date_time >= CURDATE()
         ORDER BY m.date_time
     ");
     $assignmentsStmt->execute();
