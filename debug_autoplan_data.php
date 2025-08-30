@@ -7,10 +7,37 @@ require_once 'config/database.php';
 
 echo "<h2>🔍 Autoplan Data Debug</h2>\n";
 
-// Check if PDO connection exists
-if (!isset($pdo)) {
-    echo "<p>❌ No database connection available</p>\n";
+// Check environment variables
+echo "<h3>🔧 Environment Check</h3>\n";
+echo "<p>.env file exists: " . (file_exists(__DIR__ . '/.env') ? 'Yes' : 'No') . "</p>\n";
+echo "<p>DB_HOST: " . ($_ENV['DB_HOST'] ?? 'Not set') . "</p>\n";
+echo "<p>DB_USER: " . ($_ENV['DB_USER'] ?? 'Not set') . "</p>\n";
+echo "<p>DB_NAME: " . ($_ENV['DB_NAME'] ?? 'Not set') . "</p>\n";
+echo "<p>DB_PASSWORD: " . (isset($_ENV['DB_PASSWORD']) ? '[SET]' : 'Not set') . "</p>\n";
+
+// Check if database instance exists
+if (!isset($database)) {
+    echo "<p>❌ No database instance available</p>\n";
     exit;
+}
+
+// Check if PDO connection exists  
+if (!isset($pdo)) {
+    // Try to get it from the database instance or global $db
+    if (isset($db)) {
+        $pdo = $db;
+        echo "<p>✅ Using global \$db connection</p>\n";
+    } else {
+        try {
+            $pdo = $database->getConnection();
+            echo "<p>✅ Database connection retrieved from instance</p>\n";
+        } catch (Exception $e) {
+            echo "<p>❌ Database connection failed: " . htmlspecialchars($e->getMessage()) . "</p>\n";
+            exit;
+        }
+    }
+} else {
+    echo "<p>✅ PDO connection available</p>\n";
 }
 
 echo "<p>✅ Database connection established</p>\n";
