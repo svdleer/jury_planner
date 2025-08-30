@@ -35,19 +35,19 @@ function getConstraintEditorData($constraintManager) {
 function getAvailableConstraintTypes() {
     return [
         'assignment_balance' => [
-            'name' => 'Assignment Load Balancing',
-            'description' => 'Balance assignments across teams to ensure fairness',
-            'category' => 'Load Balancing',
+            'name' => 'Toewijzing Balancering',
+            'description' => 'Balanceer toewijzingen tussen teams voor eerlijkheid',
+            'category' => 'Verdeling',
             'parameters' => [
-                'max_assignments_per_day' => ['type' => 'number', 'label' => 'Max assignments per day', 'default' => 3],
-                'max_assignments_per_week' => ['type' => 'number', 'label' => 'Max assignments per week', 'default' => 6],
-                'applies_to_all_teams' => ['type' => 'boolean', 'label' => 'Apply to all teams', 'default' => true]
+                'max_assignments_per_day' => ['type' => 'number', 'label' => 'Max toewijzingen per dag', 'default' => 3],
+                'max_assignments_per_week' => ['type' => 'number', 'label' => 'Max toewijzingen per week', 'default' => 6],
+                'applies_to_all_teams' => ['type' => 'boolean', 'label' => 'Van toepassing op alle teams', 'default' => true]
             ]
         ],
         'consecutive_assignments' => [
-            'name' => 'Consecutive Assignment Control',
-            'description' => 'Control how many consecutive matches a team can be assigned',
-            'category' => 'Scheduling',
+            'name' => 'Opeenvolgende Toewijzingen Controle',
+            'description' => 'Controleer hoeveel opeenvolgende wedstrijden een team kan worden toegewezen',
+            'category' => 'Planning',
             'parameters' => [
                 'max_consecutive' => ['type' => 'number', 'label' => 'Max consecutive matches', 'default' => 2],
                 'allow_groups' => ['type' => 'boolean', 'label' => 'Allow grouped assignments', 'default' => true],
@@ -756,6 +756,11 @@ async function refreshData() {
             constraintTypes = data.constraint_types;
             ruleTypes = data.rule_types;
             teams = data.teams;
+            
+            // Debug: Check constraint types count
+            console.log('Loaded constraint types:', Object.keys(constraintTypes).length, 'types');
+            console.log('Constraint type keys:', Object.keys(constraintTypes));
+            
             updateDisplay(data);
         } else {
             showError('<?php echo t('error_loading_data'); ?>: ' + data.error);
@@ -892,12 +897,17 @@ function updateModalDropdowns() {
     const constraintTypeSelect = document.getElementById('constraintType');
     constraintTypeSelect.innerHTML = '<option value=""><?php echo t('select_constraint_type'); ?></option>';
     
+    console.log('Updating modal dropdowns with', Object.keys(constraintTypes).length, 'constraint types');
+    
     Object.keys(constraintTypes).forEach(type => {
         const option = document.createElement('option');
         option.value = type;
         option.textContent = constraintTypes[type].name;
         constraintTypeSelect.appendChild(option);
+        console.log('Added dropdown option:', type, '-', constraintTypes[type].name);
     });
+    
+    console.log('Final dropdown has', constraintTypeSelect.options.length - 1, 'constraint options');
     
     // Update rule type dropdown
     const ruleTypeSelect = document.getElementById('ruleType');
