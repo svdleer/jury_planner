@@ -1,0 +1,3 @@
+# Python requirements for Jury Planner optimization engine
+ortools>=9.5.2237
+numpy>=1.21.0
