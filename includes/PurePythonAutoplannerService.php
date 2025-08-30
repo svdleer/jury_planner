@@ -291,7 +291,19 @@ class PurePythonAutoplannerService {
      * Find Python executable
      */
     private function findPythonExecutable(): string {
-        // Try common Python executables
+        // First try virtual environment Python (production path)
+        $venvPython = '/home/httpd/vhosts/jury2025.useless.nl/httpdocs/.venv/bin/python3';
+        if (file_exists($venvPython)) {
+            return $venvPython;
+        }
+        
+        // Try local virtual environment (development)
+        $localVenvPython = __DIR__ . '/../.venv/bin/python3';
+        if (file_exists($localVenvPython)) {
+            return $localVenvPython;
+        }
+        
+        // Try common Python executables as fallback
         $pythonCommands = ['python3', 'python'];
         
         foreach ($pythonCommands as $cmd) {
