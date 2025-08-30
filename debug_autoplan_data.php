@@ -80,7 +80,22 @@ try {
     $matchesStmt->execute();
     $matchStats = $matchesStmt->fetch(PDO::FETCH_ASSOC);
     
+    // Also check other match tables
+    $otherMatchTables = ['all_matches', 'home_matches'];
+    $otherMatchData = [];
+    
+    foreach ($otherMatchTables as $tableName) {
+        try {
+            $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM {$tableName}");
+            $stmt->execute();
+            $otherMatchData[$tableName] = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+        } catch (Exception $e) {
+            $otherMatchData[$tableName] = "Error: " . $e->getMessage();
+        }
+    }
+    
     echo "<h3>⚽ Matches</h3>\n";
+    echo "<p><strong>Main 'matches' table:</strong></p>\n";
     echo "<p>Total matches: {$matchStats['total_matches']}</p>\n";
     echo "<p>Past matches: {$matchStats['past_matches']}</p>\n";
     echo "<p>Future matches: {$matchStats['future_matches']}</p>\n";
@@ -90,6 +105,12 @@ try {
     echo "<p>Latest match: {$matchStats['latest_match']}</p>\n";
     echo "<p>Current date: " . date('Y-m-d H:i:s') . "</p>\n";
     echo "<p>Search range: " . date('Y-m-d') . " to " . date('Y-m-d', strtotime('+30 days')) . "</p>\n";
+    
+    // Show other match tables
+    echo "<p><strong>Other match tables:</strong></p>\n";
+    foreach ($otherMatchData as $table => $count) {
+        echo "<p>{$table}: {$count} records</p>\n";
+    }
     
     if ($matchStats['total_matches'] > 0 && $matchStats['next_30_days'] == 0) {
         echo "<p>⚠️ <strong>Matches exist but none in next 30 days!</strong> The autoplanner only looks 30 days ahead.</p>\n";
