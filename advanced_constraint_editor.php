@@ -1193,6 +1193,35 @@ function showError(message) {
         }
     }, 7000);
 }
+
+// Listen for language changes
+window.addEventListener('pageshow', function() {
+    // Check if the language has changed by monitoring URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentLang = urlParams.get('lang') || 'nl';
+    
+    // Store the current language to detect changes
+    if (!window.lastLanguage) {
+        window.lastLanguage = currentLang;
+    } else if (window.lastLanguage !== currentLang) {
+        // Language has changed, refresh the constraint types
+        console.log('Language changed from', window.lastLanguage, 'to', currentLang);
+        window.lastLanguage = currentLang;
+        refreshData();
+    }
+});
+
+// Also listen for popstate (back/forward navigation)
+window.addEventListener('popstate', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentLang = urlParams.get('lang') || 'nl';
+    
+    if (window.lastLanguage && window.lastLanguage !== currentLang) {
+        console.log('Language changed via navigation from', window.lastLanguage, 'to', currentLang);
+        window.lastLanguage = currentLang;
+        refreshData();
+    }
+});
 </script>
 
 <?php
