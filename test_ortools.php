@@ -5,13 +5,13 @@
 
 // Test the Python environment and OR-Tools installation
 function testOrToolsInstallation() {
-    $command = "cd /home/httpd/vhosts/jury2025.useless.nl/httpdocs && source .venv/bin/activate && python3 -c \"from ortools.sat.python import cp_model; print('SUCCESS: OR-Tools imported successfully')\" 2>&1";
+    $command = "cd /home/httpd/vhosts/jury2025.useless.nl/httpdocs && .venv/bin/python3 -c \"from ortools.sat.python import cp_model; print('SUCCESS: OR-Tools imported successfully')\" 2>&1";
     
     $output = shell_exec($command);
     
     return [
         'success' => strpos($output, 'SUCCESS') !== false,
-        'output' => $output,
+        'output' => trim($output),
         'command' => $command
     ];
 }
